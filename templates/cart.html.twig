@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+    <h1>Items in cart:</h1>
+
+    {% for cart_item in cart_items %}
+        <p>
+            {{ cart_item.variant.product.name }} /
+            {{ cart_item.variant.name }} /
+            {{ cart_item.variant.price.valueWithoutVat }} Kč /
+            <a href="{{ path('remove_item_from_cart', {'variantId': cart_item.variant.id}) }}">odstranit z košíku</a>
+        </p>
+    {% endfor %}
+
+    <hr>
+    Total totalis: {{ cart.totalPrice.amount }} Kč
+{% endblock %}
