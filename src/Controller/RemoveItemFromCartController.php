@@ -8,7 +8,7 @@ use CeskaKruta\Web\Value\CartItem;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 final class RemoveItemFromCartController extends AbstractController
 {
