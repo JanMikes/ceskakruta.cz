@@ -25,3 +25,7 @@ if [[ "$SKIP_DATABASE_MIGRATIONS" != "true" ]]; then
 else
     echo "== Skipping database migrations =="
 fi
+
+echo "== Setting 777 permission to var/ =="
+mkdir -p var/cache
+time chmod -R 777 var

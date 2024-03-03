@@ -8,11 +8,11 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     env:
-        DATABASE_URL: postgresql://ceskakruta:ceskakruta@127.0.0.1:5432/ceskakruta?serverVersion=13&charset=utf8
+        DATABASE_URL: postgresql://ceskakruta:ceskakruta@127.0.0.1:5432/ceskakruta?serverVersion=16&charset=utf8
 
     services:
       db:
-          image: postgres:13
+          image: postgres:16
           env:
               POSTGRES_USER: ceskakruta
               POSTGRES_PASSWORD: ceskakruta
@@ -24,7 +24,7 @@ jobs:
       -   uses: actions/checkout@v2
       -   uses: shivammathur/setup-php@v2
           with:
-            php-version: 8.2
+            php-version: 8.3
             coverage: none # default is xdebug
             extensions: mbstring, uuid # needed by phpunit
 
@@ -40,7 +40,7 @@ jobs:
         -   uses: actions/checkout@v2
         -   uses: shivammathur/setup-php@v2
             with:
-              php-version: 8.2
+              php-version: 8.3
               coverage: none # default is xdebug
               extensions: mbstring, uuid # needed by phpunit
 
@@ -68,7 +68,7 @@ jobs:
       -   uses: actions/checkout@v2
       -   uses: shivammathur/setup-php@v2
           with:
-            php-version: 8.2
+            php-version: 8.3
             coverage: none # default is xdebug
             extensions: mbstring, uuid # needed by phpunit
 

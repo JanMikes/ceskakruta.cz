@@ -1,1 +1,18 @@
 // the ~ allows you to reference things in node_modules
+
+// Main cervena: #E22228
+// Secondary cervena: #7E2622
+// Seda: #B4B4B4
+
+@font-face {
+    font-family: 'Calibri';
+    src: local('../fonts/calibri-regular.ttf');
+}
+
+.topbar {
+    background: #E22228;
+
+    a {
+        color: #fff;
+    }
+}

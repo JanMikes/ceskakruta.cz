@@ -3,7 +3,8 @@
         "http": {
             "max_body_size": 134217728,
             "send_timeout": 35,
-            "idle_timeout": 35
+            "idle_timeout": 35,
+            "server_version": false
         }
     },
     "listeners": {
@@ -34,7 +35,7 @@
                 }
             },
             "processes": {
-                "max": 5,
+                "max": 15,
                 "spare": 5,
                 "idle_timeout": 30
             },
