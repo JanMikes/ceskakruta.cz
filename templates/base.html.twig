@@ -31,15 +31,6 @@
     </head>
     <body>
         <header class="shadow-sm">
-            <div class="topbar">
-                <div class="container">
-
-                    <div class="topbar-text text-nowrap d-none d-md-inline-block">
-                        <a class="topbar-link" href="tel:+420123456789">+420 123 456 789</a>
-                    </div>
-                </div>
-            </div>
-
             <div class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container">
                     <a class="navbar-brand d-none d-lg-block me-3 flex-shrink-0" href="{{ path('homepage') }}">
@@ -56,7 +47,7 @@
                                         <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}">Úvod</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ path('about_us') }}">O nás</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ path('products') }}">Naše nabídka</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ path('contact') }}">Kontakty</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}#kontakty">Kontakty</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
                                     </ul>
                                 </div>
@@ -68,11 +59,6 @@
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <a class="navbar-tool d-lg-none" href="#">
-                            <div class="navbar-tool-icon-box">
-                                <i class="navbar-tool-icon ci-search"></i>
-                            </div>
-                        </a>
                         <a class="navbar-tool ms-1 ms-lg-0 me-n1 me-lg-2" href="#">
                             <div class="navbar-tool-icon-box">
                                 <i class="navbar-tool-icon ci-user"></i>
@@ -96,9 +82,6 @@
                 {% block content %}{% endblock %}
             </section>
         {% endblock %}
-
-        <!-- Back To Top Button-->
-        <a class="btn-scroll-top" href="#top" data-scroll><span class="btn-scroll-top-tooltip text-muted fs-sm me-2">Top</span><i class="btn-scroll-top-icon ci-arrow-up">   </i></a>
 
         <!-- Vendor scrits: js libraries and plugins-->
         <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>

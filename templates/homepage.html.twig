@@ -2,7 +2,209 @@
 
 {% block title %}Home{% endblock %}
 
-{% block content %}
-    <h1>Hi</h1>
+{% block full_content %}
+    <section class="home-header">
+        <div class="container py-5 align-middle">
+            <h1 class="mt-5">Chováme krůty s láskou</h1>
+
+            <p class="my-4">Pod značkou „Česká krůta“ poskytujeme to nejlepší pro vaši osobní spotřebu nebo další prodej či chov. Jsme tu pro všechny, kdo chtějí jíst zdravě. Objevte chuť pravé české krůty a obohaťte svůj život o kvalitní farmářské produkty z české farmy</p>
+
+            <a href="{{ path('about_us') }}" class="btn btn-primary">Více o nás</a>
+        </div>
+    </section>
+
+    <section class="home-squares">
+        <div class="container">
+            <h2>Naše nabídka</h2>
+
+            <div class="row">
+                <div class="col">
+                    <a class="home-img-maso-a-uzeniny" href="{{ path('products') }}"><span>Maso a uzeniny</span></a>
+                </div>
+
+                <div class="col">
+                    <a class="home-img-chlazene-kruty" href="{{ path('products') }}"><span>Chlazené krůty</span></a>
+                </div>
+
+                <div class="col">
+                    <a class="home-img-krutata" href="{{ path('alive_turkeys') }}"><span>Krůťata k chovu</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-advantages">
+        <div class="container">
+            <h2>Proč naše maso?</h2>
+
+            <div class="row">
+                <div class="col-4">
+                    <i class="icon icon-1"></i>
+                    <h3>Vlastní chov</h3>
+                    <p>Jsme hrdí na to, že veškeré maso a zvířata, které nabízíme, pochází výhradně z našeho vlastního chovu, nikde jinde je nenakupujeme.</p>
+                </div>
+
+                <div class="col-4">
+                    <i class="icon icon-2"></i>
+                    <h3>Imunitní sytém</h3>
+                    <p>V našem chovu se spoléháme na přírodní doplňky, jako je česnek, chlorella, oregano a echinacea, které přispívají k podpoře zdraví našich zvířat.</p>
+                </div>
+
+                <div class="col-4">
+                    <i class="icon icon-3"></i>
+                    <h3>Žádné stimulátory</h3>
+                    <p>S pečlivostí a ohledem na kvalitu vám zaručujeme, že u zvířat nepoužíváme žádné růstové stimulátory ani hormony.</p>
+                </div>
+
+                <div class="col-4">
+                    <i class="icon icon-4"></i>
+                    <h3>Bez stresu</h3>
+                    <p>Celý proces výkrmu i zpracování masa probíhá pod naším osobním dohledem na naší farmě. Drůbež není vystavena  stresu z převozu, držena v bednách bez přístupu k vodě či krmivu</p>
+                </div>
+
+                <div class="col-4">
+                    <i class="icon icon-5"></i>
+                    <h3>Přímo na stůl</h3>
+                    <p>Naše maso a výrobky neprochází dlouhým logistickým řetězcem, a proto uměle neprodlužujeme jejich trvanlivost</p>
+                </div>
+
+                <div class="col-4">
+                    <i class="icon icon-6"></i>
+                    <h3>Welfare požadavky</h3>
+                    <p>O naše zvířata se staráme sami, což znamená nesrovnatelné podmínky welfare. Dostatek prostoru, denní světlo i potřebný čas na odpočinek je pro nás samozřejmostí</p>
+                </div>
+            </div>
+
+            <a href="{{ path('about_meat') }}">Výhody krůtího masa</a>
+        </div>
+    </section>
+
+    <section class="home-delivery">
+        <div class="container">
+            <h2>Náš rozvoz</h2>
+
+            <p>Zadejte vaši adresu a my najdeme optimální doručení na vaši adresu, dle našich možností.</p>
+
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Zadejte vaše město či poštovní směrovací číslo">
+                <button class="btn btn-primary" type="button">Potvrdit</button>
+            </div>
+
+            <h3 class="my-5">Jednoduchá objednávka ve 3 krocích</h3>
+
+            <div class="home-delivery-steps">
+                <div class="d-flex align-items-center py-3 step-1">
+                    <span>1.</span> <i></i> Zadejte ulici a číslo popisné.
+                </div>
+
+                <div class="d-flex align-items-center py-3 step-2">
+                    <span>2.</span> <i></i> Vyberte o jaké zboží máte zájem.
+                </div>
+
+                <div class="d-flex align-items-center py-3 step-3">
+                    <span>3.</span> <i></i> Těšte se na vaši objednávku.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-contact" id="kontakty">
+        <div class="container">
+            <h2>Kontakt</h2>
+
+            <div class="row">
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="ci-location h3 mt-2 mb-4 text-primary"></i>
+                            <h3 class="h6 mb-2">Main store address</h3>
+                            <p class="fs-sm text-muted">396 Lillian Blvd, Holbrook, NY 11741, USA</p>
+                            <a class="fs-sm" href="#">
+                                Click to see map
+                                <i class="ci-arrow-right align-middle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="ci-location h3 mt-2 mb-4 text-primary"></i>
+                            <h3 class="h6 mb-2">Main store address</h3>
+                            <p class="fs-sm text-muted">396 Lillian Blvd, Holbrook, NY 11741, USA</p>
+                            <a class="fs-sm" href="#">
+                                Click to see map
+                                <i class="ci-arrow-right align-middle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="ci-location h3 mt-2 mb-4 text-primary"></i>
+                            <h3 class="h6 mb-2">Main store address</h3>
+                            <p class="fs-sm text-muted">396 Lillian Blvd, Holbrook, NY 11741, USA</p>
+                            <a class="fs-sm" href="#">
+                                Click to see map
+                                <i class="ci-arrow-right align-middle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="ci-location h3 mt-2 mb-4 text-primary"></i>
+                            <h3 class="h6 mb-2">Main store address</h3>
+                            <p class="fs-sm text-muted">396 Lillian Blvd, Holbrook, NY 11741, USA</p>
+                            <a class="fs-sm" href="#">
+                                Click to see map
+                                <i class="ci-arrow-right align-middle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="ci-location h3 mt-2 mb-4 text-primary"></i>
+                            <h3 class="h6 mb-2">Main store address</h3>
+                            <p class="fs-sm text-muted">396 Lillian Blvd, Holbrook, NY 11741, USA</p>
+                            <a class="fs-sm" href="#">
+                                Click to see map
+                                <i class="ci-arrow-right align-middle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="ci-location h3 mt-2 mb-4 text-primary"></i>
+                            <h3 class="h6 mb-2">Main store address</h3>
+                            <p class="fs-sm text-muted">396 Lillian Blvd, Holbrook, NY 11741, USA</p>
+                            <a class="fs-sm" href="#">
+                                Click to see map
+                                <i class="ci-arrow-right align-middle ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p>Společnost je vedena u Krajského soudu v Ostravě pod spisovou značkou C 50789/KSOS </p>
+
+            <p>
+                <a href="#" class="btn btn-primary btn-lg">Naše farmy</a>
+                <a href="#" class="btn btn-primary btn-lg">Naše prodejny</a>
+            </p>
+        </div>
+    </section>
 
 {% endblock %}

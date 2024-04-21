@@ -6,7 +6,7 @@
 
 @font-face {
     font-family: 'Calibri';
-    src: local('../fonts/calibri-regular.ttf');
+    src: local('fonts/calibri-regular.ttf');
 }
 
 .topbar {
@@ -15,4 +15,200 @@
     a {
         color: #fff;
     }
+}
+
+.home-header {
+    background: url('../img/home-header.png') center top no-repeat;
+    min-height: 800px;
+
+    h1, p, a {
+        color: #fff;
+    }
+
+    h1, p {
+        max-width: 640px;
+    }
+}
+
+.home-squares {
+    background: #F6CE7E;
+    color: #fff;
+
+    .container {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+
+    h2 {
+        color: #fff;
+        margin-bottom: 40px;
+    }
+
+    a {
+        display: block;
+        max-width: 440px;
+        height: 400px;
+        border: 6px solid #fff;
+        text-align: center;
+        color: #fff;
+        background-color: #79302A;
+        background-position: center center;
+        background-size: cover;
+        position: relative;
+
+        &.home-img-maso-a-uzeniny {
+            background-image: url('../img/home-maso-a-uzeniny.png')
+        }
+        &.home-img-chlazene-kruty {
+            background-image: url('../img/home-chlazene-kruty.png')
+        }
+        &.home-img-krutata {
+            background-image: url('../img/home-krutata.png')
+        }
+
+        span {
+            display: block;
+            width: 100%;
+            padding: 30px 0;
+            font-size: 36px;
+            font-weight: 700;
+            background: rgba(135, 43, 38, 0.6);
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            transition: all .5s ease;
+        }
+
+        &:hover {
+            span {
+                background: rgba(135, 43, 38, 0.88);
+            }
+        }
+    }
+}
+
+.home-advantages {
+    background: rgb(178,81,76);
+    background: radial-gradient(circle, rgba(178,81,76,1) 0%, rgba(126,38,34,1) 100%);
+    padding-top: 60px;
+    padding-bottom: 60px;
+
+    h2, h3, p {
+        color: #fff;
+    }
+
+    .icon {
+        display: block;
+        width: 70px;
+        height: 70px;
+        margin-bottom: 20px;
+        background-size: cover;
+    }
+
+    .icon-1 {
+        background: url('../img/home-icon-1.svg') center center no-repeat;
+    }
+    .icon-2 {
+        background: url('../img/home-icon-2.svg') center center no-repeat;
+    }
+    .icon-3 {
+        background: url('../img/home-icon-3.svg') center center no-repeat;
+    }
+    .icon-4 {
+        background: url('../img/home-icon-4.svg') center center no-repeat;
+    }
+    .icon-5 {
+        background: url('../img/home-icon-5.svg') center center no-repeat;
+    }
+    .icon-6 {
+        background: url('../img/home-icon-6.svg') center center no-repeat;
+    }
+}
+
+.home-delivery {
+    background: url('../img/home-doprava.png') left center no-repeat #E6E6E6;
+    padding: 100px 0;
+
+    .container {
+        padding-left: 700px;
+    }
+}
+
+.home-delivery-steps {
+    span {
+        font-size: 50px;
+        font-weight: bold;
+        display: inline-block;
+        width: 50px;
+    }
+
+    i {
+        display: inline-block;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .step-1 i {
+        width: 90px;
+        height: 72px;
+        background: url('../img/doprava-icon.svg') center center no-repeat;
+    }
+
+    .step-2 i {
+        width: 90px;
+        height: 79px;
+        background: url('../img/vyber-zbozi-icon.svg') center center no-repeat;
+    }
+
+    .step-3 i {
+        width: 90px;
+        height: 81px;
+        background: url('../img/dokonceni-objednavky-icon.svg') center center no-repeat;
+    }
+}
+
+.home-contact {
+    padding: 60px 0;
+}
+
+.separator {
+    display: block;
+    background: url('../img/separator.png') center center no-repeat;
+    width: 155px;
+    height: 94px;
+    margin: 30px auto;
+}
+
+.about-us {
+    p {
+        max-width: 750px;
+        margin: 30px auto;
+    }
+
+    padding-bottom: 60px;
+}
+
+.about-us-row {
+    background: #EBBD70;
+    margin: 50px auto;
+
+    p {
+        max-width: 450px;
+        margin: 0 auto;
+    }
+}
+
+.about-us-img-1,
+.about-us-img-2 {
+    min-height: 607px;
+}
+
+.about-us-img-1 {
+    background: url('../img/about-us-1.png') center center no-repeat;
+    background-size: cover;
+}
+
+.about-us-img-2 {
+    background: url('../img/about-us-2.png') center center no-repeat;
+    background-size: cover;
 }

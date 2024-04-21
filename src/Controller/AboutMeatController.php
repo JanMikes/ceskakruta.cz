@@ -8,11 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class ContactController extends AbstractController
+final class AboutMeatController extends AbstractController
 {
-    #[Route(path: '/kontakt', name: 'contact', methods: ['GET'])]
+    #[Route(path: '/o-krutim-mase', name: 'about_meat', methods: ['GET'])]
     public function __invoke(): Response
     {
-        return $this->render('contact.html.twig');
+        return $this->render('about_meat.html.twig');
     }
 }
