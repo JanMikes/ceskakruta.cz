@@ -282,6 +282,11 @@
         &.active {
             background: #ECECEC;
             color: #000;
+
+            .ci-arrow-down,
+            .ci-arrow-right {
+                background-color: #fff;
+            }
         }
 
         .sales-places-icon-1,
@@ -318,4 +323,83 @@
             border-radius: 20px;
         }
     }
+}
+
+.alive-turkeys {
+    padding: 60px 0;
+}
+
+.alive-turkeys-row {
+    background: #EBBD70;
+    margin: 50px auto;
+
+    p {
+        max-width: 450px;
+        margin: 0 auto;
+    }
+}
+
+.alive-turkeys-img-1,
+.alive-turkeys-img-2 {
+    min-height: 736px;
+    position: relative;
+}
+
+.alive-turkeys-img-1 {
+    background: url('../img/alive-turkeys-1.png') center center no-repeat;
+    background-size: cover;
+}
+
+.alive-turkeys-img-2 {
+    background: url('../img/alive-turkeys-2.png') center center no-repeat;
+    background-size: cover;
+}
+
+.content-wrap {
+    background: #fff;
+    position: absolute;
+    bottom: 25%;
+    width: 80%;
+    left: 10%;
+    padding: 20px;
+}
+
+.calendar-row {
+    .table-responsive {
+        border: 1px solid #ECECEC;
+
+        .table {
+            margin-bottom: 0;
+
+            tr:last-child td {
+                border-bottom: 0;
+            }
+        }
+    }
+}
+
+.ribbon {
+    display: block;
+    background: #F5B00B;
+    color: #fff;
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        background: #fff;
+        width: 150px;
+        height: 150px;
+        left: -50%;
+        top: 50%;
+        margin-top: -75px;
+        transform: rotate(45deg);
+    }
+}
+
+.products-list {
+    padding: 60px 0;
 }

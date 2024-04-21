@@ -1,13 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Naše nabídka{% endblock %}
 
 {% block content %}
-    {% for product in products %}
-        <p>
-            <a href="{{ path('product_detail', {productId: product.id}) }}">
-                {{ product.name }}
-            </a>
-        </p>
-    {% endfor %}
+    <section class="products-list">
+
+        <div class="row">
+            <div class="col-3 sales-places-nav pe-0">
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#">
+                            Chlazené maso
+                            <i class="ci-arrow-down"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="active" href="#">
+                            Maso a uzeniny
+                            <i class="ci-arrow-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Doplňkový sortiment
+                            <i class="ci-arrow-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-9 ps-5">
+                <h1>Maso a uzeniny</h1>
+
+                <div class="row">
+                    {% for i in [1, 2, 3, 4, 5, 6] %}
+                        <div class="col-4 my-3">
+                            <div class="card">
+                                <a class="card-img-top d-block text-center overflow-hidden" href="#">
+                                    <img src="{{ asset('img/product-1.png') }}" alt="Product">
+                                </a>
+                                <div class="card-body py-2">
+                                    <h3 class="product-title fs-base">Krůtí prsa s medailonkem</h3>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="product-price">
+                                            Cena: <strong>123 Kč</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex mb-2">
+                                        <input class="form-control form-control-sm me-2" type="text">
+
+                                        <button class="btn btn-primary btn-sm" type="button">
+                                            <i class="ci-cart fs-sm me-1"></i>
+                                            Do košíku
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
 {% endblock %}

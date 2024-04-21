@@ -18,7 +18,7 @@ final class ProductsController extends AbstractController
     public function __invoke(): Response
     {
         return $this->render('products.html.twig', [
-            'products' => $this->productRepository->findAll(),
+            // 'products' => $this->productRepository->findAll(),
         ]);
     }
 }
