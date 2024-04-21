@@ -212,3 +212,50 @@
     background: url('../img/about-us-2.png') center center no-repeat;
     background-size: cover;
 }
+
+.about-meat-row {
+
+}
+
+.about-meat {
+    padding: 30px 0;
+}
+
+.about-meat-img-1 {
+    min-height: 437px;
+    background: url('../img/turkey-meat-1.png') center center no-repeat;
+    background-size: cover;
+}
+
+.about-meat-items {
+    i {
+        display: block;
+        margin: 0 auto 20px auto;
+        width: 61px;
+        height: 58px;
+    }
+
+    > div {
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+}
+
+.about-meat-icon-1 {
+    background: url('../img/meat-icon-1.svg') center center no-repeat;
+}
+.about-meat-icon-2 {
+    background: url('../img/meat-icon-2.svg') center center no-repeat;
+}
+.about-meat-icon-3 {
+    background: url('../img/meat-icon-3.svg') center center no-repeat;
+}
+.about-meat-icon-4 {
+    background: url('../img/meat-icon-4.svg') center center no-repeat;
+}
+.about-meat-icon-5 {
+    background: url('../img/meat-icon-5.svg') center center no-repeat;
+}
+.about-meat-icon-6 {
+    background: url('../img/meat-icon-6.svg') center center no-repeat;
+}
