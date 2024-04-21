@@ -259,3 +259,63 @@
 .about-meat-icon-6 {
     background: url('../img/meat-icon-6.svg') center center no-repeat;
 }
+
+.sales-places {
+    padding: 60px 0;
+
+    h2 {
+        color: #EE787F;
+    }
+}
+
+.sales-places-nav {
+    border-right: 1px solid #ECECEC;
+
+    a {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        line-height: 25px;
+        color: #575756;
+        position: relative;
+
+        &.active {
+            background: #ECECEC;
+            color: #000;
+        }
+
+        .sales-places-icon-1,
+        .sales-places-icon-2 {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background-size: contain;
+            margin-right: 15px;
+            margin-top: 2px;
+            float: left;
+        }
+
+        .sales-places-icon-1 {
+            background: url('../img/places-icon-1.svg') center center no-repeat;
+        }
+        .sales-places-icon-2 {
+            background: url('../img/places-icon-2.svg') center center no-repeat;
+        }
+
+        .ci-arrow-down,
+        .ci-arrow-right {
+            display: block;
+            font-size: 10px;
+            width: 20px;
+            height: 20px;
+            line-height: 23px;
+            text-align: center;
+            background: #ECECEC;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            margin-top: -10px;
+            border-radius: 20px;
+        }
+    }
+}

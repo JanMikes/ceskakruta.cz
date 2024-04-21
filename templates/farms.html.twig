@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Prodejní místa{% endblock %}
+{% block title %}Naše farmy{% endblock %}
 
 {% block content %}
     <section class="sales-places">
@@ -8,24 +8,24 @@
             <div class="col-3 sales-places-nav pe-0">
                 <ul class="list-unstyled">
                     <li>
-                        <a class="active" href="{{ path('sales_places') }}">
+                        <a href="{{ path('sales_places') }}">
                             <i class="sales-places-icon-1"></i>
                             Naše prodejny
-                            <i class="ci-arrow-right"></i>
+                            <i class="ci-arrow-down"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ path('farms') }}">
+                        <a class="active" href="{{ path('farms') }}">
                             <i class="sales-places-icon-2"></i>
                             Naše farmy
-                            <i class="ci-arrow-down"></i>
+                            <i class="ci-arrow-right"></i>
                         </a>
                     </li>
                 </ul>
             </div>
 
             <div class="col-9 ps-5">
-                <h1>Naše prodejny</h1>
+                <h1>Naše farmy</h1>
 
                 <h2>Rychvald</h2>
 
