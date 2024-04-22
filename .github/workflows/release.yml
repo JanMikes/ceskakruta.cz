@@ -74,4 +74,4 @@ jobs:
                     username: ${{ secrets.DEPLOY_USERNAME }}
                     key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
                     script_stop: true
-                    script: cd /deployment/ceskakruta.cz && ./deploy.sh
+                    script: cd /deployment/ceskakruta && ./deploy.sh
