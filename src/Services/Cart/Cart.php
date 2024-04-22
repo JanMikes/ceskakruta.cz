@@ -27,6 +27,7 @@ readonly final class Cart
     {
         return new TotalPriceWithVat(0, Currency::CZK);
 
+        /*
         $variantIds = array_map(
             static fn (CartItem $cartItem): UuidInterface => $cartItem->productVariantId,
             $this->cartStorage->getItems(),
@@ -44,6 +45,7 @@ readonly final class Cart
         }
 
         return $totalWithVat;
+        */
     }
 
     /**

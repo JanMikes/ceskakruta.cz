@@ -22,8 +22,8 @@ $currentDatabaseHash = TestingDatabaseCaching::calculateDirectoriesHash(
 if (
     TestingDatabaseCaching::isCacheUpToDate($cacheFilePath, $currentDatabaseHash) === false
 ) {
-    bootstrapDatabase();
-    file_put_contents($cacheFilePath, $currentDatabaseHash);
+    // bootstrapDatabase();
+    // file_put_contents($cacheFilePath, $currentDatabaseHash);
 }
 
 

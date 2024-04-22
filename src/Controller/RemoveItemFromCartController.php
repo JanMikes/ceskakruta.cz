@@ -22,7 +22,7 @@ final class RemoveItemFromCartController extends AbstractController
     {
         try {
             $this->cartStorage->removeItem(
-                new CartItem(Uuid::fromString($variantId), null),
+                new CartItem(Uuid::fromString($variantId)),
             );
         } finally {
             return $this->redirectToRoute('cart');

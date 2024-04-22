@@ -21,6 +21,4 @@ parameters:
         - tests/object-manager.php
     symfony:
         container_xml_path: var/cache/dev/CeskaKruta_Web_CeskaKrutaKernelDevDebugContainer.xml
-    doctrine:
-        objectManagerLoader: tests/object-manager.php
     checkUninitializedProperties: true

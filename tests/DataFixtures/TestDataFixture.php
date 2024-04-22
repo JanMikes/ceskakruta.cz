@@ -20,31 +20,5 @@ final class TestDataFixture extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $product = new Product(
-            Uuid::fromString(self::PRODUCT_ID),
-            'Testovací kresbička',
-        );
-
-        $manager->persist($product);
-
-        $variant = new ProductVariant(
-            Uuid::fromString(self::VARIANT_1_ID),
-            $product,
-            'Varianta 1',
-            new Price(10, 21, Currency::CZK),
-        );
-
-        $manager->persist($variant);
-
-        $variant = new ProductVariant(
-            Uuid::fromString(self::VARIANT_2_ID),
-            $product,
-            'Varianta 2',
-            new Price(20, 21, Currency::CZK),
-        );
-
-        $manager->persist($variant);
-
-        $manager->flush();
     }
 }

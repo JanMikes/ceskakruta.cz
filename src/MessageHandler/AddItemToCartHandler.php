@@ -18,7 +18,7 @@ readonly final class AddItemToCartHandler
 
     public function __invoke(AddItemToCart $message): void
     {
-        $item = new CartItem($message->productVariantId, null);
+        $item = new CartItem($message->productVariantId);
 
         $this->cartStorage->addItem($item);
     }

@@ -8,7 +8,7 @@ use CeskaKruta\Web\Value\CartItem;
 final class InMemoryCartStorage implements CartStorage
 {
     public function __construct(
-        /** @var list<CartItem> */
+        /** @var array<int, CartItem> */
         private array $items = [],
     ) {
     }
@@ -20,7 +20,7 @@ final class InMemoryCartStorage implements CartStorage
     }
 
     /**
-     * @return list<CartItem>
+     * @return array<int, CartItem>
      */
     public function getItems(): array
     {

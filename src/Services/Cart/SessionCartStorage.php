@@ -34,10 +34,12 @@ final class SessionCartStorage implements CartStorage
     {
         return [];
 
+        /*
         $session = $this->requestStack->getSession();
 
+        */
         /** @var list<array{variant_id: string}> $items */
-        $items = $session->get(self::SESSION_NAME, []);
+        /*$items = $session->get(self::SESSION_NAME, []);
 
         $cart = [];
 
@@ -46,6 +48,7 @@ final class SessionCartStorage implements CartStorage
         }
 
         return $cart;
+        */
     }
 
     public function clear(): void

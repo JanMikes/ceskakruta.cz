@@ -6,8 +6,6 @@ namespace CeskaKruta\Web\Controller;
 use CeskaKruta\Web\FormData\AddToCartFormData;
 use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
-use CeskaKruta\Web\Repository\ProductRepository;
-use CeskaKruta\Web\Repository\ProductVariantRepository;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +16,6 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProductDetailController extends AbstractController
 {
     public function __construct(
-        private readonly ProductRepository $productRepository,
-        private readonly ProductVariantRepository $productVariantRepository,
         private readonly MessageBusInterface $messageBus,
     ) {
     }
@@ -27,11 +23,8 @@ final class ProductDetailController extends AbstractController
     #[Route(path: '/product/{productId}', name: 'product_detail', methods: ['GET', 'POST'])]
     public function __invoke(Request $request, string $productId): Response
     {
-        $product = $this->productRepository->get(Uuid::fromString($productId));
-        $variants = $this->productVariantRepository->findAll();
-
         $addToCartForm = $this->createForm(AddToCartFormType::class, options: [
-            'variants' => $variants,
+            'variants' => [],
         ]);
 
         $addToCartForm->handleRequest($request);
@@ -50,8 +43,6 @@ final class ProductDetailController extends AbstractController
         }
 
         return $this->render('product_detail.html.twig', [
-            'product' => $product,
-            'variants' => $variants,
             'add_to_cart_form' => $addToCartForm,
         ]);
     }
