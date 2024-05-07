@@ -389,6 +389,7 @@ main {
     padding: 15px;
     position: relative;
     overflow: hidden;
+    text-align: right;
 
     &::before {
         content: '';
@@ -397,7 +398,7 @@ main {
         background: #fff;
         width: 150px;
         height: 150px;
-        left: -50%;
+        left: -150px;
         top: 50%;
         margin-top: -75px;
         transform: rotate(45deg);
@@ -405,5 +406,9 @@ main {
 }
 
 .products-list {
+    padding: 60px 0;
+}
+
+.products-calendar {
     padding: 60px 0;
 }
