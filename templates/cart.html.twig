@@ -1,19 +1,74 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cart{% endblock %}
+{% block title %}Má objednávka{% endblock %}
 
 {% block content %}
-    <h1>Items in cart:</h1>
 
-    {% for cart_item in cart_items %}
-        <p>
-            {{ cart_item.variant.product.name }} /
-            {{ cart_item.variant.name }} /
-            {{ cart_item.variant.price.valueWithoutVat }} Kč /
-            <a href="{{ path('remove_item_from_cart', {'variantId': cart_item.variant.id}) }}">odstranit z košíku</a>
-        </p>
-    {% endfor %}
+    <div class="row">
+        <!-- Content-->
+        <section class="col-lg-8 pt-2 pt-lg-4 pb-4 mb-3">
+            <div class="pt-2 px-4 pe-lg-0 ps-xl-5">
+                <!-- Header-->
+                <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-3">
+                    <div class="py-1"><a class="btn btn-outline-accent btn-sm" href="{{ path('products') }}"><i class="ci-arrow-left me-1 ms-n1"></i>Zpět na výběr zboží</a></div>
+                    <div class="d-none d-sm-block py-1 fs-sm">Máte 3 položky v košíku</div>
+                    <div class="py-1"><a class="btn btn-outline-danger btn-sm" href="#"><i class="ci-close fs-xs me-1 ms-n1"></i>Vymazat košík</a></div>
+                </div>
+                <!-- Product-->
+                <div class="d-block d-sm-flex align-items-center py-4 border-bottom"><a class="d-block position-relative mb-3 mb-sm-0 me-sm-4 ms-sm-0 mx-auto" href="#" style="width: 12.5rem;"><img class="rounded-3" src="{{ asset('img/product-1.png') }}" alt="Product"><span class="btn btn-icon btn-danger position-absolute top-0 end-0 py-0 px-1 m-2" data-bs-toggle="tooltip" aria-label="Odstranit z košíku" data-bs-original-title="Odstranit z košíku"><i class="ci-trash"></i></span></a>
+                    <div class="text-center text-sm-start">
+                        <h3 class="h6 product-title mb-2"><a href="#">Krůtí šunka</a></h3>
+                        <div class="d-inline-block">150 <small>Kč/kg</small></div>
+                        <div class="form-inline pt-2">
+                            <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Kg
 
-    <hr>
-    Total totalis: {{ cart.totalPrice.amount }} Kč
+                        </div>
+                    </div>
+                </div>
+                <!-- Product-->
+                <div class="d-block d-sm-flex align-items-center py-4 border-bottom"><a class="d-block position-relative mb-3 mb-sm-0 me-sm-4 ms-sm-0 mx-auto" href="#" style="width: 12.5rem;"><img class="rounded-3" src="{{ asset('img/product-1.png') }}" alt="Product"><span class="btn btn-icon btn-danger position-absolute top-0 end-0 py-0 px-1 m-2" data-bs-toggle="tooltip" aria-label="Odstranit z košíku" data-bs-original-title="Odstranit z košíku"><i class="ci-trash"></i></span></a>
+                    <div class="text-center text-sm-start">
+                        <h3 class="h6 product-title mb-2"><a href="#">Krůtí šunka</a></h3>
+                        <div class="d-inline-block">150 <small>Kč/kg</small></div>
+                        <div class="form-inline pt-2">
+                            <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Kg
+                        </div>
+                    </div>
+                </div>
+                <!-- Product-->
+                <div class="d-block d-sm-flex align-items-center pt-4 pb-2"><a class="d-block position-relative mb-3 mb-sm-0 me-sm-4 ms-sm-0 mx-auto" href="#" style="width: 12.5rem;"><img class="rounded-3" src="{{ asset('img/product-1.png') }}" alt="Product"><span class="btn btn-icon btn-danger position-absolute top-0 end-0 py-0 px-1 m-2" data-bs-toggle="tooltip" aria-label="Odstranit z košíku" data-bs-original-title="Odstranit z košíku"><i class="ci-trash"></i></span></a>
+                    <div class="text-center text-sm-start">
+                        <h3 class="h6 product-title mb-2"><a href="#">Krůtí šunka</a></h3>
+                        <div class="d-inline-block">150 <small>Kč/kg</small></div>
+                        <div class="form-inline pt-2">
+                            <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Kg
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Sidebar-->
+        <aside class="col-lg-4 ps-xl-5">
+            <hr class="d-lg-none">
+            <div class="p-4 h-100 ms-auto border-start">
+                <div class="px-lg-2">
+                    <div class="text-center mb-4 py-3 border-bottom">
+                        <h2 class="h6 mb-3 pb-1">Orientační cena</h2>
+                        <h3 class="fw-normal">1560<small>Kč</small></h3>
+                    </div>
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        <h2 class="h6 mb-3 pb-1">Slevový kód</h2>
+                        <form class="needs-validation pb-2" method="post" novalidate="">
+                            <div class="mb-3">
+                                <input class="form-control" type="text" placeholder="Kód" required="">
+                                <div class="invalid-feedback">Please provide promo code.</div>
+                            </div>
+                            <button class="btn btn-secondary d-block w-100 btn-sm" type="submit">Použít slevový kód</button>
+                        </form>
+                    </div><a class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" href="#"></i>Objednat</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
 {% endblock %}

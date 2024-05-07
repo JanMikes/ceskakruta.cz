@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Přihlášení{% endblock %}
+
+{% block content %}
+    <section class="login-section">
+
+        <div class="container py-4 py-lg-5 my-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow">
+                        <div class="card-body">
+                            <h2 class="h4 mb-4">Přihlásit se</h2>
+
+                            <form class="needs-validation" novalidate="">
+                                <div class="input-group mb-3"><i class="ci-mail position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
+                                    <input class="form-control rounded-start" type="email" placeholder="E-mail" required="">
+                                </div>
+                                <div class="input-group mb-3"><i class="ci-locked position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
+                                    <div class="password-toggle w-100">
+                                        <input class="form-control" type="password" placeholder="Heslo" required="">
+                                        <label class="password-toggle-btn" aria-label="Show/hide password">
+                                            <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap justify-content-between">
+                                    <a class="nav-link-inline fs-sm" href="#">Zapomněli jste heslo?</a>
+                                </div>
+                                <hr class="mt-4">
+                                <div class="text-end pt-4">
+                                    <button class="btn btn-primary" type="submit"><i class="ci-sign-in me-2 ms-n21"></i>Přihlásit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 pt-4 mt-3 mt-md-0">
+                    <h2 class="h4 mb-3">Nemáte účet? Zaregistrujte se</h2>
+                    <p class="fs-sm text-muted mb-4">Registrace vám zabere méně než minutu, pomůže vám mít přehled o všech vašich objednávkách.</p>
+                    <form class="needs-validation" novalidate="">
+                        <div class="row gx-4 gy-3">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="reg-fn">Jméno</label>
+                                <input class="form-control" type="text" required="" id="reg-fn">
+                                <div class="invalid-feedback">Please enter your first name!</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="reg-ln">Příjmení</label>
+                                <input class="form-control" type="text" required="" id="reg-ln">
+                                <div class="invalid-feedback">Please enter your last name!</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="reg-email">E-mail</label>
+                                <input class="form-control" type="email" required="" id="reg-email">
+                                <div class="invalid-feedback">Please enter valid email address!</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="reg-phone">Telefon</label>
+                                <input class="form-control" type="text" required="" id="reg-phone">
+                                <div class="invalid-feedback">Please enter your phone number!</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="reg-password">Heslo</label>
+                                <input class="form-control" type="password" required="" id="reg-password">
+                                <div class="invalid-feedback">Please enter password!</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="reg-password-confirm">Kontrola hesla</label>
+                                <input class="form-control" type="password" required="" id="reg-password-confirm">
+                                <div class="invalid-feedback">Passwords do not match!</div>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button class="btn btn-primary" type="submit"><i class="ci-user me-2 ms-n1"></i>Zaregistrovat se</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
