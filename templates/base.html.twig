@@ -30,11 +30,11 @@
         {% endblock %}
     </head>
     <body>
-        <header class="shadow-sm">
-            <div class="navbar navbar-expand-lg navbar-light bg-light">
+        <header class="shadow-sm fixed-top">
+            <div class="navbar navbar-expand-lg navbar-light bg-light pb-0 pt-1">
                 <div class="container">
-                    <a class="navbar-brand d-none d-lg-block me-3 flex-shrink-0" href="{{ path('homepage') }}">
-                        <img width="142" src="{{ asset('img/ceska-kruta-logo.svg') }}" alt="Českákrůta.cz"/>
+                    <a class="navbar-brand d-none d-lg-block me-3 flex-shrink-0 p-0" href="{{ path('homepage') }}">
+                        <img width="80" src="{{ asset('img/ceska-kruta-logo.svg') }}" alt="Českákrůta.cz"/>
                     </a>
                     <a class="navbar-brand d-lg-none me-2" href="{{ path('homepage') }}">
                         <img width="74" src="{{ asset('img/ceska-kruta-logo.svg') }}" alt="Českákrůta.cz"/>
@@ -78,21 +78,25 @@
             </div>
         </header>
 
-        {% block full_content %}
-            <section class="container">
-                {% block content %}{% endblock %}
-            </section>
-        {% endblock %}
+        <main>
+            {% block full_content %}
+                <section class="container">
+                    {% block content %}{% endblock %}
+                </section>
+            {% endblock %}
+        </main>
 
-        <footer>
-            <a href="{{ path('homepage') }}">Úvod</a>
-            <a href="{{ path('about_us') }}">O nás</a>
-            <a href="{{ path('products') }}">Naše nabídka</a>
-            <a href="{{ path('delivery_info') }}">Rozvoz</a>
-            <a href="{{ path('homepage') }}#kontakty">Kontakty</a>
-            <a href="{{ path('sales_places') }}">Naše prodejny</a>
-            <a href="{{ path('actuality') }}">Aktuality</a>
-            <a href="{{ path('recipes') }}">Recepty</a>
+        <footer class="bg-secondary mt-4">
+            <div class="container py-4">
+                <a class="p-2" href="{{ path('homepage') }}">Úvod</a>
+                <a class="p-2" href="{{ path('about_us') }}">O nás</a>
+                <a class="p-2" href="{{ path('products') }}">Naše nabídka</a>
+                <a class="p-2" href="{{ path('delivery_info') }}">Rozvoz</a>
+                <a class="p-2" href="{{ path('homepage') }}#kontakty">Kontakty</a>
+                <a class="p-2" href="{{ path('sales_places') }}">Naše prodejny</a>
+                <a class="p-2" href="{{ path('actuality') }}">Aktuality</a>
+                <a class="p-2" href="{{ path('recipes') }}">Recepty</a>
+            </div>
         </footer>
 
         <!-- Vendor scrits: js libraries and plugins-->
