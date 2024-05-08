@@ -6,8 +6,6 @@ use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Services\Cart\SessionCartStorage;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 return static function(ContainerConfigurator $configurator): void
 {
@@ -22,11 +20,6 @@ return static function(ContainerConfigurator $configurator): void
         ->autoconfigure()
         ->autowire()
         ->public();
-
-    $services->set(PdoSessionHandler::class)
-        ->args([
-            env('DATABASE_URL'),
-        ]);
 
     $services->set(PsrLogMessageProcessor::class)
         ->tag('monolog.processor');

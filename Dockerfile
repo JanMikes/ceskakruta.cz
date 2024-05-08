@@ -1,4 +1,4 @@
-FROM unit:php8.3 as dev
+FROM unit:php8.2 as dev
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_MEMORY_LIMIT=-1 \
@@ -36,7 +36,7 @@ RUN chmod +x /usr/local/bin/wait-for-it \
         pcntl \
         zip \
         uuid \
-        pdo_pgsql \
+        pdo_mysql \
         opcache \
         apcu \
         gd \

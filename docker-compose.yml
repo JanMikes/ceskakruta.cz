@@ -1,7 +1,7 @@
 version: "3.7"
 
 volumes:
-    postgres-data:
+    mariadb-data:
     redis-data:
 
 services:
@@ -14,7 +14,7 @@ services:
             - .:/app
             - .docker/on-startup.sh:/docker-entrypoint.d/on-startup.sh
         depends_on:
-            - postgres
+            - mariadb
         ports:
             - "8080:8080"
         environment:
@@ -22,16 +22,16 @@ services:
             XDEBUG_MODE: debug
             PHP_IDE_CONFIG: "serverName=ceskakruta"
 
-    postgres:
-        image: postgres:16.0
+    mariadb:
+        image: mariadb:10.1
+        restart: unless-stopped
         environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: ceskakruta
+          MYSQL_ROOT_PASSWORD: "root"
+          MYSQL_DATABASE: "ceskakruta"
         volumes:
-            - postgres-data:/var/lib/postgresql/data
+          - mariadb-data:/var/lib/mysql
         ports:
-            - "5432:5432"
+          - 3306:3306
 
     js-watch:
         image: ceskakrutacz
@@ -47,6 +47,6 @@ services:
         ports:
             - "8000:8080"
         environment:
-            ADMINER_DEFAULT_SERVER: postgres
+            ADMINER_DEFAULT_SERVER: mariadb
         depends_on:
-            - postgres
+            - mariadb

@@ -17,7 +17,7 @@ fi
 ## Database setup
 
 if [[ "$ENVIRONMENT" == "dev" ]] || [[ "$SKIP_DATABASE_MIGRATIONS" != "true" ]]; then
-    wait-for-it ${DATABASE_HOST:-postgres}:${DATABASE_PORT:-5432} --timeout=15
+    wait-for-it ${DATABASE_HOST:-mariadb}:${DATABASE_PORT:-3306} --timeout=15
 fi
 
 if [[ "$SKIP_DATABASE_MIGRATIONS" != "true" ]]; then
