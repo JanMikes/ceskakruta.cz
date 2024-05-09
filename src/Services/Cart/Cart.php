@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services\Cart;
 
-use CeskaKruta\Web\Query\GetVariants;
+use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\CartItem;
 use CeskaKruta\Web\Value\Currency;
 use CeskaKruta\Web\Value\ProductVariantInCart;
@@ -13,7 +13,7 @@ use Ramsey\Uuid\UuidInterface;
 readonly final class Cart
 {
     public function __construct(
-        private GetVariants $getVariantsInCart,
+        private GetProducts $getVariantsInCart,
         private CartStorage $cartStorage,
     ) {
     }
@@ -58,7 +58,8 @@ readonly final class Cart
             $this->cartStorage->getItems(),
         );
 
-        $variantsInCart = $this->getVariantsInCart->byIds($variantIds);
+        // $variantsInCart = $this->getVariantsInCart->byIds($variantIds);
+        $variantsInCart = [];
         $variantItemsInCart = [];
 
         foreach ($variantsInCart as $variantInCart) {

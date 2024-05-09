@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Uuid;
 final class AddToCartFormData
 {
     #[NotBlank]
-    #[Uuid]
-    public string $variantId = '';
+    public string $productId = '';
+    #[NotBlank]
+    public float|int $quantity = 0;
 }

@@ -3,18 +3,54 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
+use CeskaKruta\Web\FormData\AddToCartFormData;
+use CeskaKruta\Web\FormType\AddToCartFormType;
+use CeskaKruta\Web\Query\GetProducts;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ProductsController extends AbstractController
 {
     public function __construct(
+        readonly private GetProducts $getProducts,
     ) {}
 
-    #[Route(path: '/nase-nabidka', name: 'products', methods: ['GET'])]
-    public function __invoke(): Response
+    #[Route(path: '/nase-nabidka', name: 'products', methods: ['GET', 'POST'])]
+    public function __invoke(Request $request): Response
     {
-        return $this->render('products.html.twig');
+        $products = $this->getProducts->all();
+
+        /** @var array<Form> $forms */
+        $forms = [];
+        /** @var array<FormView> $formViews */
+        $formViews = [];
+
+        foreach ($products as $product) {
+            $data = new AddToCartFormData();
+            $data->productId = (string) $product->id;
+
+            $form = $this->createForm(AddToCartFormType::class, $data, [
+                'action' => $this->generateUrl('products', ['productId' => $product->id]),
+            ]);
+
+            $forms[$product->id] = $form;
+            $formViews[$product->id] = $form->createView();
+        }
+
+        /** @var null|string $submittedProductId */
+        $submittedProductId = $request->query->get('productId');
+
+        if ($submittedProductId !== null) {
+            $forms[(int) $submittedProductId]->handleRequest($request);
+        }
+
+        return $this->render('products.html.twig', [
+            'products' => $products,
+            'add_to_cart_forms' =>  $formViews,
+        ]);
     }
 }
