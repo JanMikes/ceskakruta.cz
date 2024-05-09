@@ -3,18 +3,160 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services\Cart;
 
+use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
+use CeskaKruta\Web\Value\Currency;
+use CeskaKruta\Web\Value\TotalPriceWithVat;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-interface CartStorage
+final class CartStorage
 {
-    public function addItem(CartItem $item): void;
+    private const PICKUP_PLACE_SESSION_NAME = 'pickup_place';
+    private const ITEMS_SESSION_NAME = 'cart_items';
+    private const LOCKED_WEEK_SESSION_NAME = 'locked_week';
+    private const DELIVERY_ADDRESS_SESSION_NAME = 'delivery_address';
+
+    public function __construct(
+        private readonly RequestStack $requestStack,
+    ) {
+    }
+
+    public function itemsCount(): int
+    {
+        return count($this->getItems());
+    }
+
+    public function totalPrice(): TotalPriceWithVat
+    {
+        return new TotalPriceWithVat(0, Currency::CZK);
+
+        /*
+        $variantIds = array_map(
+            static fn (CartItem $cartItem): UuidInterface => $cartItem->productVariantId,
+            $this->cartStorage->getItems(),
+        );
+
+        $variantsInCart = $this->getVariantsInCart->byIds($variantIds);
+        $totalWithVat = new TotalPriceWithVat(0, Currency::CZK);
+
+        foreach ($variantsInCart as $variantInCart) {
+            foreach ($this->cartStorage->getItems() as $item) {
+                if ($item->productVariantId->equals($variantInCart->id)) {
+                    $totalWithVat = $totalWithVat->add($variantInCart->price->valueWithoutVat);
+                }
+            }
+        }
+
+        return $totalWithVat;
+        */
+    }
+
+    public function addItem(CartItem $item): void
+    {
+        $session = $this->requestStack->getSession();
+
+        /** @var array<mixed> $items */
+        $items = $session->get(self::ITEMS_SESSION_NAME, []);
+
+        $items[] = $item->toArray();
+
+        $session->set(self::ITEMS_SESSION_NAME, $items);
+    }
 
     /**
      * @return list<CartItem>
      */
-    public function getItems(): array;
+    public function getItems(): array
+    {
+        $session = $this->requestStack->getSession();
 
-    public function removeItem(CartItem $itemToRemove): void;
+        /** @var list<array{product_id: int}> $items */
+        $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
-    public function clear(): void;
+        $cart = [];
+
+        foreach ($items as $itemData) {
+            $cart[] = CartItem::fromArray($itemData);
+        }
+
+        return $cart;
+    }
+
+    public function clear(): void
+    {
+        $this->requestStack->getSession()
+            ->clear();
+    }
+
+    public function removeItem(CartItem $itemToRemove): void
+    {
+        $session = $this->requestStack->getSession();
+
+        /** @var list<array{product_id: int}> $items */
+        $items = $session->get(self::ITEMS_SESSION_NAME, []);
+
+        foreach ($items as $key => $itemData) {
+            $itemInCart = CartItem::fromArray($itemData);
+
+            if ($itemInCart->isSame($itemToRemove)) {
+                unset($items[$key]);
+                $session->set(self::ITEMS_SESSION_NAME, $items);
+
+                return;
+            }
+        }
+    }
+
+    public function storePickupPlace(null|int $placeId): void
+    {
+        $this->requestStack->getSession()
+            ->set(self::PICKUP_PLACE_SESSION_NAME, $placeId);
+    }
+
+    public function getPickupPlace(): null|int
+    {
+        /** @var null|int $pickupPlace */
+        $pickupPlace = $this->requestStack->getSession()
+            ->get(self::PICKUP_PLACE_SESSION_NAME);
+
+        return $pickupPlace;
+    }
+
+    public function storeDeliveryAddress(null|Address $address): void
+    {
+        // TODO: address to array
+
+        $this->requestStack->getSession()
+            ->set(self::DELIVERY_ADDRESS_SESSION_NAME, null);
+    }
+
+    public function getDeliveryAddress(): null|Address
+    {
+        /** @var null|mixed $sessionData */
+        $sessionData = $this->requestStack->getSession()
+            ->get(self::DELIVERY_ADDRESS_SESSION_NAME);
+
+        // TODO: address from array
+
+        if ($sessionData !== null) {
+            return new Address();
+        }
+
+        return null;
+    }
+
+    public function storeLockedWeek(null|int $week): void
+    {
+        $this->requestStack->getSession()
+            ->set(self::LOCKED_WEEK_SESSION_NAME, $week);
+    }
+
+    public function getLockedWeek(): null|int
+    {
+        /** @var null|int $lockedWeek */
+        $lockedWeek = $this->requestStack->getSession()
+            ->get(self::LOCKED_WEEK_SESSION_NAME);
+
+        return $lockedWeek;
+    }
 }

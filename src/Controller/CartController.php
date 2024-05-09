@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
-use CeskaKruta\Web\Services\Cart\Cart;
+use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CartController extends AbstractController
 {
     public function __construct(
-        private readonly Cart $cart,
+        private readonly CartStorage $cart,
     ) {
     }
 
@@ -19,7 +19,7 @@ final class CartController extends AbstractController
     public function __invoke(): Response
     {
         return $this->render('cart.html.twig', [
-            'cart_items' => $this->cart->items(),
+            'cart_items' => $this->cart->getItems(),
         ]);
     }
 }

@@ -1,6 +1,4 @@
 includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-    - vendor/phpstan/phpstan-phpunit/rules.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
     - vendor/phpstan/phpstan-symfony/rules.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
@@ -12,13 +10,9 @@ parameters:
     paths:
         - src
         - bin
-        - tests
         - config
     scanDirectories:
       - var/cache/dev/Symfony
-    excludePaths:
-        - tests/bootstrap.php
-        - tests/object-manager.php
     symfony:
         container_xml_path: var/cache/dev/CeskaKruta_Web_CeskaKrutaKernelDevDebugContainer.xml
     checkUninitializedProperties: true

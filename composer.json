@@ -61,9 +61,7 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpstan/phpstan": "^1.2",
         "phpstan/phpstan-doctrine": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",
-        "phpunit/phpunit": "^11.0",
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "^7.0",
         "symfony/css-selector": "^7.0",
@@ -73,11 +71,6 @@
     "autoload": {
         "psr-4": {
             "CeskaKruta\\Web\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "CeskaKruta\\Web\\Tests\\": "tests"
         }
     },
     "scripts": {

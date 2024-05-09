@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Osobní odběr{% endblock %}
+
+{% block content %}
+    <h1></h1>
+
+    {{ include('_order_panel.html.twig') }}
+
+    {% for place in places %}
+        {{ place.id }}
+        {{ place.name }}
+        <a data-turbo-prefetch="false" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Zvolit</a>
+    {% endfor %}
+{% endblock %}

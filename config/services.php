@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
-use CeskaKruta\Web\Services\Cart\SessionCartStorage;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -34,5 +33,5 @@ return static function(ContainerConfigurator $configurator): void
     $services->load('CeskaKruta\\Web\\Services\\', __DIR__ . '/../src/Services/**/{*.php}');
     $services->load('CeskaKruta\\Web\\Query\\', __DIR__ . '/../src/Query/**/{*.php}');
 
-    $services->alias(CartStorage::class, SessionCartStorage::class);
+    $services->set(CartStorage::class);
 };
