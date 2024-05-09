@@ -17,12 +17,12 @@ final class RemoveItemFromCartController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/remove-item-from-cart/{variantId}', name: 'remove_item_from_cart', methods: ['GET'])]
-    public function __invoke(string $variantId): Response
+    #[Route(path: '/remove-item-from-cart/{productId}', name: 'remove_item_from_cart', methods: ['GET'])]
+    public function __invoke(string $productId): Response
     {
         try {
             $this->cartStorage->removeItem(
-                new CartItem(Uuid::fromString($variantId)),
+                new CartItem((int) $productId),
             );
         } finally {
             return $this->redirectToRoute('cart');

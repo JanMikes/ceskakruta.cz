@@ -13,7 +13,7 @@ use Ramsey\Uuid\UuidInterface;
 readonly final class Cart
 {
     public function __construct(
-        private GetProducts $getVariantsInCart,
+        private GetProducts $getProducts,
         private CartStorage $cartStorage,
     ) {
     }
@@ -53,23 +53,24 @@ readonly final class Cart
      */
     public function items(): array
     {
-        $variantIds = array_map(
-            static fn (CartItem $cartItem): UuidInterface => $cartItem->productVariantId,
-            $this->cartStorage->getItems(),
-        );
+        $products = $this->getProducts->all();
 
         // $variantsInCart = $this->getVariantsInCart->byIds($variantIds);
-        $variantsInCart = [];
-        $variantItemsInCart = [];
+        $productsInCart = [];
+        $productItemsInCart = [];
 
-        foreach ($variantsInCart as $variantInCart) {
+        return $productItemsInCart;
+
+        /*
+        foreach ($productsInCart as $productInCart) {
             foreach ($this->cartStorage->getItems() as $item) {
-                if ($item->productVariantId->equals($variantInCart->id)) {
-                    $variantItemsInCart[] = new ProductVariantInCart($variantInCart);
+                if ($item->productId === $productInCart->id) {
+                    $productItemsInCart[] = new $productInCart;
                 }
             }
         }
 
-        return $variantItemsInCart;
+        return $productItemsInCart;
+        */
     }
 }

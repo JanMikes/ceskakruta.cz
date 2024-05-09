@@ -23,8 +23,8 @@ class AddItemToCartHandlerTest extends KernelTestCase
 
     public function test(): void
     {
-        $variantId1 = Uuid::uuid7();
-        $variantId2 = Uuid::uuid7();
+        $variantId1 = 1;
+        $variantId2 = 2;
 
         $items = $this->cartStorage->getItems();
 
@@ -36,7 +36,7 @@ class AddItemToCartHandlerTest extends KernelTestCase
 
         self::assertCount(1, $items);
 
-        self::assertTrue($variantId1->equals($items[0]->productVariantId));
+        self::assertSame($variantId1, $items[0]->productId);
 
         $this->handler->__invoke(new AddItemToCart($variantId1));
         $this->handler->__invoke(new AddItemToCart($variantId2));
@@ -45,7 +45,7 @@ class AddItemToCartHandlerTest extends KernelTestCase
 
         self::assertCount(3, $items);
 
-        self::assertTrue($variantId1->equals($items[1]->productVariantId));
-        self::assertTrue($variantId2->equals($items[2]->productVariantId));
+        self::assertSame($variantId1, $items[1]->productId);
+        self::assertSame($variantId2, $items[2]->productId);
     }
 }

@@ -61,7 +61,7 @@ final class SessionCartStorage implements CartStorage
     {
         $session = $this->requestStack->getSession();
 
-        /** @var list<array{variant_id: string}> $items */
+        /** @var list<array{product_id: int}> $items */
         $items = $session->get(self::SESSION_NAME, []);
 
         foreach ($items as $key => $itemData) {

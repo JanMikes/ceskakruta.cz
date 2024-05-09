@@ -9,28 +9,28 @@ use Ramsey\Uuid\UuidInterface;
 readonly final class CartItem
 {
     public function __construct(
-        public UuidInterface $productVariantId,
+        public int $productId,
     ) {
     }
 
 
     /**
-     * @return array{variant_id: string}
+     * @return array{product_id: int}
      */
     public function toArray(): array
     {
         return [
-            'variant_id' => $this->productVariantId->toString(),
+            'product_id' => $this->productId,
         ];
     }
 
 
     /**
-     * @param array{variant_id: string} $data
+     * @param array{product_id: int} $data
      */
     public static function fromArray(array $data): self
     {
-        return new CartItem(Uuid::fromString($data['variant_id']));
+        return new CartItem($data['product_id']);
     }
 
 

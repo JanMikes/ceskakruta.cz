@@ -7,46 +7,44 @@ use Generator;
 use CeskaKruta\Web\Value\CartItem;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class CartItemTest extends TestCase
 {
     #[DataProvider('provideValues')]
     public function testIsSame(
-        UuidInterface $variantIdA,
-        UuidInterface $variantIdB,
+        int $productIdA,
+        int $productIdB,
         bool $expected,
     ): void
     {
-        $a = new CartItem($variantIdA);
-        $b = new CartItem($variantIdB);
+        $a = new CartItem($productIdA);
+        $b = new CartItem($productIdB);
 
         $this->assertSame($expected, $a->isSame($b));
         $this->assertSame($expected, $b->isSame($a));
     }
 
     /**
-     * @return Generator<array{UuidInterface, UuidInterface, bool}>
+     * @return Generator<array{int, int, bool}>
      */
     public static function provideValues(): Generator
     {
-        $uuid1 = Uuid::uuid7();
-        $uuid2 = Uuid::uuid7();
+        $id1 = 1;
+        $id2 = 2;
 
-        yield [$uuid1, $uuid1, true];
+        yield [$id1, $id1, true];
 
-        yield [$uuid1, $uuid2, false];
+        yield [$id1, $id2, false];
     }
 
 
     public function testToArray(): void
     {
-        $uuid = Uuid::uuid7();
-        $item = new CartItem($uuid);
+        $id = 1;
+        $item = new CartItem($id);
 
         $expected = [
-            'variant_id' => $uuid->toString(),
+            'product_id' => $id,
         ];
 
         $this->assertSame($expected, $item->toArray());
@@ -54,15 +52,15 @@ class CartItemTest extends TestCase
 
     public function testFromArrayWithout(): void
     {
-        $uuid = Uuid::uuid7();
+        $id = 1;
 
         $data = [
-            'variant_id' => $uuid->toString(),
+            'product_id' => $id,
             'dimensions' => null,
         ];
 
         $item = CartItem::fromArray($data);
 
-        $this->assertTrue($uuid->equals($item->productVariantId));
+        $this->assertSame($id, $item->productId);
     }
 }

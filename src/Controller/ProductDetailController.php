@@ -34,9 +34,7 @@ final class ProductDetailController extends AbstractController
             assert($addToCartFormData instanceof AddToCartFormData);
 
             $this->messageBus->dispatch(
-                new AddItemToCart(
-                    Uuid::fromString($addToCartFormData->variantId),
-                )
+                new AddItemToCart(1)
             );
 
             return $this->redirectToRoute('product_detail', ['productId' => $productId]);
