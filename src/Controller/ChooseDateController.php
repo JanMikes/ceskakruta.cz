@@ -8,11 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class ChooseDeliveryController extends AbstractController
+final class ChooseDateController extends AbstractController
 {
-    #[Route(path: '/zadat-adresu-doruceni', name: 'choose_delivery', methods: ['GET'])]
+    #[Route(path: '/vybrat-datum-objednavky', name: 'choose_date', methods: ['GET'])]
     public function __invoke(): Response
     {
-        return $this->render('choose_delivery.html.twig');
+        return $this->render('choose_date.html.twig');
     }
 }
