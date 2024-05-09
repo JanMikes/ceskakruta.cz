@@ -58,6 +58,8 @@ final class CartStorage
         /** @var array<mixed> $items */
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
+        // TODO: stacking
+
         $items[] = $item->toArray();
 
         $session->set(self::ITEMS_SESSION_NAME, $items);

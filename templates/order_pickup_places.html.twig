@@ -4,6 +4,10 @@
 
 {% block content %}
     <section class="order-pickup-places">
+        <h1>Osobní odběr</h1>
+
+        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
+
         <div class="row">
             <div class="col-3 sales-places-nav pe-0">
                 <ul class="list-unstyled">
@@ -23,10 +27,6 @@
             </div>
 
             <div class="col-9 ps-5">
-                <h1>Osobní odběr</h1>
-
-                {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
-
                 <div class="row">
                     {% for place in places %}
                         <div class="col-md-4 mb-4">

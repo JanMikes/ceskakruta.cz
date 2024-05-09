@@ -5,18 +5,21 @@ namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\FormData\AddToCartFormData;
 use CeskaKruta\Web\FormType\AddToCartFormType;
+use CeskaKruta\Web\Message\AddItemToCart;
 use CeskaKruta\Web\Query\GetProducts;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ProductsController extends AbstractController
 {
     public function __construct(
         readonly private GetProducts $getProducts,
+        readonly private MessageBusInterface $bus,
     ) {}
 
     #[Route(path: '/nase-nabidka', name: 'products', methods: ['GET', 'POST'])]
@@ -45,7 +48,24 @@ final class ProductsController extends AbstractController
         $submittedProductId = $request->query->get('productId');
 
         if ($submittedProductId !== null) {
-            $forms[(int) $submittedProductId]->handleRequest($request);
+            $requestForm = $forms[(int)$submittedProductId];
+            $requestForm->handleRequest($request);
+
+            if ($requestForm->isSubmitted() && $requestForm->isValid()) {
+                $data = $requestForm->getData();
+                assert($data instanceof AddToCartFormData);
+
+                $this->bus->dispatch(
+                    new AddItemToCart(
+                        (int) $data->productId,
+                        $data->quantity,
+                    ),
+                );
+
+                $this->addFlash('success', 'Přidáno do košíku');
+
+                return $this->redirectToRoute('products');
+            }
         }
 
         return $this->render('products.html.twig', [
