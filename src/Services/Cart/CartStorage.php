@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services\Cart;
 
+use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
 use CeskaKruta\Web\Value\Currency;
-use CeskaKruta\Web\Value\TotalPriceWithVat;
+use CeskaKruta\Web\Value\Price;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CartStorage
@@ -17,7 +18,7 @@ final class CartStorage
     private const DELIVERY_ADDRESS_SESSION_NAME = 'delivery_address';
 
     public function __construct(
-        private readonly RequestStack $requestStack,
+        private readonly RequestStack $requestStack, private readonly GetProducts $getProducts,
     ) {
     }
 
@@ -26,29 +27,18 @@ final class CartStorage
         return count($this->getItems());
     }
 
-    public function totalPrice(): TotalPriceWithVat
+    public function totalPrice(): Price
     {
-        return new TotalPriceWithVat(0, Currency::CZK);
+        $totalPrice = new Price(0);
+        $products = $this->getProducts->all(); // TODO: place
 
-        /*
-        $variantIds = array_map(
-            static fn (CartItem $cartItem): UuidInterface => $cartItem->productVariantId,
-            $this->cartStorage->getItems(),
-        );
+        foreach ($this->getItems() as $item) {
+            $product = $products[$item->productId];
 
-        $variantsInCart = $this->getVariantsInCart->byIds($variantIds);
-        $totalWithVat = new TotalPriceWithVat(0, Currency::CZK);
-
-        foreach ($variantsInCart as $variantInCart) {
-            foreach ($this->cartStorage->getItems() as $item) {
-                if ($item->productVariantId->equals($variantInCart->id)) {
-                    $totalWithVat = $totalWithVat->add($variantInCart->price->valueWithoutVat);
-                }
-            }
+            $totalPrice = $totalPrice->add($product->priceForChosenPlace ?? $product->priceFrom);
         }
 
-        return $totalWithVat;
-        */
+        return $totalPrice;
     }
 
     public function addItem(CartItem $item): void

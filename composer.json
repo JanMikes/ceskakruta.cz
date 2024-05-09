@@ -16,7 +16,6 @@
         "ext-iconv": "*",
         "ext-uuid": "*",
         "doctrine/doctrine-bundle": "^2.4",
-        "doctrine/doctrine-migrations-bundle": "^3.1",
         "doctrine/orm": "^3.0",
         "monolog/monolog": "^3.0",
         "ramsey/uuid": "^4.2",
@@ -57,8 +56,6 @@
         "twig/twig": "^3.0"
     },
     "require-dev": {
-        "dama/doctrine-test-bundle": "^8.0",
-        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpstan/phpstan": "^1.2",
         "phpstan/phpstan-doctrine": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",

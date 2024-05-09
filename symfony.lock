@@ -1,16 +1,4 @@
 {
-    "dama/doctrine-test-bundle": {
-        "version": "7.1",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "4.0",
-            "ref": "56eaa387b5e48ebcc7c95a893b47dfa1ad51449c"
-        },
-        "files": [
-            "src/Infrastructure/Symfony/Config/packages/test/dama_doctrine_test_bundle.yaml"
-        ]
-    },
     "doctrine/doctrine-bundle": {
         "version": "2.7",
         "recipe": {
@@ -23,31 +11,6 @@
             "src/Infrastructure/Symfony/Config/packages/doctrine.yaml",
             "src/Entity/.gitignore",
             "src/Repository/.gitignore"
-        ]
-    },
-    "doctrine/doctrine-fixtures-bundle": {
-        "version": "3.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.0",
-            "ref": "1f5514cfa15b947298df4d771e694e578d4c204d"
-        },
-        "files": [
-            "src/DataFixtures/AppFixtures.php"
-        ]
-    },
-    "doctrine/doctrine-migrations-bundle": {
-        "version": "3.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.1",
-            "ref": "1d01ec03c6ecbd67c3375c5478c9a423ae5d6a33"
-        },
-        "files": [
-            "src/Infrastructure/Symfony/Config/packages/doctrine_migrations.yaml",
-            "migrations/.gitignore"
         ]
     },
     "php-http/discovery": {
