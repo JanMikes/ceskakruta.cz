@@ -16,14 +16,8 @@ fi
 
 ## Database setup
 
-if [[ "$ENVIRONMENT" == "dev" ]] || [[ "$SKIP_DATABASE_MIGRATIONS" != "true" ]]; then
+if [[ "$ENVIRONMENT" == "dev" ]]; then
     wait-for-it ${DATABASE_HOST:-mariadb}:${DATABASE_PORT:-3306} --timeout=15
-fi
-
-if [[ "$SKIP_DATABASE_MIGRATIONS" != "true" ]]; then
-    time bin/console doctrine:migrations:migrate -vv --allow-no-migration --all-or-nothing --no-interaction
-else
-    echo "== Skipping database migrations =="
 fi
 
 echo "== Setting 777 permission to var/ =="
