@@ -26,7 +26,7 @@
             <div class="col-9 ps-5">
                 <h1>Maso a uzeniny</h1>
 
-                {{ include('_order_panel.html.twig') }}
+                {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
                 <div class="alert alert-warning d-flex" role="alert">
                     <div class="alert-icon">

@@ -5,5 +5,5 @@
 {% block content %}
     <h1>Výběr data</h1>
 
-    {{ include('_order_panel.html.twig') }}
+    {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 {% endblock %}

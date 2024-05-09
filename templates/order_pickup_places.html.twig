@@ -3,13 +3,49 @@
 {% block title %}Osobní odběr{% endblock %}
 
 {% block content %}
-    <h1></h1>
+    <section class="order-pickup-places">
+        <div class="row">
+            <div class="col-3 sales-places-nav pe-0">
+                <ul class="list-unstyled">
+                    <li>
+                        <a class="active" href="{{ path('order_pickup_places') }}">
+                            Osobní odběr
+                            <i class="ci-arrow-right"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('choose_delivery') }}">
+                            Rozvoz
+                            <i class="ci-arrow-down"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-    {{ include('_order_panel.html.twig') }}
+            <div class="col-9 ps-5">
+                <h1>Osobní odběr</h1>
 
-    {% for place in places %}
-        {{ place.id }}
-        {{ place.name }}
-        <a data-turbo-prefetch="false" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Zvolit</a>
-    {% endfor %}
+                {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
+
+                <div class="row">
+                    {% for place in places %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card {{ cart.pickupPlace == place.id ? 'border-primary' }}">
+                                <div class="card-body text-center">
+                                    <strong>{{ place.name }}</strong><br>
+
+                                    {% if cart.pickupPlace == place.id %}
+                                        <a data-turbo-prefetch="false" class="mt-2 btn btn-sm btn-primary" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Vybráno</a>
+                                    {% else %}
+                                        <a data-turbo-prefetch="false" class="mt-2 btn btn-sm btn-outline-primary" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Zvolit</a>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

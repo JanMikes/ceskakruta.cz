@@ -6,7 +6,7 @@
     <section class="products-calendar">
         <h1>Chlazené krůty a krocani</h1>
 
-        {{ include('_order_panel.html.twig') }}
+        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
         <div class="alert alert-warning d-flex" role="alert">
             <div class="alert-icon">
