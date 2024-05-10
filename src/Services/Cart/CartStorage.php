@@ -8,6 +8,7 @@ use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
 use CeskaKruta\Web\Value\Currency;
 use CeskaKruta\Web\Value\Price;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CartStorage
@@ -16,6 +17,7 @@ final class CartStorage
     private const ITEMS_SESSION_NAME = 'cart_items';
     private const LOCKED_WEEK_SESSION_NAME = 'locked_week';
     private const DELIVERY_ADDRESS_SESSION_NAME = 'delivery_address';
+    private const DATE_SESSION_NAME = 'date';
 
     public function __construct(
         private readonly RequestStack $requestStack, private readonly GetProducts $getProducts,
@@ -150,5 +152,24 @@ final class CartStorage
             ->get(self::LOCKED_WEEK_SESSION_NAME);
 
         return $lockedWeek;
+    }
+
+    public function storeDate(null|DateTimeImmutable $date): void
+    {
+        $this->requestStack->getSession()
+            ->set(self::DATE_SESSION_NAME, $date?->format('Y-m-d'));
+    }
+
+    public function getDate(): null|DateTimeImmutable
+    {
+        /** @var null|string $date */
+        $date = $this->requestStack->getSession()
+            ->get(self::DATE_SESSION_NAME);
+
+        if ($date !== null) {
+            return DateTimeImmutable::createFromFormat('Y-m-d', $date) ?: null;
+        }
+
+        return null;
     }
 }

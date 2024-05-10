@@ -29,6 +29,8 @@ final class OrderPickupPlacesController extends AbstractController
                 new ChoosePickupPlace($placeId),
             );
 
+            $this->addFlash('success', 'Zvoleno místo odběru');
+
             return $this->redirectToRoute('order_pickup_places');
         }
 

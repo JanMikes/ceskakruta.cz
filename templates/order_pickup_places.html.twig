@@ -47,5 +47,16 @@
                 </div>
             </div>
         </div>
+
+        <p class="text-center mt-3">
+            <a class="btn btn-outline-primary" href="{{ path('products') }}">Pokračovat v nákupu</a>
+            {% if cart.pickupPlace or cart.deliveryAddress %}
+                {% if cart.date %}
+                    <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit objednávku</a>
+                {% else %}
+                    <a class="btn btn-primary" href="{{ path('order_available_dates') }}">Další krok: zvolit datum</a>
+                {% endif %}
+            {% endif %}
+        </p>
     </section>
 {% endblock %}

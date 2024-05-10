@@ -5,6 +5,10 @@
 {% block content %}
     <section class="products-list">
 
+        <h1>Maso a uzeniny</h1>
+
+        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
+
         <div class="row">
             <div class="col-3 sales-places-nav pe-0">
                 <ul class="list-unstyled">
@@ -24,10 +28,6 @@
             </div>
 
             <div class="col-9 ps-5">
-                <h1>Maso a uzeniny</h1>
-
-                {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
-
                 <div class="alert alert-warning d-flex" role="alert">
                     <div class="alert-icon">
                         <i class="ci-security-announcement"></i>
@@ -118,6 +118,7 @@
                 </div>
 
                 <p class="text-center mt-3">
+                    {# TODO: podle kontextu link na misto/datum/kosik #}
                     <a class="btn btn-primary" href="{{ path('cart') }}">Pokračovat do košíku</a>
                 </p>
             </div>

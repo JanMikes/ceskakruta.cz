@@ -18,5 +18,8 @@ readonly final class ChoosePickupPlaceHandler
     public function __invoke(ChoosePickupPlace $message): void
     {
         $this->cartStorage->storePickupPlace($message->placeId);
+
+        // TODO: if date is available, it might be stored as well
+        $this->cartStorage->storeDate(null);
     }
 }

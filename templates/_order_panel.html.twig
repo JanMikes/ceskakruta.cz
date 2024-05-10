@@ -40,13 +40,18 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ path('choose_date') }}">
-                <div class="nav-link {% if currentUri == path('choose_date') %}active{% endif %}">
+            <a href="{{ path('order_available_dates') }}">
+                <div class="nav-link {% if currentUri == path('order_available_dates') %}active{% endif %} {% if cart.date %}completed{% endif %}">
                     <div class="d-flex align-items-center">
                         <div class="media-tab-media"><i class="ci-time"></i></div>
                         <div class="ps-3">
                             <h6 class="media-tab-title text-nowrap mb-0">Termín</h6>
-                            {# <div class="media-tab-subtitle text-muted fs-xs mb-0">Third step</div> #}
+
+                            {% if cart.date %}
+                                <div class="media-tab-subtitle text-muted fs-xs mb-0">
+                                    {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

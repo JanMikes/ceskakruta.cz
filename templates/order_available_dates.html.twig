@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Výběr data{% endblock %}
+
+{% block content %}
+    <section class="choose-date">
+        <h1>Výběr data</h1>
+
+        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
+
+        {% if cart.date %}
+            Vybráno:
+            <div>
+                {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+            </div>
+        {% endif %}
+
+        {% for available_date in available_days %}
+            <a href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}" data-turbo-prefetch="false">
+                <div>
+                    {{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}
+                </div>
+            </a>
+        {% endfor %}
+
+        <p class="text-center mt-3">
+            {% if cart.date %}
+                <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit nákup</a>
+            {% endif %}
+        </p>
+    </section>
+{% endblock %}

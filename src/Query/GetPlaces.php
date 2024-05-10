@@ -13,6 +13,11 @@ readonly final class GetPlaces
     ) {
     }
 
+    public function oneById(int $placeId): Place
+    {
+        return $this->all()[$placeId];
+    }
+
     /**
      * @return array<int, Place>
      */
