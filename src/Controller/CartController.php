@@ -11,15 +11,22 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CartController extends AbstractController
 {
     public function __construct(
-        private readonly CartStorage $cart,
+        private readonly CartStorage $cartStorage,
     ) {
     }
 
     #[Route(path: '/nakupni-kosik', name: 'cart', methods: ['GET'])]
-    public function __invoke(): Response
+    #[Route(path: '/odebrat-z-kosiku/{cartItem}', name: 'remove_from_cart', methods: ['GET'])]
+    public function __invoke(null|int $cartItem): Response
     {
-        return $this->render('cart.html.twig', [
-            'cart_items' => $this->cart->getItems(),
-        ]);
+        if ($cartItem !== null) {
+            $this->cartStorage->removeItem($cartItem);
+
+            $this->addFlash('success', 'Odstraněno z košíku');
+
+            return $this->redirectToRoute('cart');
+        }
+
+        return $this->render('cart.html.twig');
     }
 }

@@ -17,4 +17,9 @@ readonly final class Product
         public bool $forcePacking,
     ) {
     }
+
+    public function price(): int
+    {
+        return $this->priceForChosenPlace ?? $this->priceFrom;
+    }
 }

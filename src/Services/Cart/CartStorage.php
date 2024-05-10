@@ -6,8 +6,8 @@ namespace CeskaKruta\Web\Services\Cart;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
-use CeskaKruta\Web\Value\Currency;
 use CeskaKruta\Web\Value\Price;
+use CeskaKruta\Web\Value\ProductInCart;
 use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -20,7 +20,8 @@ final class CartStorage
     private const DATE_SESSION_NAME = 'date';
 
     public function __construct(
-        private readonly RequestStack $requestStack, private readonly GetProducts $getProducts,
+        private readonly RequestStack $requestStack,
+        private readonly GetProducts $getProducts,
     ) {
     }
 
@@ -35,9 +36,9 @@ final class CartStorage
         $products = $this->getProducts->all(); // TODO: place
 
         foreach ($this->getItems() as $item) {
-            $product = $products[$item->productId];
+            $product = $products[$item->product->id];
 
-            $totalPrice = $totalPrice->add($product->priceForChosenPlace ?? $product->priceFrom);
+            $totalPrice = $totalPrice->add($product->price());
         }
 
         return $totalPrice;
@@ -58,19 +59,22 @@ final class CartStorage
     }
 
     /**
-     * @return list<CartItem>
+     * @return list<ProductInCart>
      */
     public function getItems(): array
     {
         $session = $this->requestStack->getSession();
+        $products = $this->getProducts->all($this->getPickupPlace());
+        $cart = [];
 
         /** @var list<array{product_id: int}> $items */
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
-        $cart = [];
-
         foreach ($items as $itemData) {
-            $cart[] = CartItem::fromArray($itemData);
+            $cartItem = CartItem::fromArray($itemData);
+
+            // TODO: real quantity
+            $cart[] = new ProductInCart(1, $products[$cartItem->productId]);
         }
 
         return $cart;
@@ -82,7 +86,7 @@ final class CartStorage
             ->clear();
     }
 
-    public function removeItem(CartItem $itemToRemove): void
+    public function removeItem(int $keyToRemove): void
     {
         $session = $this->requestStack->getSession();
 
@@ -90,11 +94,10 @@ final class CartStorage
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
         foreach ($items as $key => $itemData) {
-            $itemInCart = CartItem::fromArray($itemData);
-
-            if ($itemInCart->isSame($itemToRemove)) {
+            if ($keyToRemove === 1 + $key) {
                 unset($items[$key]);
-                $session->set(self::ITEMS_SESSION_NAME, $items);
+
+                $session->set(self::ITEMS_SESSION_NAME, array_values($items));
 
                 return;
             }

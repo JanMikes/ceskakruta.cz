@@ -16,7 +16,7 @@
         {% endif %}
 
         {% for available_date in available_days %}
-            <a href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}" data-turbo-prefetch="false">
+            <a data-turbo-prefetch="false" href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}">
                 <div>
                     {{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}
                 </div>
