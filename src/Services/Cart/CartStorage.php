@@ -90,7 +90,7 @@ final class CartStorage
         $session = $this->requestStack->getSession();
 
         $session->remove(self::ITEMS_SESSION_NAME);
-        $session->remove(self::ITEMS_SESSION_NAME);
+        $session->remove(self::DATE_SESSION_NAME);
         $session->remove(self::LOCKED_WEEK_SESSION_NAME);
     }
 
