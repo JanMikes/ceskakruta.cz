@@ -7,6 +7,7 @@ use CeskaKruta\Web\FormData\AddToCartFormData;
 use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
 use CeskaKruta\Web\Query\GetProducts;
+use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
@@ -20,12 +21,13 @@ final class ProductsController extends AbstractController
     public function __construct(
         readonly private GetProducts $getProducts,
         readonly private MessageBusInterface $bus,
+        readonly private CartStorage $cartStorage,
     ) {}
 
     #[Route(path: '/nase-nabidka', name: 'products', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        $products = $this->getProducts->all();
+        $products = $this->getProducts->all($this->cartStorage->getPickupPlace()); // TODO: delivery
 
         /** @var array<Form> $forms */
         $forms = [];

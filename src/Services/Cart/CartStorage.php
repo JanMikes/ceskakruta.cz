@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services\Cart;
 
+use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
@@ -18,6 +19,8 @@ final class CartStorage
     private const LOCKED_WEEK_SESSION_NAME = 'locked_week';
     private const DELIVERY_ADDRESS_SESSION_NAME = 'delivery_address';
     private const DATE_SESSION_NAME = 'date';
+    private const CUSTOMER_SESSION_NAME = 'customer';
+    private const ORDER_ID_SESSION_NAME = 'order_id';
 
     public function __construct(
         private readonly RequestStack $requestStack,
@@ -33,7 +36,9 @@ final class CartStorage
     public function totalPrice(): Price
     {
         $totalPrice = new Price(0);
-        $products = $this->getProducts->all(); // TODO: place
+        $products = $this->getProducts->all(
+            $this->getPickupPlace(), // TODO: might be delivery
+        );
 
         foreach ($this->getItems() as $item) {
             $product = $products[$item->product->id];
@@ -64,7 +69,7 @@ final class CartStorage
     public function getItems(): array
     {
         $session = $this->requestStack->getSession();
-        $products = $this->getProducts->all($this->getPickupPlace());
+        $products = $this->getProducts->all($this->getPickupPlace()); // TODO
         $cart = [];
 
         /** @var list<array{product_id: int}> $items */
@@ -82,8 +87,11 @@ final class CartStorage
 
     public function clear(): void
     {
-        $this->requestStack->getSession()
-            ->clear();
+        $session = $this->requestStack->getSession();
+
+        $session->remove(self::ITEMS_SESSION_NAME);
+        $session->remove(self::ITEMS_SESSION_NAME);
+        $session->remove(self::LOCKED_WEEK_SESSION_NAME);
     }
 
     public function removeItem(int $keyToRemove): void
@@ -174,5 +182,65 @@ final class CartStorage
         }
 
         return null;
+    }
+
+    public function storeOrderData(null|OrderFormData $orderData): void
+    {
+        $data = null;
+
+        if ($orderData !== null) {
+            $data = [
+                'name' => $orderData->name,
+                'email' => $orderData->email,
+                'phone' => $orderData->phone,
+                'note' => $orderData->note,
+                'subscribeToNewsletter' => $orderData->subscribeToNewsletter,
+            ];
+        }
+
+        $this->requestStack->getSession()
+            ->set(self::CUSTOMER_SESSION_NAME, $data);
+    }
+
+    public function getOrderData(): null|OrderFormData
+    {
+        /**
+         * @var null|array{
+         *     name?: string,
+         *     email?: string,
+         *     phone?: string,
+         *     note?: string,
+         *     subscribeToNewsletter?: bool,
+         * } $data
+         */
+        $data = $this->requestStack->getSession()
+            ->get(self::CUSTOMER_SESSION_NAME);
+
+        if ($data !== null) {
+            $orderData = new OrderFormData();
+            $orderData->name = $data['name'] ?? '';
+            $orderData->email = $data['email'] ?? '';
+            $orderData->phone = $data['phone'] ?? '';
+            $orderData->note = $data['note'] ?? '';
+            $orderData->subscribeToNewsletter = $data['subscribeToNewsletter'] ?? false;
+            return $orderData;
+        }
+
+        return null;
+    }
+
+    public function storeLastOrderId(null|int $orderId): void
+    {
+        $this->requestStack->getSession()
+            ->set(self::ORDER_ID_SESSION_NAME, $orderId);
+    }
+
+    public function getLastOrderId(): null|int
+    {
+        /** @var null|int $lastOrderId */
+        $lastOrderId = $this->requestStack->getSession()
+            ->get(self::ORDER_ID_SESSION_NAME);
+
+        return $lastOrderId;
     }
 }

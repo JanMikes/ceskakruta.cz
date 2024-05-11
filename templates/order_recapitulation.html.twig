@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rekapitulace{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <!-- Content-->
+        <section class="col-lg-8 pt-2 pt-lg-4 pb-4 mb-3">
+            <div class="pt-2 px-4 pe-lg-0 ps-xl-5">
+
+                {% for item in cart.items %}
+                    <div class="d-block d-sm-flex align-items-center py-4 border-bottom">
+                        <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
+
+                        <div class="text-center text-sm-start">
+                            <h3 class="h6 product-title mb-2"><a href="#">{{ item.product.title }}</a></h3>
+                            <div class="d-inline-block">{{ item.product.price  }} <small>Kč/kg</small></div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </section>
+        <!-- Sidebar-->
+        <aside class="col-lg-4 ps-xl-5">
+            <hr class="d-lg-none">
+            <div class="p-4 h-100 ms-auto border-start">
+                <div class="px-lg-2">
+                    <div class="text-center py-3 border-bottom">
+                        <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
+                        <h3 class="h5 fw-normal mb-0">
+                            {{ places[cart.pickupPlace].name }}
+                        </h3>
+                        <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
+
+                        <h3 class="h5 fw-normal mt-3 mb-0">
+                            {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+                        </h3>
+                        <a class="small" href="{{ path('order_available_dates') }}">Změnit</a>
+                    </div>
+
+                    <div class="text-center mb-4 py-3 border-bottom">
+                        <h2 class="h6 mb-3 pb-1">Orientační cena</h2>
+                        <h3 class="fw-normal">{{ cart.totalPrice.amount }} <small>Kč</small></h3>
+                    </div>
+
+                    <div class="mb-4 pb-3">
+                        <p>
+                            <strong>Jméno a příjmení</strong><br>
+                            {{ cart.orderData.name }}
+                        </p>
+                        <p>
+                            <strong>E-mail</strong><br>
+                            {{ cart.orderData.email }}
+                        </p>
+                        <p>
+                            <strong>Telefon</strong><br>
+                            {{ cart.orderData.phone }}
+                        </p>
+                        <p>
+                            <strong>Poznámka</strong><br>
+                            {{ cart.orderData.note }}
+                        </p>
+                    </div>
+
+                    <a href="{{ path('finish_order') }}" class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg">Závazně objednat</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+{% endblock %}

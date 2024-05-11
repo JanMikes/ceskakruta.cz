@@ -6,10 +6,13 @@ namespace CeskaKruta\Web\Query;
 use CeskaKruta\Web\Value\Place;
 use Doctrine\DBAL\Connection;
 
-readonly final class GetPlaces
+final class GetPlaces
 {
+    /** @var array<Place>|null  */
+    private null|array $places = null;
+
     public function __construct(
-        private Connection $connection,
+        readonly private Connection $connection,
     ) {
     }
 
@@ -23,30 +26,34 @@ readonly final class GetPlaces
      */
     public function all(): array
     {
-        $placeRows = $this->connection
-            ->executeQuery('SELECT * FROM place WHERE active_flag = 1 AND del_flag = 0')
-            ->fetchAllAssociative();
+        if ($this->places === null) {
+            $placeRows = $this->connection
+                ->executeQuery('SELECT * FROM place WHERE active_flag = 1 AND del_flag = 0')
+                ->fetchAllAssociative();
 
-        /** @var array<int, Place> $places */
-        $places = [];
+            /** @var array<int, Place> $places */
+            $places = [];
 
-        foreach ($placeRows as $placeRow) {
-            /**
-             * @var array{
-             *     id: int,
-             *     name: string,
-             *     force_delivery_address: int,
-             *     force_packing: int,
-             * } $placeRow
-             */
+            foreach ($placeRows as $placeRow) {
+                /**
+                 * @var array{
+                 *     id: int,
+                 *     name: string,
+                 *     force_delivery_address: int,
+                 *     force_packing: int,
+                 * } $placeRow
+                 */
 
-            $places[$placeRow['id']] = new Place(
-                id: $placeRow['id'],
-                name: $placeRow['name'],
-                isDelivery: $placeRow['force_delivery_address'] === 1,
-            );
+                $places[$placeRow['id']] = new Place(
+                    id: $placeRow['id'],
+                    name: $placeRow['name'],
+                    isDelivery: $placeRow['force_delivery_address'] === 1,
+                );
+            }
+
+            $this->places = $places;
         }
 
-        return $places;
+        return $this->places;
     }
 }

@@ -54,16 +54,22 @@
                         <h2 class="h6 mb-3 pb-1">Orientační cena</h2>
                         <h3 class="fw-normal">{{ cart.totalPrice.amount }} <small>Kč</small></h3>
                     </div>
-                    <div class="text-center mb-4 pb-3 border-bottom">
-                        <h2 class="h6 mb-3 pb-1">Slevový kód</h2>
-                        <form class="needs-validation pb-2" method="post" novalidate="">
-                            <div class="mb-3">
-                                <input class="form-control" type="text" placeholder="Kód" required="">
-                                <div class="invalid-feedback">Please provide promo code.</div>
-                            </div>
-                            <button class="btn btn-secondary d-block w-100 btn-sm" type="submit">Použít slevový kód</button>
-                        </form>
-                    </div><a class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" href="#"></i>Objednat</a>
+
+                    <div class="mb-4 pb-3">
+                        {{ form_start(orderForm) }}
+                            {{ form_row(orderForm.name) }}
+                            {{ form_row(orderForm.email) }}
+                            {{ form_row(orderForm.phone) }}
+                            {{ form_row(orderForm.note) }}
+                            {{ form_row(orderForm.subscribeToNewsletter) }}
+
+                            {% if cart.itemsCount > 0 %}
+                                <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
+                            {% else %}
+                                <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
+                            {% endif %}
+                        {{ form_end(orderForm) }}
+                    </div>
                 </div>
             </div>
         </aside>

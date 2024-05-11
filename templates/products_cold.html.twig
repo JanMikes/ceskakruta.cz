@@ -27,12 +27,15 @@
             </div>
 
             <div class="col-9 ps-5">
-                <div class="alert alert-warning d-flex" role="alert">
-                    <div class="alert-icon">
-                        <i class="ci-security-announcement"></i>
+
+                {% if cart.pickupPlace is null %}
+                    <div class="alert alert-warning d-flex" role="alert">
+                        <div class="alert-icon">
+                            <i class="ci-security-announcement"></i>
+                        </div>
+                        <div>Zobrazené ceny se upřesní po výběru místa ...</div>
                     </div>
-                    <div>Zobrazené ceny se upřesní po výběru místa ...</div>
-                </div>
+                {% endif %}
 
                 <div class="row">
                     {% for i in [1, 2, 3, 4] %}
@@ -46,7 +49,7 @@
                                     <div class="d-flex justify-content-between">
                                         <div class="product-price">
                                             Hhmotnost: <strong>4,5 až 5kg</strong><br>
-                                            Cena od: <strong>500 Kč / ks</strong>
+                                            Cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>500 Kč / ks</strong>
                                         </div>
                                     </div>
                                 </div>

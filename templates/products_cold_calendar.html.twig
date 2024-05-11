@@ -8,12 +8,14 @@
 
         {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
-        <div class="alert alert-warning d-flex" role="alert">
-            <div class="alert-icon">
-                <i class="ci-security-announcement"></i>
+        {% if cart.pickupPlace is null %}
+            <div class="alert alert-warning d-flex" role="alert">
+                <div class="alert-icon">
+                    <i class="ci-security-announcement"></i>
+                </div>
+                <div>Zobrazené ceny se upřesní po výběru místa ...</div>
             </div>
-            <div>Zobrazené ceny se upřesní po výběru místa ...</div>
-        </div>
+        {% endif %}
 
         <h2 class="h4 mt-4">Aktuální váhy pro tento týden</h2>
 
