@@ -8,4 +8,12 @@
     <a href="{{ path('order_pickup_places') }}">Osobní odběr</a>
 
     {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
+
+    {{ form_start(delivery_form) }}
+        {{ form_row(delivery_form.street) }}
+        {{ form_row(delivery_form.city) }}
+        {{ form_row(delivery_form.postalCode) }}
+
+        <button class="btn btn-primary" type="submit">Potvrdit</button>
+    {{ form_end(delivery_form) }}
 {% endblock %}

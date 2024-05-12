@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\Exceptions\EmailAlreadySubscribedToNewsletter;
+use CeskaKruta\Web\FormData\DeliveryFormData;
 use CeskaKruta\Web\FormData\SubscribeNewsletterFormData;
+use CeskaKruta\Web\FormType\DeliveryFormType;
 use CeskaKruta\Web\FormType\SubscribeNewsletterFormType;
 use CeskaKruta\Web\Message\SubscribeNewsletter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomepageController extends AbstractController
 {
     public function __construct(
-        private readonly MessageBusInterface $messageBus,
+        private readonly MessageBusInterface $bus,
     ) {
     }
 
@@ -32,7 +34,7 @@ final class HomepageController extends AbstractController
             assert($formData instanceof SubscribeNewsletterFormData);
 
             try {
-                $this->messageBus->dispatch(
+                $this->bus->dispatch(
                     new SubscribeNewsletter($formData->email)
                 );
 
@@ -47,12 +49,17 @@ final class HomepageController extends AbstractController
                 }
             }
 
-
             return $this->redirectToRoute('homepage');
         }
 
+        $deliveryFormData = new DeliveryFormData(); // TODO
+        $deliveryForm = $this->createForm(DeliveryFormType::class, $deliveryFormData, [
+            'action' => $this->generateUrl('order_delivery'),
+        ]);
+
         return $this->render('homepage.html.twig', [
             'subscribe_newsletter_form' => $subscribeNewsletterForm,
+            'delivery_form' => $deliveryForm,
         ]);
     }
 }

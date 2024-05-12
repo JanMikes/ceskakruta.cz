@@ -14,8 +14,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ cart.pickupPlace ? path('order_pickup_places') : path('choose_delivery') }}">
-                <div class="nav-link {% if currentUri == path('choose_delivery') or currentUri == path('order_pickup_places') %}active{% endif %} {% if cart.deliveryAddress or cart.pickupPlace %}completed{% endif %}">
+            <a href="{{ cart.pickupPlace ? path('order_pickup_places') : path('order_delivery') }}">
+                <div class="nav-link {% if currentUri == path('order_delivery') or currentUri == path('order_pickup_places') %}active{% endif %} {% if cart.deliveryAddress or cart.pickupPlace %}completed{% endif %}">
                     <div class="d-flex align-items-center">
                         <div class="media-tab-media"><i class="ci-delivery"></i></div>
                         <div class="ps-3">

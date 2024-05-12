@@ -4,16 +4,19 @@
 
         <p>Zadejte vaši adresu a my najdeme optimální doručení na vaši adresu, dle našich možností.</p>
 
-        <div class="input-group">
-            <input class="form-control" type="text" placeholder="Zadejte vaše město či poštovní směrovací číslo">
-            <button class="btn btn-primary" type="button">Potvrdit</button>
-        </div>
+        {{ form_start(delivery_form) }}
+            {{ form_row(delivery_form.street) }}
+            {{ form_row(delivery_form.city) }}
+            {{ form_row(delivery_form.postalCode) }}
+
+            <button class="btn btn-primary" type="submit">Potvrdit</button>
+        {{ form_end(delivery_form) }}
 
         <h3 class="my-5">Jednoduchá objednávka ve 3 krocích</h3>
 
         <div class="home-delivery-steps">
             <div class="d-flex align-items-center py-3 step-1">
-                <span>1.</span> <i></i> Zadejte ulici a číslo popisné.
+                <span>1.</span> <i></i> Zadejte adresu.
             </div>
 
             <div class="d-flex align-items-center py-3 step-2">
