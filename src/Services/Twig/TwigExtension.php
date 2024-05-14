@@ -5,19 +5,56 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Services\Twig;
 
 use DateTimeImmutable;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 final class TwigExtension extends AbstractExtension
 {
+    public function __construct(
+        readonly private KernelInterface $kernel,
+    ) {
+    }
+
     /**
      * @return array<TwigFilter>
      */
     public function getFilters(): array
     {
         return [
-            new TwigFilter('dayOfWeek', [$this, 'dayOfWeek']),
+            new TwigFilter('dayOfWeek', $this->dayOfWeek(...)),
         ];
+    }
+
+    /**
+     * @return array<TwigFunction>
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('asset_exists', $this->asset_exists(...)),
+        ];
+    }
+
+    public function asset_exists(string $path): bool
+    {
+        $webRoot = realpath($this->kernel->getProjectDir() . '/public/');
+        assert(is_string($webRoot));
+
+        $toCheck = realpath(rtrim($webRoot, '/') . '/' . $path);
+
+        // check if the file exists
+        if ($toCheck === false || !is_file($toCheck)) {
+            return false;
+        }
+
+        // check if file is well contained in web/ directory (prevents ../ in paths)
+        if (strncmp($webRoot, $toCheck, strlen($webRoot)) !== 0) {
+            return false;
+        }
+
+        return true;
     }
 
 

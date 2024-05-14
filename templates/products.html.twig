@@ -43,7 +43,11 @@
                         <div class="col-4 my-3">
                             <div class="card">
                                 <a class="card-img-top d-block text-center overflow-hidden" href="#">
-                                    <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" alt="Product">
+                                    {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
+                                        <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" alt="Product">
+                                    {% else %}
+                                        <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                                    {% endif %}
                                 </a>
                                 <div class="card-body py-2">
                                     <h3 class="product-title fs-base">{{ product.title }}</h3>
