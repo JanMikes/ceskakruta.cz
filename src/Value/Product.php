@@ -15,6 +15,7 @@ readonly final class Product
         public bool $canBePacked,
         public bool $forceSlicing,
         public bool $forcePacking,
+        public null|int $type,
     ) {
     }
 

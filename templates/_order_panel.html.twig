@@ -40,7 +40,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ path('order_available_dates') }}">
+            <a data-turbo-prefetch="false" href="{{ path('order_available_dates') }}">
                 <div class="nav-link {% if currentUri == path('order_available_dates') %}active{% endif %} {% if cart.date %}completed{% endif %}">
                     <div class="d-flex align-items-center">
                         <div class="media-tab-media"><i class="ci-time"></i></div>

@@ -66,6 +66,7 @@ final class GetProducts
                  *     name: string,
                  *     can_be_packed_flag: int,
                  *     can_be_sliced_flag: int,
+                 *     type: null|int,
                  * } $productRow
                  */
 
@@ -84,6 +85,7 @@ final class GetProducts
                     canBePacked: $productRow['can_be_packed_flag'] === 1,
                     forceSlicing: false,
                     forcePacking: false,
+                    type: $productRow['type'],
                 );
             }
 

@@ -24,9 +24,13 @@ final class ProductsController extends AbstractController
         readonly private CartStorage $cartStorage,
     ) {}
 
+    #[Route(path: '/nase-nabidka/kruty-a-krocani', name: 'products_cold', methods: ['GET', 'POST'])]
     #[Route(path: '/nase-nabidka', name: 'products', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
+        /** @var string $routeName */
+        $routeName = $request->attributes->get('_route');
+
         $products = $this->getProducts->all($this->cartStorage->getPickupPlace()); // TODO: delivery
 
         /** @var array<Form> $forms */
@@ -39,7 +43,7 @@ final class ProductsController extends AbstractController
             $data->productId = (string) $product->id;
 
             $form = $this->createForm(AddToCartFormType::class, $data, [
-                'action' => $this->generateUrl('products', ['productId' => $product->id]),
+                'action' => $this->generateUrl($routeName, ['productId' => $product->id]),
             ]);
 
             $forms[$product->id] = $form;
@@ -66,11 +70,11 @@ final class ProductsController extends AbstractController
 
                 $this->addFlash('success', 'Přidáno do košíku');
 
-                return $this->redirectToRoute('products');
+                return $this->redirectToRoute($routeName);
             }
         }
 
-        return $this->render('products.html.twig', [
+        return $this->render($routeName === 'products' ? 'products.html.twig' : 'products_cold.html.twig', [
             'products' => $products,
             'add_to_cart_forms' =>  $formViews,
         ]);

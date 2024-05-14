@@ -38,38 +38,10 @@
                 {% endif %}
 
                 <div class="row">
-                    {% for i in [1, 2, 3, 4] %}
-                        <div class="col-4 my-3">
-                            <div class="card">
-                                <a class="card-img-top d-block text-center overflow-hidden" href="#">
-                                    <img src="{{ asset('img/product-2.png') }}" alt="Product">
-                                </a>
-                                <div class="card-body py-2">
-                                    <h3 class="product-title fs-base">{{ i == 1 ? 'Krůta celá' : i == 2 ? 'Krocan celý' : i == 3 ? 'Porcovaná celá krůta' : 'Porcovaný krocan' }}</h3>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="product-price">
-                                            Hhmotnost: <strong>4,5 až 5kg</strong><br>
-                                            Cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>500 Kč / ks</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body pt-0">
-                                    <div class="mb-2">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="ex-check-{{ i }}">
-                                            <label class="form-check-label" for="ex-check-{{ i }}">Chci jen půlku</label>
-                                        </div>
-
-                                        <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Ks
-
-                                        <button class="ms-2 btn btn-primary btn-sm float-end" type="button">
-                                            <i class="ci-cart fs-sm me-1"></i>
-                                            Do košíku
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {% for product in products %}
+                        {% if product.type == 3 %}
+                            {{ include('_product_item.html.twig') }}
+                        {% endif %}
                     {% endfor %}
 
                     <div class="col-4 my-3">

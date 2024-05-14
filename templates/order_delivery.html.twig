@@ -3,17 +3,38 @@
 {% block title %}Rozvoz domů{% endblock %}
 
 {% block content %}
+<section class="order-pickup-places">
     <h1>Místo doručení</h1>
-
-    <a href="{{ path('order_pickup_places') }}">Osobní odběr</a>
 
     {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
-    {{ form_start(delivery_form) }}
-        {{ form_row(delivery_form.street) }}
-        {{ form_row(delivery_form.city) }}
-        {{ form_row(delivery_form.postalCode) }}
+    <div class="row">
+        <div class="col-3 sales-places-nav pe-0">
+            <ul class="list-unstyled">
+                <li>
+                    <a href="{{ path('order_pickup_places') }}">
+                        Osobní odběr
+                        <i class="ci-arrow-down"></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="active" href="{{ path('order_delivery') }}">
+                        Rozvoz
+                        <i class="ci-arrow-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-        <button class="btn btn-primary" type="submit">Potvrdit</button>
-    {{ form_end(delivery_form) }}
+        <div class="col-9 ps-5">
+            {{ form_start(delivery_form) }}
+                {{ form_row(delivery_form.street) }}
+                {{ form_row(delivery_form.city) }}
+                {{ form_row(delivery_form.postalCode) }}
+
+                <button class="btn btn-primary" type="submit">Potvrdit</button>
+            {{ form_end(delivery_form) }}
+        </div>
+    </div>
+</section>
 {% endblock %}
