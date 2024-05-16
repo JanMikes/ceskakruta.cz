@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
+use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,7 @@ final class OrderRecapitulationController extends AbstractController
     public function __construct(
         private readonly CartStorage $cartStorage,
         private readonly GetPlaces $getPlaces,
+        private readonly GetColdProductsCalendar $getColdProductsCalendar,
     ) {
     }
 
@@ -36,8 +38,11 @@ final class OrderRecapitulationController extends AbstractController
             return $this->redirectToRoute('cart');
         }
 
+        $calendar = $this->getColdProductsCalendar->all();
+
         return $this->render('order_recapitulation.html.twig', [
             'places' => $this->getPlaces->all(),
+            'calendar' => $calendar,
         ]);
     }
 }
