@@ -24,6 +24,7 @@ final class TwigExtension extends AbstractExtension
     {
         return [
             new TwigFilter('dayOfWeek', $this->dayOfWeek(...)),
+            new TwigFilter('price', $this->formatPrice(...)),
         ];
     }
 
@@ -34,7 +35,26 @@ final class TwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction('asset_exists', $this->asset_exists(...)),
+            new TwigFunction('firstDayOfWeek', [$this, 'getFirstDayOfWeek']),
+            new TwigFunction('lastDayOfWeek', [$this, 'getLastDayOfWeek']),
         ];
+    }
+
+    public function getFirstDayOfWeek(int $year, int $week): DateTimeImmutable
+    {
+        $startOfWeek = new \DateTimeImmutable();
+        $startOfWeek = $startOfWeek->setISODate($year, $week, 1); // 1 indicates Monday
+
+        return $startOfWeek;
+    }
+
+    public function getLastDayOfWeek(int $year, int $week): DateTimeImmutable
+    {
+        $startOfWeek = new \DateTimeImmutable();
+        $startOfWeek = $startOfWeek->setISODate($year, $week, 1); // 1 indicates Monday
+        $endOfWeek = $startOfWeek->modify('sunday this week');
+
+        return $endOfWeek;
     }
 
     public function asset_exists(string $path): bool
@@ -71,5 +91,10 @@ final class TwigExtension extends AbstractExtension
             5 => 'Pátek',
             6 => 'Sobota',
         };
+    }
+
+    public function formatPrice(float|int $price): int
+    {
+        return (int) $price;
     }
 }

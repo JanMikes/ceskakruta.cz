@@ -22,7 +22,7 @@
         <div class="row calendar-row mb-3">
             <div class="col-3 pe-0">
                 <span class="ribbon">
-                    <strong>16. týden:</strong> 15.4.-21.4.
+                    <strong>{{ current_week }}. týden:</strong> {{ firstDayOfWeek(current_year, current_week).format('d.m.') }} - {{ lastDayOfWeek(current_year, current_week).format('d.m.') }}
                 </span>
             </div>
 
@@ -30,42 +30,14 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tbody>
-                        {% for i in [1, 2, 3, 4] %}
-                            <tr>
-                                <td>
-                                    <img width="100" src="{{ asset('img/product-2.png') }}">
-                                </td>
-
-                                <td>
-                                    {{ i == 1 ? 'Krůta celá' : i == 2 ? 'Krocan celý' : i == 3 ? 'Porcovaná celá krůta' : 'Porcovaný krocan' }}
-                                </td>
-
-                                <td>
-                                    Hmotnost<br>
-                                    <strong>19 až 21 kg</strong>
-                                </td>
-
-                                <td>
-                                    Cena za ks od<br>
-                                    <strong>500 Kč</strong>
-                                </td>
-
-                                <td>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="ex-check">
-                                        <label class="form-check-label" for="ex-check">Chci jen půlku</label>
-                                    </div>
-                                    <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Ks
-
-                                </td>
-                                <td>
-                                    <button class="text-center ms-2 btn btn-primary btn-sm" type="button">
-                                        <i class="ci-cart fs-sm me-1"></i>
-                                        Do košíku
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                            {% for product in products %}
+                                {% if product.type == 3 and calendar[current_year][current_week][product.turkeyType] is defined %}
+                                    {{ include('_cold_calendar_product_item.html.twig', {
+                                        week: current_week,
+                                        year: current_year,
+                                    }) }}
+                                {% endif %}
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -81,113 +53,35 @@
             <div>Výběrem konkrétní váhy se vám omezí datum objednávky na vámi zvolený týden</div>
         </div>
 
-        <div class="row calendar-row mb-3">
-            <div class="col-3 pe-0">
-                <span class="ribbon">
-                    <strong>16. týden:</strong> 15.4.-21.4.
-                </span>
-            </div>
+        {% for year, weeks in calendar %}
+            {% for week, types in weeks %}
+                {% if calendar[year][week] is defined and (current_week != week or current_year != year) %}
+                    <div class="row calendar-row mb-3">
+                        <div class="col-3 pe-0">
+                            <span class="ribbon">
+                                <strong>{{ week }}. týden:</strong> {{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
+                            </span>
+                        </div>
 
-            <div class="col-9 ps-0">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        {% for i in [1, 2, 3, 4] %}
-                            <tr>
-                                <td>
-                                    <img width="100" src="{{ asset('img/product-2.png') }}">
-                                </td>
+                        <div class="col-9 ps-0">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                    {% for product in products %}
+                                        {% if product.type == 3 and calendar[year][week][product.turkeyType] is defined %}
+                                            {{ include('_cold_calendar_product_item.html.twig') }}
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                                <td>
-                                    {{ i == 1 ? 'Krůta celá' : i == 2 ? 'Krocan celý' : i == 3 ? 'Porcovaná celá krůta' : 'Porcovaný krocan' }}
-                                </td>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
 
-                                <td>
-                                    Hmotnost<br>
-                                    <strong>19 až 21 kg</strong>
-                                </td>
-
-                                <td>
-                                    Cena za ks od<br>
-                                    <strong>500 Kč</strong>
-                                </td>
-
-                                <td>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="ex-check">
-                                        <label class="form-check-label" for="ex-check">Chci jen půlku</label>
-                                    </div>
-                                    <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Ks
-
-                                </td>
-                                <td>
-                                    <button class="text-center ms-2 btn btn-primary btn-sm" type="button">
-                                        <i class="ci-cart fs-sm me-1"></i>
-                                        Objednat na<br>tento týden
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="row calendar-row mb-3">
-            <div class="col-3 pe-0">
-                <span class="ribbon">
-                    <strong>16. týden:</strong> 15.4.-21.4.
-                </span>
-            </div>
-
-            <div class="col-9 ps-0">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        {% for i in [1, 2, 3, 4] %}
-                            <tr>
-                                <td>
-                                    <img width="100" src="{{ asset('img/product-2.png') }}">
-                                </td>
-
-                                <td>
-                                    {{ i == 1 ? 'Krůta celá' : i == 2 ? 'Krocan celý' : i == 3 ? 'Porcovaná celá krůta' : 'Porcovaný krocan' }}
-                                </td>
-
-                                <td>
-                                    Hmotnost<br>
-                                    <strong>19 až 21 kg</strong>
-                                </td>
-
-                                <td>
-                                    Cena za ks od<br>
-                                    <strong>500 Kč</strong>
-                                </td>
-
-                                <td>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="ex-check">
-                                        <label class="form-check-label" for="ex-check">Chci jen půlku</label>
-                                    </div>
-                                    <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Ks
-
-                                </td>
-                                <td>
-                                    <button class="text-center ms-2 btn btn-primary btn-sm" type="button">
-                                        <i class="ci-cart fs-sm me-1"></i>
-                                        Objednat na<br>tento týden
-                                    </button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
 
     </section>
 
