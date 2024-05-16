@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
+use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
@@ -25,6 +26,7 @@ final class CartStorage
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly GetProducts $getProducts,
+        private readonly GetColdProductsCalendar $getColdProductsCalendar,
     ) {
     }
 
@@ -39,11 +41,22 @@ final class CartStorage
         $products = $this->getProducts->all(
             $this->getPickupPlace(), // TODO: might be delivery
         );
+        $calendar = $this->getColdProductsCalendar->all();
+        $calendarWeek = $this->getWeek();
+        $week = $calendarWeek['week'];
+        $year = $calendarWeek['year'];
 
         foreach ($this->getItems() as $item) {
             $product = $products[$item->product->id];
 
-            $totalPrice = $totalPrice->add($product->price());
+            $price = $product->price();
+
+            if ($product->type === 3) {
+                $weights = $calendar[$year][$week][$product->turkeyType];
+                $price = ($weights->weightFrom + $weights->weightTo) / 2 * $product->price();
+            }
+
+            $totalPrice = $totalPrice->add((int) ($item->quantity * $price));
         }
 
         return $totalPrice;
@@ -78,8 +91,10 @@ final class CartStorage
         foreach ($items as $itemData) {
             $cartItem = CartItem::fromArray($itemData);
 
-            // TODO: real quantity
-            $cart[] = new ProductInCart(1, $products[$cartItem->productId]);
+            $cart[] = new ProductInCart(
+                $cartItem->quantity,
+                $products[$cartItem->productId],
+            );
         }
 
         return $cart;
@@ -150,15 +165,27 @@ final class CartStorage
         return null;
     }
 
-    public function storeLockedWeek(null|int $week): void
+    public function storeLockedWeek(null|int $year, null|int $week): void
     {
+        $data = null;
+
+        if ($week !== null && $year !== null) {
+            $data = [
+                'week' => $week,
+                'year' => $year,
+            ];
+        }
+
         $this->requestStack->getSession()
-            ->set(self::LOCKED_WEEK_SESSION_NAME, $week);
+            ->set(self::LOCKED_WEEK_SESSION_NAME, $data);
     }
 
-    public function getLockedWeek(): null|int
+    /**
+     * @return null|array{week: int, year: int}
+     */
+    public function getLockedWeek(): null|array
     {
-        /** @var null|int $lockedWeek */
+        /** @var null|array{week: int, year: int} $lockedWeek */
         $lockedWeek = $this->requestStack->getSession()
             ->get(self::LOCKED_WEEK_SESSION_NAME);
 
@@ -242,5 +269,18 @@ final class CartStorage
             ->get(self::ORDER_ID_SESSION_NAME);
 
         return $lastOrderId;
+    }
+
+    /**
+     * @return array{week: int, year: int}
+     */
+    public function getWeek(): array
+    {
+        $now = new \DateTimeImmutable();
+
+        return [
+            'week' => (int) $now->format('W'),
+            'year' => (int) $now->format('Y'),
+        ];
     }
 }

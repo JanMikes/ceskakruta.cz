@@ -26,9 +26,17 @@
                         </a>
                         <div class="text-center text-sm-start">
                             <h3 class="h6 product-title mb-2"><a href="#">{{ item.product.title }}</a></h3>
-                            <div class="d-inline-block">{{ item.product.price  }} <small>Kč/kg</small></div>
+                            <div class="d-inline-block">
+                                {% if item.product.type == 3 %}
+                                    Hhmotnost: {{ calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightFrom }} až {{ calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightTo }}kg<br>
+                                    {% set piecePrice = (calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightFrom + calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightTo) / 2 * item.product.price  %}
+                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ piecePrice }} Kč / ks</strong>
+                                {% else %}
+                                    {{ item.product.price  }} <small>Kč/kg</small>
+                                {% endif %}
+                            </div>
                             <div class="form-inline pt-2">
-                                <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Kg
+                                <input style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {% if item.product.type == 3 %}ks{% else %}Kg{% endif %}
                             </div>
                         </div>
                     </div>
@@ -63,7 +71,7 @@
                             {{ form_row(orderForm.note) }}
                             {{ form_row(orderForm.subscribeToNewsletter) }}
 
-                            {% if cart.itemsCount > 0 %}
+                            {% if cart.itemsCount > 0 and cart.date and cart.pickupPlace %}
                                 <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
                             {% else %}
                                 <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>

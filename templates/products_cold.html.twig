@@ -39,7 +39,7 @@
 
                 <div class="row">
                     {% for product in products %}
-                        {% if product.type == 3 %}
+                        {% if product.type == 3 and calendar[current_year][current_week][product.turkeyType] %}
                             {{ include('_product_item.html.twig') }}
                         {% endif %}
                     {% endfor %}

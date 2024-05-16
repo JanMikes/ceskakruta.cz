@@ -36,9 +36,11 @@ final class OrderFormType extends AbstractType
 
         $builder->add('note', TextareaType::class, [
             'label' => 'Poznámka',
+            'required' => false,
         ]);
 
         $builder->add('subscribeToNewsletter', CheckboxType::class, [
+            'required' => false,
             'label' => 'Chci zasílat informace a novinky z České Krůty',
         ]);
     }

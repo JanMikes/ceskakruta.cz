@@ -6,6 +6,7 @@ namespace CeskaKruta\Web\Controller;
 use CeskaKruta\Web\FormData\AddToCartFormData;
 use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
+use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,7 @@ final class ProductsController extends AbstractController
         readonly private GetProducts $getProducts,
         readonly private MessageBusInterface $bus,
         readonly private CartStorage $cartStorage,
+        readonly private GetColdProductsCalendar $getColdProductsCalendar,
     ) {}
 
     #[Route(path: '/nase-nabidka/kruty-a-krocani', name: 'products_cold', methods: ['GET', 'POST'])]
@@ -74,9 +76,14 @@ final class ProductsController extends AbstractController
             }
         }
 
+        $now = new \DateTimeImmutable();
+
         return $this->render($routeName === 'products' ? 'products.html.twig' : 'products_cold.html.twig', [
             'products' => $products,
             'add_to_cart_forms' =>  $formViews,
+            'current_year' => $now->format('Y'),
+            'current_week' => $now->format('W'),
+            'calendar' => $this->getColdProductsCalendar->all(),
         ]);
     }
 }

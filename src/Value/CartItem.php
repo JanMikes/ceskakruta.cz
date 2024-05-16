@@ -10,27 +10,32 @@ readonly final class CartItem
 {
     public function __construct(
         public int $productId,
+        public int|float $quantity,
     ) {
     }
 
 
     /**
-     * @return array{product_id: int}
+     * @return array{product_id: int, quantity: int|float}
      */
     public function toArray(): array
     {
         return [
             'product_id' => $this->productId,
+            'quantity' => $this->quantity,
         ];
     }
 
 
     /**
-     * @param array{product_id: int} $data
+     * @param array{product_id: int, quantity?: int|float} $data
      */
     public static function fromArray(array $data): self
     {
-        return new CartItem($data['product_id']);
+        return new CartItem(
+            $data['product_id'],
+            $data['quantity'] ?? 1,
+        );
     }
 
 

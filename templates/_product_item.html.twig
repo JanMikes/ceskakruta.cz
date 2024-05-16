@@ -14,10 +14,11 @@
             <div class="d-flex justify-content-between">
                 <div class="product-price">
                     {% if product.type == 3 %}
-                        Hhmotnost: <strong>4,5 až 5kg</strong><br>
-                        Cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>500 Kč / ks</strong>
+                        Hhmotnost: <strong>{{ calendar[current_year][current_week][product.turkeyType].weightFrom }} až {{ calendar[current_year][current_week][product.turkeyType].weightTo }}kg</strong><br>
+                        {% set piecePrice = (calendar[current_year][current_week][product.turkeyType].weightFrom + calendar[current_year][current_week][product.turkeyType].weightTo) / 2 * product.price  %}
+                        Orientační cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ piecePrice}} Kč / ks</strong>
                     {% else %}
-                        Cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ product.priceFrom}} Kč/kg</strong>
+                        Cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ product.price }} Kč/kg</strong>
                     {% endif %}
                 </div>
             </div>
@@ -47,7 +48,7 @@
                     </div>
                 {% endif %}
 
-                <input name="{{ field_name(add_to_cart_forms[product.id].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> Kg
+                <input name="{{ field_name(add_to_cart_forms[product.id].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> {% if product.type == 3 %}ks{% else %}Kg{% endif %}
 
                 <button class="ms-2 btn btn-primary btn-sm float-end" type="submit">
                     <i class="ci-cart fs-sm me-1"></i>

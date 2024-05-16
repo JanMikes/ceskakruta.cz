@@ -5,6 +5,7 @@ namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\FormType\OrderFormType;
+use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ final class CartController extends AbstractController
 {
     public function __construct(
         private readonly CartStorage $cartStorage,
+        private readonly GetColdProductsCalendar $getColdProductsCalendar,
     ) {
     }
 
@@ -47,8 +49,12 @@ final class CartController extends AbstractController
             return $this->redirectToRoute('cart');
         }
 
+        $week = $this->cartStorage->getWeek();
+        $calendar = $this->getColdProductsCalendar->all();
+
         return $this->render('cart.html.twig', [
             'orderForm' => $orderForm,
+            'calendar' => $calendar,
         ]);
     }
 }
