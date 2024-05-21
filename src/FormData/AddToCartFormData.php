@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints\Uuid;
 
 final class AddToCartFormData
 {
+    public null|int $week = null;
+    public null|int $year = null;
     #[NotBlank]
     public string $productId = '';
     #[NotBlank]

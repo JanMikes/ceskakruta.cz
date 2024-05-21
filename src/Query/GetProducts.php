@@ -67,13 +67,18 @@ final class GetProducts
                  *     can_be_packed_flag: int,
                  *     can_be_sliced_flag: int,
                  *     type: null|int,
+                 *     half_of_product_id: null|int,
                  * } $productRow
                  */
+
+                if (!isset($pricesFrom[$productRow['id']])) {
+                    continue;
+                }
 
                 $priceForChosenPlace = null;
 
                 if ($chosenPlaceId !== null) {
-                    $priceForChosenPlace = $placePrices[$productRow['id']][$chosenPlaceId];
+                    $priceForChosenPlace = $placePrices[$productRow['id']][$chosenPlaceId] ?? $pricesFrom[$productRow['id']];
                 }
 
                 $products[$productRow['id']] = new Product(
@@ -85,6 +90,10 @@ final class GetProducts
                     canBePacked: $productRow['can_be_packed_flag'] === 1,
                     forceSlicing: false,
                     forcePacking: false,
+                    isHalf: $productRow['half_of_product_id'] !== null,
+                    halfOfProductId: $productRow['half_of_product_id'],
+                    weightFrom: 0,
+                    weightTo: 0,
                     type: $productRow['type'],
                 );
             }
@@ -93,5 +102,21 @@ final class GetProducts
         }
 
         return $this->products;
+    }
+
+    /**
+     * @return array<int, Product>
+     */
+    public function getHalves(): array
+    {
+        $halves = [];
+
+        foreach ($this->all() as $product) {
+            if ($product->halfOfProductId !== null) {
+                $halves[$product->halfOfProductId] = $product;
+            }
+        }
+
+        return $halves;
     }
 }

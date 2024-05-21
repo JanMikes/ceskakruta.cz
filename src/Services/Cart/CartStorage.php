@@ -51,8 +51,8 @@ final class CartStorage
 
             $price = $product->price();
 
-            if ($product->type === 3) {
-                $weights = $calendar[$year][$week][$product->turkeyType];
+            if ($product->isTurkey()) {
+                $weights = $calendar[$year][$week][$product->getTurkeyType()];
                 $price = ($weights->weightFrom + $weights->weightTo) / 2 * $product->price();
             }
 

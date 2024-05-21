@@ -15,13 +15,34 @@ readonly final class Product
         public bool $canBePacked,
         public bool $forceSlicing,
         public bool $forcePacking,
-        public null|int $type,
-        public int $turkeyType = 1,
+        public bool $isHalf,
+        public null|int $halfOfProductId,
+        public null|int $weightFrom,
+        public null|int $weightTo,
+        private null|int $type,
     ) {
     }
 
     public function price(): int
     {
         return $this->priceForChosenPlace ?? $this->priceFrom;
+    }
+
+    public function isTurkey(): bool
+    {
+        return $this->type === 3 || $this->type === 4;
+    }
+
+    public function getTurkeyType(): null|int
+    {
+        if ($this->type === 3) {
+            return 1;
+        }
+
+        if ($this->type === 4) {
+            return 2;
+        }
+
+        return null;
     }
 }

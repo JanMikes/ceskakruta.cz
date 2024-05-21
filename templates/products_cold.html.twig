@@ -28,6 +28,14 @@
 
             <div class="col-9 ps-5">
 
+                <div class="alert alert-accent d-flex" role="alert">
+                    <div class="alert-icon">
+                        <i class="ci-security-announcement"></i>
+                    </div>
+                    <div class="small">Krůty a krocany prodávám vždy ve váze tak, jak nám dorůstají. Uvedené váhy jsou pro aktuální nabídku/vámi vybraný termín. Pokud vám nevyhovují váhy, vyberte si podle potřeby z <a href="{{ path('products_cold_calendar') }}">váhového kalendáře</a>.</div>
+                </div>
+
+
                 {% if cart.pickupPlace is null %}
                     <div class="alert alert-warning d-flex" role="alert">
                         <div class="alert-icon">
@@ -39,7 +47,7 @@
 
                 <div class="row">
                     {% for product in products %}
-                        {% if product.type == 3 and calendar[current_year][current_week][product.turkeyType] is defined %}
+                        {% if calendar[current_year][current_week][product.turkeyType] is defined %}
                             {{ include('_product_item.html.twig') }}
                         {% endif %}
                     {% endfor %}

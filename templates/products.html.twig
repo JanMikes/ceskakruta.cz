@@ -40,13 +40,13 @@
 
                 <div class="row">
                     {% for product in products %}
-                        {% if product.type != 3 %}
+                        {% if not product.turkeyType %}
                             {{ include('_product_item.html.twig') }}
                         {% endif %}
                     {% endfor %}
 
                     {% for product in products %}
-                        {% if product.type == 3 %}
+                        {% if product.turkeyType %}
                             {{ include('_product_item.html.twig') }}
                         {% endif %}
                     {% endfor %}

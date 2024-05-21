@@ -31,7 +31,7 @@
                     <table class="table">
                         <tbody>
                             {% for product in products %}
-                                {% if product.type == 3 and calendar[current_year][current_week][product.turkeyType] is defined %}
+                                {% if calendar[current_year][current_week][product.turkeyType] is defined %}
                                     {{ include('_cold_calendar_product_item.html.twig', {
                                         week: current_week,
                                         year: current_year,
@@ -68,7 +68,7 @@
                                 <table class="table">
                                     <tbody>
                                     {% for product in products %}
-                                        {% if product.type == 3 and calendar[year][week][product.turkeyType] is defined %}
+                                        {% if calendar[year][week][product.turkeyType] is defined %}
                                             {{ include('_cold_calendar_product_item.html.twig') }}
                                         {% endif %}
                                     {% endfor %}

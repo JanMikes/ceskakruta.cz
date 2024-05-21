@@ -17,6 +17,9 @@ final class AddToCartFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('week', HiddenType::class);
+        $builder->add('year', HiddenType::class);
+
         $builder->add('productId', HiddenType::class);
 
         $builder->add('quantity', NumberType::class);
