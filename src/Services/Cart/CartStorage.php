@@ -182,18 +182,25 @@ final class CartStorage
 
         $this->requestStack->getSession()
             ->set(self::LOCKED_WEEK_SESSION_NAME, $data);
+
+        // Because choosing week -> remove the chosen date
+        $this->storeDate(null);
     }
 
-    /**
-     * @return null|array{week: int, year: int}
-     */
-    public function getLockedWeek(): null|array
+    public function getLockedWeek(): null|Week
     {
         /** @var null|array{week: int, year: int} $lockedWeek */
         $lockedWeek = $this->requestStack->getSession()
             ->get(self::LOCKED_WEEK_SESSION_NAME);
 
-        return $lockedWeek;
+        if ($lockedWeek !== null) {
+            return new Week(
+                number: $lockedWeek['week'],
+                year: $lockedWeek['year'],
+            );
+        }
+
+        return null;
     }
 
     public function storeDate(null|DateTimeImmutable $date): void
@@ -277,7 +284,11 @@ final class CartStorage
 
     public function getWeek(): Week
     {
-        // TODO
+        $lockedWeek = $this->getLockedWeek();
+
+        if ($lockedWeek !== null) {
+            return $lockedWeek;
+        }
 
         $now = new \DateTimeImmutable();
 

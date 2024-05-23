@@ -81,7 +81,7 @@ final class CartController extends AbstractController
         $submittedItemKey = $request->query->get('cartItem');
 
         if ($submittedItemKey !== null) {
-            $requestForm = $changeQuantityForms[(int)$submittedItemKey];
+            $requestForm = $changeQuantityForms[(int) $submittedItemKey];
             $requestForm->handleRequest($request);
 
             if ($requestForm->isSubmitted() && $requestForm->isValid()) {

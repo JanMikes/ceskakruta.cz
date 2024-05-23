@@ -10,5 +10,5 @@ final class OrderFormData
     public string $email = '';
     public string $phone = '';
     public null|string $note = null;
-    public bool $subscribeToNewsletter = false;
+    public bool $subscribeToNewsletter = true;
 }

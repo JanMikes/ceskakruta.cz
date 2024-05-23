@@ -31,9 +31,14 @@ readonly final class Product
         $this->weightTo = ($isHalf === true && $weightTo !== null) ? $weightTo / 2 : $weightTo;
     }
 
+    public function pricePerUnit(): int
+    {
+        return $this->priceForChosenPlace ?? $this->priceFrom;
+    }
+
     public function price(): int|float
     {
-        $pricePerUnit = $this->priceForChosenPlace ?? $this->priceFrom;
+        $pricePerUnit = $this->pricePerUnit();
 
         if ($this->isTurkey) {
             $averageWeight = ($this->weightFrom + $this->weightTo) / 2;

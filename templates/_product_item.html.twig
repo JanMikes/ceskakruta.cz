@@ -2,7 +2,7 @@
     <div class="col-4 my-3" data-controller="turkey-half-toggle">
         <div class="card shadow">
             {% if products_halves[product.id] is defined %}
-                <div class="toggleable d-none" data-turkey-half-toggle-target="whole">
+                <div class="toggleable d-none" data-turkey-half-toggle-target="half">
                     <div style="height: 150px;" class="overflow-hidden">
                         <a class="card-img-top d-block text-center" href="#">
                             {% if asset_exists('img/produkty/' ~ products_halves[product.id].id ~ '.png') %}
@@ -28,7 +28,7 @@
                 </div>
             {% endif %}
 
-            <div class="toggleable visible" data-turkey-half-toggle-target="half">
+            <div class="toggleable visible" data-turkey-half-toggle-target="whole">
                 <div style="height: 150px;" class="overflow-hidden">
                     <a class="card-img-top d-block text-center" href="#">
                         {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
@@ -63,7 +63,7 @@
                     {% endif %}
 
                     {% if products_halves[product.id] is defined %}
-                        <div class="toggleable d-none" data-turkey-half-toggle-target="whole">
+                        <div class="toggleable d-none" data-turkey-half-toggle-target="half">
                             {{ form_start(add_to_cart_forms[products_halves[product.id].id]) }}
                                 <input name="{{ field_name(add_to_cart_forms[products_halves[product.id].id].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> {% if products_halves[product.id].turkeyType %}ks{% else %}Kg{% endif %}
 
@@ -76,7 +76,7 @@
                         </div>
                     {% endif %}
 
-                    <div class="toggleable visible" data-turkey-half-toggle-target="half">
+                    <div class="toggleable visible" data-turkey-half-toggle-target="whole">
                         {{ form_start(add_to_cart_forms[product.id]) }}
                             {% if product.canBeSliced %}
                                 <div class="form-check">

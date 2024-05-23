@@ -55,7 +55,7 @@ final class ProductsController extends AbstractController
         $submittedProductId = $request->query->get('productId');
 
         if ($submittedProductId !== null) {
-            $requestForm = $forms[(int)$submittedProductId];
+            $requestForm = $forms[(int) $submittedProductId];
             $requestForm->handleRequest($request);
 
             if ($requestForm->isSubmitted() && $requestForm->isValid()) {

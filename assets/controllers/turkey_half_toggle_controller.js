@@ -12,7 +12,7 @@ export default class extends Controller {
     }
 
     updateVisibility() {
-        const shouldShowWhole = this.togglerTarget.checked
+        const shouldShowWhole = !this.togglerTarget.checked
 
         this.wholeTargets.forEach(element => {
             if (shouldShowWhole) {

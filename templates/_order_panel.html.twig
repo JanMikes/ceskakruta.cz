@@ -47,6 +47,12 @@
                         <div class="ps-3">
                             <h6 class="media-tab-title text-nowrap mb-0">Termín</h6>
 
+                            {% if cart.lockedWeek %}
+                                <div class="media-tab-subtitle text-muted fs-xs mb-0">
+                                    Vybrán {{ cart.lockedWeek.number }}. týden
+                                </div>
+                            {% endif %}
+
                             {% if cart.date %}
                                 <div class="media-tab-subtitle text-muted fs-xs mb-0">
                                     {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
