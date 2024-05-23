@@ -97,7 +97,7 @@ final class CartStorage
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
         foreach ($items as $key => $itemData) {
-            if ($keyToRemove === $key + 1) {
+            if ($keyToRemove === $key) {
                 unset($items[$key]);
 
                 $session->set(self::ITEMS_SESSION_NAME, array_values($items));
@@ -109,13 +109,18 @@ final class CartStorage
 
     public function changeQuantity(int $keyToChange, int|float $newQuantity): void
     {
+        if ($newQuantity < 0) {
+            $this->removeItem($keyToChange);
+            return;
+        }
+
         $session = $this->requestStack->getSession();
 
         /** @var array<array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool}> $items */
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
         foreach ($items as $key => $item) {
-            if ($keyToChange === $key + 1) {
+            if ($keyToChange === $key) {
                 $cartItem = CartItem::fromArray($item);
                 $items[$key] = $cartItem->withQuantity($newQuantity)->toArray();
 
