@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Query;
 
+use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Value\Product;
 use Doctrine\DBAL\Connection;
 
@@ -13,15 +14,23 @@ final class GetProducts
 
     public function __construct(
         readonly private Connection $connection,
+        readonly private CartStorage $cartStorage,
+        readonly private GetColdProductsCalendar $getColdProductsCalendar,
+        readonly private GetPlaces $getPlaces,
     ) {
     }
 
     /**
      * @return array<int, Product>
      */
-    public function all(null|int $chosenPlaceId = null): array
+    public function all(): array
     {
         if ($this->products === null) {
+            $calendar = $this->getColdProductsCalendar->all();
+            $week = $this->cartStorage->getWeek();
+            $chosenPlaceId = $this->cartStorage->getPickupPlace(); // TODO: can be delivery
+            $chosenPlace = $chosenPlaceId !== null ? $this->getPlaces->oneById($chosenPlaceId) : null;
+
             $productRows = $this->connection
                 ->executeQuery('SELECT * FROM product WHERE active_flag = 1 AND del_flag = 0')
                 ->fetchAllAssociative();
@@ -29,6 +38,7 @@ final class GetProducts
             $productPlaceRows = $this->connection
                 ->executeQuery('SELECT * FROM product_place WHERE active_flag = 1 AND del_flag = 0')
                 ->fetchAllAssociative();
+
 
             // $placePrices[$productId][$placeId] = $price
             /** @var array<int, array<int, int>> $placePrices */
@@ -68,33 +78,64 @@ final class GetProducts
                  *     can_be_sliced_flag: int,
                  *     type: null|int,
                  *     half_of_product_id: null|int,
+                 *     force_packing: int,
+                 *     price_pack: null|int,
                  * } $productRow
                  */
 
-                if (!isset($pricesFrom[$productRow['id']])) {
+                $productId = $productRow['id'];
+
+                if (!isset($pricesFrom[$productId])) {
                     continue;
                 }
-
                 $priceForChosenPlace = null;
 
                 if ($chosenPlaceId !== null) {
-                    $priceForChosenPlace = $placePrices[$productRow['id']][$chosenPlaceId] ?? $pricesFrom[$productRow['id']];
+                    $priceForChosenPlace = $placePrices[$productId][$chosenPlaceId] ?? $pricesFrom[$productId];
                 }
 
-                $products[$productRow['id']] = new Product(
-                    id: $productRow['id'],
+                $type = $productRow['type'];
+                $turkeyType = null;
+
+                if ($type === 3) {
+                    $turkeyType = 1;
+                }
+
+                if ($type === 4) {
+                    $turkeyType = 2;
+                }
+
+                $weightFrom = null;
+                $weightTo = null;
+
+                if (isset($calendar[$week->year][$week->number][$turkeyType])) {
+                    $weightFrom = $calendar[$week->year][$week->number][$turkeyType]->weightFrom;
+                    $weightTo = $calendar[$week->year][$week->number][$turkeyType]->weightTo;
+                }
+
+                $forcePacking = false;
+
+                if ($productRow['force_packing'] === 1 || ($chosenPlace !== null && $chosenPlace->forcePacking === true)) {
+                    $forcePacking = true;
+                }
+
+                $products[$productId] = new Product(
+                    id: $productId,
                     title: $productRow['name'],
-                    priceFrom: $pricesFrom[$productRow['id']],
+                    priceFrom: $pricesFrom[$productId],
                     priceForChosenPlace: $priceForChosenPlace,
                     canBeSliced: $productRow['can_be_sliced_flag'] === 1,
                     canBePacked: $productRow['can_be_packed_flag'] === 1,
+                    packPrice: $productRow['price_pack'],
                     forceSlicing: false,
-                    forcePacking: false,
+                    forcePacking: $forcePacking,
                     isHalf: $productRow['half_of_product_id'] !== null,
                     halfOfProductId: $productRow['half_of_product_id'],
-                    weightFrom: 0,
-                    weightTo: 0,
-                    type: $productRow['type'],
+                    weightFrom: $weightFrom,
+                    weightTo: $weightTo,
+                    type: $type,
+                    isTurkey: $type === 3 || $type === 4,
+                    turkeyType: $turkeyType,
                 );
             }
 
@@ -102,6 +143,11 @@ final class GetProducts
         }
 
         return $this->products;
+    }
+
+    public function oneById(int $productId): Product
+    {
+        return $this->all()[$productId] ?? throw new \Exception('Product not found');
     }
 
     /**

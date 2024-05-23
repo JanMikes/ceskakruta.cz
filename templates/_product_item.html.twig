@@ -17,9 +17,8 @@
                         <div class="d-flex justify-content-between">
                             <div class="product-price">
                                 {% if products_halves[product.id].turkeyType %}
-                                    Hhmotnost: <strong>{{ calendar[current_year][current_week][products_halves[product.id].turkeyType].weightFrom }} až {{ calendar[current_year][current_week][products_halves[product.id].turkeyType].weightTo }} kg</strong><br>
-                                    {% set piecePrice = (calendar[current_year][current_week][products_halves[product.id].turkeyType].weightFrom + calendar[current_year][current_week][products_halves[product.id].turkeyType].weightTo) / 2 * products_halves[product.id].price %}
-                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ piecePrice|price }}&nbsp;Kč/ks</strong>
+                                    Hhmotnost: <strong>{{ products_halves[product.id].weightFrom }} až {{ products_halves[product.id].weightTo }} kg</strong><br>
+                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ products_halves[product.id].price|price }}&nbsp;Kč/ks</strong>
                                 {% else %}
                                     Cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ products_halves[product.id].price|price }}&nbsp;Kč/kg</strong>
                                 {% endif %}
@@ -44,9 +43,8 @@
                     <div class="d-flex justify-content-between">
                         <div class="product-price">
                             {% if product.turkeyType %}
-                                Hhmotnost: <strong>{{ calendar[current_year][current_week][product.turkeyType].weightFrom }} až {{ calendar[current_year][current_week][product.turkeyType].weightTo }} kg</strong><br>
-                                {% set piecePrice = (calendar[current_year][current_week][product.turkeyType].weightFrom + calendar[current_year][current_week][product.turkeyType].weightTo) / 2 * product.price %}
-                                Orientační cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ piecePrice|price }}&nbsp;Kč/ks</strong>
+                                Hhmotnost: <strong>{{ product.weightFrom }} až {{ product.weightTo }} kg</strong><br>
+                                Orientační cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ product.price|price }}&nbsp;Kč/ks</strong>
                             {% else %}
                                 Cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ product.price|price }}&nbsp;Kč/kg</strong>
                             {% endif %}
@@ -67,21 +65,6 @@
                     {% if products_halves[product.id] is defined %}
                         <div class="toggleable d-none" data-turkey-half-toggle-target="whole">
                             {{ form_start(add_to_cart_forms[products_halves[product.id].id]) }}
-                                {% if products_halves[product.id].canBeSliced %}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="ex-check-{{ products_halves[product.id].id }}1">
-                                        <label class="form-check-label" for="ex-check-{{ products_halves[product.id].id }}1">Nakrájet</label>
-                                    </div>
-                                {% endif %}
-
-                                {% if products_halves[product.id].canBePacked %}
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" id="ex-check-{{ products_halves[product.id].id }}2">
-                                        <label class="form-check-label" for="ex-check-{{ products_halves[product.id].id }}2">Vakuově zabalit</label>
-                                    </div>
-                                {% endif %}
-
-
                                 <input name="{{ field_name(add_to_cart_forms[products_halves[product.id].id].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="1"> {% if products_halves[product.id].turkeyType %}ks{% else %}Kg{% endif %}
 
                                 <button class="ms-2 btn btn-primary btn-sm float-end" type="submit">
@@ -97,15 +80,20 @@
                         {{ form_start(add_to_cart_forms[product.id]) }}
                             {% if product.canBeSliced %}
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="ex-check-{{ product.id }}1">
-                                    <label class="form-check-label" for="ex-check-{{ product.id }}1">Nakrájet</label>
+                                    <input name="{{ field_name(add_to_cart_forms[product.id].slice) }}" class="form-check-input" type="checkbox" id="slice-check-{{ product.id }}1">
+                                    <label class="form-check-label" for="slice-check-{{ product.id }}1">Nakrájet</label>
                                 </div>
                             {% endif %}
 
                             {% if product.canBePacked %}
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="ex-check-{{ product.id }}2">
-                                    <label class="form-check-label" for="ex-check-{{ product.id }}2">Vakuově zabalit</label>
+                                    {% if product.forcePacking %}
+                                        <input type="checkbox" disabled="disabled" checked="checked" class="form-check-input">
+                                        <span class="form-check-label">Lze objednat pouze vakuově balené (+{{ product.packPrice }} kč)</span>
+                                    {% else %}
+                                        <input name="{{ field_name(add_to_cart_forms[product.id].pack) }}" class="form-check-input" type="checkbox" id="pack-check-{{ product.id }}1">
+                                        <label class="form-check-label" for="pack-check-{{ product.id }}1">Vakuově zabalit (+{{ product.packPrice }} kč)</label>
+                                    {% endif %}
                                 </div>
                             {% endif %}
 

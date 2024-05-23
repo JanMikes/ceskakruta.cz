@@ -11,17 +11,26 @@
 
                 {% for item in cart.items %}
                     <div class="d-block d-sm-flex align-items-center py-4 border-bottom">
-                        <img style="max-width: 100px;max-height: 100px;" class="rounded-3 me-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
+                        {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
+                            <img style="max-width: 100px;max-height: 100px;" class="rounded-3 me-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
+                        {% else %}
+                            <img style="max-width: 100px;max-height: 100px;" class="rounded-3 me-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                        {% endif %}
 
                         <div class="text-center text-sm-start">
                             <h3 class="h6 product-title mb-2"><a href="#">{{ item.product.title }}</a></h3>
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
-                                    Hmotnost: {{ calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightFrom }} až {{ calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightTo }}kg<br>
-                                    {% set piecePrice = (calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightFrom + calendar[cart.week['year']][cart.week['week']][item.product.turkeyType].weightTo) / 2 * item.product.price  %}
-                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ piecePrice }} Kč / ks</strong>
+                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
+                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ item.product.price|price }} Kč/ks</strong>
                                 {% else %}
-                                    {{ item.product.price  }} <small>Kč/kg</small>
+                                    <strong>{{ item.product.price  }} <small>Kč/kg</small></strong>
+                                    {% if item.slice %}
+                                        <br>+ Nakrájet
+                                    {% endif %}
+                                    {% if item.pack %}
+                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                    {% endif %}
                                 {% endif %}
                                 <br>
                                 Množství: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
@@ -52,7 +61,7 @@
 
                     <div class="text-center mb-4 py-3 border-bottom">
                         <h2 class="h6 mb-3 pb-1">Orientační cena</h2>
-                        <h3 class="fw-normal">{{ cart.totalPrice.amount }} <small>Kč</small></h3>
+                        <h3 class="fw-normal">{{ cart.totalPrice.amount|price }} <small>Kč</small></h3>
                     </div>
 
                     <div class="mb-4 pb-3">

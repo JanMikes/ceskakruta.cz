@@ -22,7 +22,6 @@ final class ProductsController extends AbstractController
     public function __construct(
         readonly private GetProducts $getProducts,
         readonly private MessageBusInterface $bus,
-        readonly private CartStorage $cartStorage,
         readonly private GetColdProductsCalendar $getColdProductsCalendar,
     ) {}
 
@@ -33,7 +32,7 @@ final class ProductsController extends AbstractController
         /** @var string $routeName */
         $routeName = $request->attributes->get('_route');
 
-        $products = $this->getProducts->all($this->cartStorage->getPickupPlace()); // TODO: delivery
+        $products = $this->getProducts->all();
 
         /** @var array<Form> $forms */
         $forms = [];
@@ -65,8 +64,10 @@ final class ProductsController extends AbstractController
 
                 $this->bus->dispatch(
                     new AddItemToCart(
-                        (int) $data->productId,
-                        $data->quantity,
+                        productId: (int) $data->productId,
+                        quantity: $data->quantity,
+                        slice: $data->slice,
+                        pack: $data->pack,
                     ),
                 );
 

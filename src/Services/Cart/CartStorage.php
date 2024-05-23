@@ -4,12 +4,9 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
-use CeskaKruta\Web\Query\GetColdProductsCalendar;
-use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
-use CeskaKruta\Web\Value\Price;
-use CeskaKruta\Web\Value\ProductInCart;
+use CeskaKruta\Web\Value\Week;
 use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -25,8 +22,6 @@ final class CartStorage
 
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly GetProducts $getProducts,
-        private readonly GetColdProductsCalendar $getColdProductsCalendar,
     ) {
     }
 
@@ -35,66 +30,44 @@ final class CartStorage
         return count($this->getItems());
     }
 
-    public function totalPrice(): Price
-    {
-        $totalPrice = new Price(0);
-        $products = $this->getProducts->all(
-            $this->getPickupPlace(), // TODO: might be delivery
-        );
-        $calendar = $this->getColdProductsCalendar->all();
-        $calendarWeek = $this->getWeek();
-        $week = $calendarWeek['week'];
-        $year = $calendarWeek['year'];
-
-        foreach ($this->getItems() as $item) {
-            $product = $products[$item->product->id];
-
-            $price = $product->price();
-
-            if ($product->isTurkey()) {
-                $weights = $calendar[$year][$week][$product->getTurkeyType()];
-                $price = ($weights->weightFrom + $weights->weightTo) / 2 * $product->price();
-            }
-
-            $totalPrice = $totalPrice->add((int) ($item->quantity * $price));
-        }
-
-        return $totalPrice;
-    }
-
     public function addItem(CartItem $item): void
     {
         $session = $this->requestStack->getSession();
+        $addNew = true;
 
-        /** @var array<mixed> $items */
+        /** @var array<array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool}> $items */
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
-        // TODO: stacking
+        foreach ($items as $key => $existingItem) {
+            $existingCartItem = CartItem::fromArray($existingItem);
 
-        $items[] = $item->toArray();
+            if ($existingCartItem->isSameProduct($item)) {
+                $newQuantity = $existingCartItem->quantity + $item->quantity;
+                $items[$key] = $existingCartItem->withQuantity($newQuantity)->toArray();
+                $addNew = false;
+            }
+        }
+
+        if ($addNew === true) {
+            $items[] = $item->toArray();
+        }
 
         $session->set(self::ITEMS_SESSION_NAME, $items);
     }
 
     /**
-     * @return list<ProductInCart>
+     * @return list<CartItem>
      */
     public function getItems(): array
     {
         $session = $this->requestStack->getSession();
-        $products = $this->getProducts->all($this->getPickupPlace()); // TODO
         $cart = [];
 
-        /** @var list<array{product_id: int}> $items */
+        /** @var list<array{product_id: int, quantity: int|float, slice?: null|bool, pack?: null|bool}> $items */
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
         foreach ($items as $itemData) {
-            $cartItem = CartItem::fromArray($itemData);
-
-            $cart[] = new ProductInCart(
-                $cartItem->quantity,
-                $products[$cartItem->productId],
-            );
+            $cart[] = CartItem::fromArray($itemData);
         }
 
         return $cart;
@@ -117,7 +90,7 @@ final class CartStorage
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
         foreach ($items as $key => $itemData) {
-            if ($keyToRemove === 1 + $key) {
+            if ($keyToRemove === $key + 1) {
                 unset($items[$key]);
 
                 $session->set(self::ITEMS_SESSION_NAME, array_values($items));
@@ -125,6 +98,25 @@ final class CartStorage
                 return;
             }
         }
+    }
+
+    public function changeQuantity(int $keyToChange, int|float $newQuantity): void
+    {
+        $session = $this->requestStack->getSession();
+
+        /** @var array<array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool}> $items */
+        $items = $session->get(self::ITEMS_SESSION_NAME, []);
+
+        foreach ($items as $key => $item) {
+            if ($keyToChange === $key + 1) {
+                $cartItem = CartItem::fromArray($item);
+                $items[$key] = $cartItem->withQuantity($newQuantity)->toArray();
+
+                $session->set(self::ITEMS_SESSION_NAME, $items);
+                return;
+            }
+        }
+
     }
 
     public function storePickupPlace(null|int $placeId): void
@@ -271,16 +263,15 @@ final class CartStorage
         return $lastOrderId;
     }
 
-    /**
-     * @return array{week: int, year: int}
-     */
-    public function getWeek(): array
+    public function getWeek(): Week
     {
+        // TODO
+
         $now = new \DateTimeImmutable();
 
-        return [
-            'week' => (int) $now->format('W'),
-            'year' => (int) $now->format('Y'),
-        ];
+        return new Week(
+            number: (int) $now->format('W'),
+            year: (int) $now->format('Y'),
+        );
     }
 }

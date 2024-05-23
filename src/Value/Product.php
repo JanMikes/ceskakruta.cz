@@ -6,6 +6,9 @@ namespace CeskaKruta\Web\Value;
 
 readonly final class Product
 {
+    public null|float $weightFrom;
+    public null|float $weightTo;
+
     public function __construct(
         public int $id,
         public string $title,
@@ -13,36 +16,31 @@ readonly final class Product
         public null|int $priceForChosenPlace,
         public bool $canBeSliced,
         public bool $canBePacked,
+        public null|int $packPrice,
         public bool $forceSlicing,
         public bool $forcePacking,
         public bool $isHalf,
         public null|int $halfOfProductId,
-        public null|int $weightFrom,
-        public null|int $weightTo,
-        private null|int $type,
+        null|float $weightFrom,
+        null|float $weightTo,
+        public null|int $type,
+        public bool $isTurkey,
+        public null|int $turkeyType,
     ) {
+        $this->weightFrom = ($isHalf === true && $weightFrom !== null) ? $weightFrom / 2 : $weightFrom;
+        $this->weightTo = ($isHalf === true && $weightTo !== null) ? $weightTo / 2 : $weightTo;
     }
 
-    public function price(): int
+    public function price(): int|float
     {
-        return $this->priceForChosenPlace ?? $this->priceFrom;
-    }
+        $pricePerUnit = $this->priceForChosenPlace ?? $this->priceFrom;
 
-    public function isTurkey(): bool
-    {
-        return $this->type === 3 || $this->type === 4;
-    }
+        if ($this->isTurkey) {
+            $averageWeight = ($this->weightFrom + $this->weightTo) / 2;
 
-    public function getTurkeyType(): null|int
-    {
-        if ($this->type === 3) {
-            return 1;
+            return $pricePerUnit * $averageWeight;
         }
 
-        if ($this->type === 4) {
-            return 2;
-        }
-
-        return null;
+        return $pricePerUnit;
     }
 }

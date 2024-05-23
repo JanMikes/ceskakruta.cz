@@ -48,6 +48,7 @@ final class GetPlaces
                     id: $placeRow['id'],
                     name: $placeRow['name'],
                     isDelivery: $placeRow['force_delivery_address'] === 1,
+                    forcePacking: $placeRow['force_packing'] === 1,
                 );
             }
 

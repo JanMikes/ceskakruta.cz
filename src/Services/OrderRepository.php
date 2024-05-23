@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services;
 
-use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Services\Cart\CartService;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 
@@ -12,7 +12,7 @@ readonly final class OrderRepository
 {
     public function __construct(
         private Connection $connection,
-        private CartStorage $cartStorage,
+        private CartService $cartService,
     ) {
     }
 
@@ -22,17 +22,17 @@ readonly final class OrderRepository
 
         $this->connection->beginTransaction();
         try {
-            $date = $this->cartStorage->getDate();
+            $date = $this->cartService->getDate();
             assert($date !== null);
 
-            $orderData = $this->cartStorage->getOrderData();
+            $orderData = $this->cartService->getOrderData();
             assert($orderData !== null);
 
             $now = new DateTimeImmutable();
 
             $this->connection->insert('`order`', [
                 'user_id'               => null, // TODO
-                'place_id'              => $this->cartStorage->getPickupPlace(), // TODO - muze byt delivery
+                'place_id'              => $this->cartService->getPickupPlace(), // TODO - muze byt delivery
                 'date'                  => $date->format('Y-m-d'),
                 'email'                 => $orderData->email,
                 'phone'                 => $orderData->phone,
@@ -42,25 +42,25 @@ readonly final class OrderRepository
                 'delivery_city'         => null, // TODO
                 'delivery_postal_code'  => null, // TODO
                 'note'                  => $orderData->note,
-                'price_total'           => $this->cartStorage->totalPrice()->amount,
+                'price_total'           => $this->cartService->totalPrice()->amount,
                 'ins_dt'                => $now->format('Y-m-d H:i:s'),
             ]);
 
             $orderId = (int) $this->connection->lastInsertId();
 
-            foreach ($this->cartStorage->getItems() as $item) {
+            foreach ($this->cartService->getItems() as $item) {
                 $this->connection->insert('order_item', [
                     'order_id'         => $orderId,
                     'product_id'       => $item->product->id,
-                    'product_tp_id'    => null, // TODO
-                    'is_sliced'        => null, // TODO
-                    'is_packed'        => null, // TODO
+                    'product_tp_id'    => $item->product->turkeyType,
+                    'is_sliced'        => $item->slice,
+                    'is_packed'        => $item->pack,
                     'amount'           => $item->quantity,
                     'price_per_unit'   => $item->product->price(),
-                    'price_packing'    => 0, // TODO
+                    'price_packing'    => $item->product->packPrice ?? 0,
                     'price_total'      => $item->product->price() * $item->quantity,
-                    'weight_from'      => null, // TODO
-                    'weight_to'        => null, // TODO
+                    'weight_from'      => $item->product->weightFrom,
+                    'weight_to'        => $item->product->weightTo,
                     'ins_dt'           => $now->format('Y-m-d H:i:s'),
                 ]);
             }

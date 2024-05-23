@@ -11,36 +11,53 @@ readonly final class CartItem
     public function __construct(
         public int $productId,
         public int|float $quantity,
+        public null|bool $slice = null,
+        public null|bool $pack = null,
     ) {
     }
 
 
     /**
-     * @return array{product_id: int, quantity: int|float}
+     * @return array{product_id: int, quantity: int|float, slice: null|bool, pack: null|bool}
      */
     public function toArray(): array
     {
         return [
             'product_id' => $this->productId,
             'quantity' => $this->quantity,
+            'slice' => $this->slice,
+            'pack' => $this->pack,
         ];
     }
 
 
     /**
-     * @param array{product_id: int, quantity?: int|float} $data
+     * @param array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool} $data
      */
     public static function fromArray(array $data): self
     {
         return new CartItem(
-            $data['product_id'],
-            $data['quantity'] ?? 1,
+            productId: $data['product_id'],
+            quantity: $data['quantity'] ?? 1,
+            slice: $data['slice'] ?? null,
+            pack: $data['pack'] ?? null,
         );
     }
 
-
-    public function isSame(CartItem $other): bool
+    public function isSameProduct(CartItem $other): bool
     {
-        return $this->toArray() === $other->toArray();
+        return $this->productId === $other->productId
+            && $this->slice === $other->slice
+            && $this->pack === $other->pack;
+    }
+
+    public function withQuantity(int|float $newQuantity): self
+    {
+        return new self(
+            $this->productId,
+            $newQuantity,
+            $this->slice,
+            $this->pack,
+        );
     }
 }

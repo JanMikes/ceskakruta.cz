@@ -93,8 +93,8 @@ final class TwigExtension extends AbstractExtension
         };
     }
 
-    public function formatPrice(float|int $price): int
+    public function formatPrice(float|int $price): string
     {
-        return (int) $price;
+        return number_format($price, thousands_separator: ' ');
     }
 }

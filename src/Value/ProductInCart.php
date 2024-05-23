@@ -9,6 +9,8 @@ readonly final class ProductInCart
     public function __construct(
         public float|int $quantity,
         public Product $product,
+        public null|bool $slice = null,
+        public null|bool $pack = null,
     ) {
     }
 }

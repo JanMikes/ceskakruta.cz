@@ -10,6 +10,7 @@ readonly final class Place
         public int $id,
         public string $name,
         public bool $isDelivery,
+        public bool $forcePacking,
     ) {
     }
 }
