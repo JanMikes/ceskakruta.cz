@@ -6,7 +6,6 @@ namespace CeskaKruta\Web\Controller;
 use CeskaKruta\Web\FormData\AddToCartFormData;
 use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
-use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +33,7 @@ final class ProductDetailController extends AbstractController
             assert($addToCartFormData instanceof AddToCartFormData);
 
             $this->messageBus->dispatch(
-                new AddItemToCart(1, 1)
+                new AddItemToCart(1, 1, null, null)
             );
 
             return $this->redirectToRoute('product_detail', ['productId' => $productId]);
