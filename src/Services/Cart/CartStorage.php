@@ -73,6 +73,13 @@ final class CartStorage
         return $cart;
     }
 
+    public function clearItems(): void
+    {
+        $session = $this->requestStack->getSession();
+
+        $session->remove(self::ITEMS_SESSION_NAME);
+    }
+
     public function clear(): void
     {
         $session = $this->requestStack->getSession();
