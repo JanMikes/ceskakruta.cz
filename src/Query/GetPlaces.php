@@ -41,6 +41,13 @@ final class GetPlaces
                  *     name: string,
                  *     force_delivery_address: int,
                  *     force_packing: int,
+                 *     allow_order_day_1_days_before: null|int,
+                 *     allow_order_day_2_days_before: null|int,
+                 *     allow_order_day_3_days_before: null|int,
+                 *     allow_order_day_4_days_before: null|int,
+                 *     allow_order_day_5_days_before: null|int,
+                 *     allow_order_day_6_days_before: null|int,
+                 *     allow_order_day_7_days_before: null|int,
                  * } $placeRow
                  */
 
@@ -49,6 +56,13 @@ final class GetPlaces
                     name: $placeRow['name'],
                     isDelivery: $placeRow['force_delivery_address'] === 1,
                     forcePacking: $placeRow['force_packing'] === 1,
+                    day1AllowedDaysBefore: $placeRow['allow_order_day_1_days_before'],
+                    day2AllowedDaysBefore: $placeRow['allow_order_day_2_days_before'],
+                    day3AllowedDaysBefore: $placeRow['allow_order_day_3_days_before'],
+                    day4AllowedDaysBefore: $placeRow['allow_order_day_4_days_before'],
+                    day5AllowedDaysBefore: $placeRow['allow_order_day_5_days_before'],
+                    day6AllowedDaysBefore: $placeRow['allow_order_day_6_days_before'],
+                    day7AllowedDaysBefore: $placeRow['allow_order_day_7_days_before'],
                 );
             }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
+use CeskaKruta\Web\Query\GetAvailableDays;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\Price;
@@ -16,7 +17,8 @@ readonly final class CartService
 {
     public function __construct(
         private CartStorage $storage,
-        private GetProducts $getProducts, private CartStorage $cartStorage,
+        private GetProducts $getProducts,
+        private GetAvailableDays $getAvailableDays,
     ) {
     }
 
@@ -37,7 +39,18 @@ readonly final class CartService
 
     public function getDate(): null|DateTimeImmutable
     {
-        return $this->storage->getDate();
+        $date = $this->storage->getDate();
+        $placeId = $this->getPickupPlace(); // TODO delivery
+
+        if ($date === null || $placeId === null) {
+            return null;
+        }
+
+        if ($this->getAvailableDays->isDateAvailable($date, $placeId) === false) {
+            return null;
+        }
+
+        return $date;
     }
 
     public function totalPrice(): Price
@@ -67,7 +80,7 @@ readonly final class CartService
         $products = $this->getProducts->all();
         $items = [];
 
-        foreach ($this->cartStorage->getItems() as $item) {
+        foreach ($this->storage->getItems() as $item) {
             $items[] = new ProductInCart(
                 $item->quantity,
                 $products[$item->productId],

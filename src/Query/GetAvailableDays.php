@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Query;
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
-use CeskaKruta\Web\Value\Place;
 use DateTimeImmutable;
 
 readonly final class GetAvailableDays
@@ -13,6 +12,7 @@ readonly final class GetAvailableDays
     public function __construct(
         private GetPlaces $getPlaces,
         private CartStorage $cartStorage,
+        private GetPlaceClosedDays $getPlaceClosedDays,
     ) {
     }
 
@@ -21,48 +21,60 @@ readonly final class GetAvailableDays
      */
     public function forPlace(int $placeId): array
     {
-        $place = $this->getPlaces->oneById($placeId);
-
-        $lockedWeek = $this->cartStorage->getLockedWeek();
-
         $availableDays = [];
         $date = new DateTimeImmutable(); // začneme dnešním dnem
 
-        $iterations = 0;
-        while (count($availableDays) < 5) {
-            if ($this->isDateAvailable($date, $place)) {
+        for ($i=0; $i<=365; $i++) {
+
+            if ($this->isDateAvailable($date, $placeId)) {
                 $availableDays[] = $date;
             }
 
             $date = $date->modify('+1 day');
-            $iterations++;
-
-            // failsafe
-            if ($iterations > 50) {
-                break;
-            }
         }
 
         return $availableDays;
     }
 
-    public function isDateAvailable(DateTimeImmutable $date, Place $place): bool
+    public function isDateAvailable(DateTimeImmutable $date, int $placeId): bool
     {
-        $weekDay = (int) $date->format('w');
+        $place = $this->getPlaces->oneById($placeId);
+        $lockedWeek = $this->cartStorage->getLockedWeek();
 
-        // Dny v týdnu k vynechání: 0 = neděle, 1 = pondělí, ..., 6 = sobota
-        $skipWeekDays = [1, 6, 0]; // Příklad pro vynechání pondělí, soboty a neděle
+        if ($lockedWeek !== null) {
+            if ($lockedWeek->year !== (int) $date->format('Y') || $lockedWeek->number !== (int) $date->format('W')) {
+                return false;
+            }
+        }
 
-        // TODO: svatky
-        $skipDates = [
-            '2024-01-01',
-            '2024-05-08',
+        $today = new DateTimeImmutable();
+        $weekDay = (int) $date->format('w'); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
+        $weekDay = $weekDay === 0 ? 7 : $weekDay; // Převedeme neděli na 7
+
+        // Zabalíme všechny proměnné pro dny do pole
+        $allowDaysBefore = [
+            1 => $place->day1AllowedDaysBefore,
+            2 => $place->day2AllowedDaysBefore,
+            3 => $place->day3AllowedDaysBefore,
+            4 => $place->day4AllowedDaysBefore,
+            5 => $place->day5AllowedDaysBefore,
+            6 => $place->day6AllowedDaysBefore,
+            7 => $place->day7AllowedDaysBefore,
         ];
 
-        if (in_array($weekDay, $skipWeekDays) || in_array($date->format('Y-m-d'), $skipDates)) {
+        $daysBefore = $allowDaysBefore[$weekDay] ?? null;
+
+        if ($daysBefore === null) {
             return false;
         }
 
-        return true;
+        $skipDates = $this->getPlaceClosedDays->forPlace($placeId);
+
+        if (in_array($date->format('Y-m-d'), $skipDates, true)) {
+            return false;
+        }
+
+        // Zkontrolujeme, zda je datum dostatečně daleko od dnešního dne
+        return $date->diff($today)->days >= $daysBefore;
     }
 }

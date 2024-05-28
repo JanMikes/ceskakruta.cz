@@ -11,6 +11,13 @@ readonly final class Place
         public string $name,
         public bool $isDelivery,
         public bool $forcePacking,
+        public null|int $day1AllowedDaysBefore,
+        public null|int $day2AllowedDaysBefore,
+        public null|int $day3AllowedDaysBefore,
+        public null|int $day4AllowedDaysBefore,
+        public null|int $day5AllowedDaysBefore,
+        public null|int $day6AllowedDaysBefore,
+        public null|int $day7AllowedDaysBefore,
     ) {
     }
 }
