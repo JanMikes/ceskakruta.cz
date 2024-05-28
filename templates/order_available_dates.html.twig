@@ -9,19 +9,25 @@
         {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
         {% if cart.date %}
-            Vybráno:
-            <div>
-                {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
-            </div>
+            <p>
+                Vybráno: <strong>{{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}</strong>
+            </p>
         {% endif %}
 
-        {% for available_date in available_days %}
-            <a data-turbo-prefetch="false" href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}">
-                <div>
-                    {{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}
-                </div>
-            </a>
-        {% endfor %}
+        <div class="list-group">
+            {% for available_date in available_days %}
+                <a data-turbo-prefetch="false" href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}" class="list-group-item list-group-item-action p-3 {{ cart.date and cart.date.format('Y-m-d') == available_date.format('Y-m-d') ? 'active list-group-item-primary' }}">
+                    <div class="d-flex w-100 justify-content-between">
+                        {% if cart.date and cart.date.format('Y-m-d') == available_date.format('Y-m-d') %}
+                            <h6 class="m-0" style="color: #fff;">{{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}</h6>
+                            <small>Vybráno</small>
+                        {% else %}
+                            <h6 class="m-0">{{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}</h6>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
 
         <p class="text-center mt-3">
             {% if cart.date %}

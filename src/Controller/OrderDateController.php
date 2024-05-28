@@ -31,7 +31,7 @@ final class OrderDateController extends AbstractController
         if ($placeId === null) {
             $this->addFlash('warning', 'Pro možnost výběru termínu, prosím zvolte první způsob doručení - osobní odběr nebo rozvoz.');
 
-            return $this->redirectToRoute('order_available_dates');
+            return $this->redirectToRoute('order_pickup_places');
         }
 
         if ($date !== null) {

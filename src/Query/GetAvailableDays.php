@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Query;
 
+use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Value\Place;
 use DateTimeImmutable;
 
@@ -11,6 +12,7 @@ readonly final class GetAvailableDays
 {
     public function __construct(
         private GetPlaces $getPlaces,
+        private CartStorage $cartStorage,
     ) {
     }
 
@@ -20,6 +22,8 @@ readonly final class GetAvailableDays
     public function forPlace(int $placeId): array
     {
         $place = $this->getPlaces->oneById($placeId);
+
+        $lockedWeek = $this->cartStorage->getLockedWeek();
 
         $availableDays = [];
         $date = new DateTimeImmutable(); // začneme dnešním dnem
@@ -49,6 +53,7 @@ readonly final class GetAvailableDays
         // Dny v týdnu k vynechání: 0 = neděle, 1 = pondělí, ..., 6 = sobota
         $skipWeekDays = [1, 6, 0]; // Příklad pro vynechání pondělí, soboty a neděle
 
+        // TODO: svatky
         $skipDates = [
             '2024-01-01',
             '2024-05-08',
