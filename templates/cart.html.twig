@@ -94,7 +94,12 @@
                             <h3 class="h5 fw-normal mt-3 mb-0">
                                 Chybí datum objednávky
                             </h3>
+
                             <a class="small" href="{{ path('order_available_dates') }}">Vybrat</a>
+                        {% endif %}
+
+                        {% if cart.lockedWeek is null and cart.containsTurkey %}
+                            <p><small class="text-muted">Změníte-li datum, změní se i váha..</small></p>
                         {% endif %}
                     </div>
 

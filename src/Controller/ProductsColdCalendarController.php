@@ -8,6 +8,7 @@ use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
+use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
@@ -22,7 +23,9 @@ final class ProductsColdCalendarController extends AbstractController
     public function __construct(
         readonly private GetColdProductsCalendar $getColdProductsCalendar,
         readonly private GetProducts $getProducts,
-        readonly private MessageBusInterface $bus, private readonly CartStorage $cartStorage,
+        readonly private MessageBusInterface $bus,
+        readonly private CartStorage $cartStorage,
+        readonly private CartService $cartService,
     ) {}
 
     #[Route(path: '/nase-nabidka/kruty-a-krocani/vahovy-kalendar', name: 'products_cold_calendar', methods: ['GET', 'POST'])]
@@ -61,6 +64,11 @@ final class ProductsColdCalendarController extends AbstractController
                 $data = $requestForm->getData();
                 assert($data instanceof AddToCartFormData);
 
+                if ($data->week !== null && $data->year !== null) {
+                    $this->cartService->removeAllTurkeys();
+                    // TODO: flash??
+                }
+
                 $this->bus->dispatch(
                     new AddItemToCart(
                         productId: (int) $data->productId,
@@ -73,9 +81,6 @@ final class ProductsColdCalendarController extends AbstractController
                 $this->addFlash('success', 'Přidáno do košíku');
 
                 $this->cartStorage->storeLockedWeek($data->year, $data->week);
-                if ($data->week !== null && $data->year !== null) {
-                    // TODO: flash??
-                }
 
                 return $this->redirectToRoute('products_cold_calendar');
             }

@@ -26,7 +26,7 @@ readonly final class CartService
 
     public function itemsCount(): int
     {
-        return $this->storage->itemsCount();
+        return count($this->getItems());
     }
 
     public function getPickupPlace(): null|int
@@ -116,5 +116,25 @@ readonly final class CartService
     public function getWeek(): Week
     {
         return $this->storage->getWeek();
+    }
+
+    public function containsTurkey(): bool
+    {
+        foreach ($this->getItems() as $item) {
+            if ($item->product->isTurkey === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function removeAllTurkeys(): void
+    {
+        foreach ($this->getItems() as $key => $item) {
+            if ($item->product->isTurkey === true) {
+                $this->storage->removeItem($key);
+            }
+        }
     }
 }
