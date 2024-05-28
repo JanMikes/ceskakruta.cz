@@ -114,4 +114,9 @@ readonly final class CartService
     {
         return $this->storage->getLockedWeek();
     }
+
+    public function getWeek(): Week
+    {
+        return $this->storage->getWeek();
+    }
 }

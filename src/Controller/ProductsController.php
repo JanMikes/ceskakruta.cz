@@ -8,7 +8,6 @@ use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
-use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
@@ -77,14 +76,10 @@ final class ProductsController extends AbstractController
             }
         }
 
-        $now = new \DateTimeImmutable();
-
         return $this->render($routeName === 'products' ? 'products.html.twig' : 'products_cold.html.twig', [
             'products' => $products,
             'products_halves' => $this->getProducts->getHalves(),
             'add_to_cart_forms' =>  $formViews,
-            'current_year' => $now->format('Y'),
-            'current_week' => $now->format('W'),
             'calendar' => $this->getColdProductsCalendar->all(),
         ]);
     }

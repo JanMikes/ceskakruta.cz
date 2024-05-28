@@ -23,6 +23,12 @@
                             <i class="ci-arrow-right"></i>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ path('products_cold_calendar') }}">
+                            Váhový kalendář
+                            <i class="ci-arrow-down"></i>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -47,7 +53,7 @@
 
                 <div class="row">
                     {% for product in products %}
-                        {% if calendar[current_year][current_week][product.turkeyType] is defined %}
+                        {% if calendar[cart.week.year][cart.week.number][product.turkeyType] is defined %}
                             {{ include('_product_item.html.twig') }}
                         {% endif %}
                     {% endfor %}

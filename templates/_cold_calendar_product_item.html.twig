@@ -107,7 +107,7 @@
                         {% if week == current_week and year == current_year %}
                             Do košíku
                         {% else %}
-                            Objednat na<br>tento týden
+                            Objednat na<br>{{ week }}. týden
                         {% endif %}
                     </button>
                 {{ form_end(add_to_cart_forms[product.id]) }}
