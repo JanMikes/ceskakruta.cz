@@ -1,10 +1,28 @@
+<div class="modal fade" id="{{ 'product-modal-' ~ product.id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ product.title }}</h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
+                    <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 150px;" alt="Product">
+                {% else %}
+                    <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% if not product.isHalf %}
     <div class="col-sm-4 my-3" data-controller="turkey-half-toggle">
         <div class="card shadow">
             {% if products_halves[product.id] is defined %}
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
                     <div style="height: 150px;" class="overflow-hidden">
-                        <a class="card-img-top d-block text-center" href="#">
+                        <a class="card-img-top d-block text-center" href="#" data-bs-toggle="modal" data-bs-target="#product-modal-{{ products_halves[product.id].id }}">
                             {% if asset_exists('img/produkty/' ~ products_halves[product.id].id ~ '.png') %}
                                 <img src="{{ asset('img/produkty/' ~ products_halves[product.id].id ~ '.png') }}" style="max-height: 150px;" alt="Product">
                             {% else %}
@@ -30,7 +48,7 @@
 
             <div class="toggleable visible" data-turkey-half-toggle-target="whole">
                 <div style="height: 150px;" class="overflow-hidden">
-                    <a class="card-img-top d-block text-center" href="#">
+                    <a class="card-img-top d-block text-center" href="#" data-bs-toggle="modal" data-bs-target="#product-modal-{{ product.id }}">
                         {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
                             <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 150px;" alt="Product">
                         {% else %}
