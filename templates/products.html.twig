@@ -53,7 +53,9 @@
 
                     {% for product in products %}
                         {% if product.turkeyType %}
-                            {{ include('_product_item.html.twig') }}
+                            {% if calendar[cart.week.year][cart.week.number][product.turkeyType] is defined %}
+                                {{ include('_product_item.html.twig') }}
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </div>

@@ -55,6 +55,36 @@ readonly final class CartService
         return $date;
     }
 
+    /**
+     * @return list<ProductInCart>
+     */
+    public function getItems(): array
+    {
+        $products = $this->getProducts->all();
+        $calendar = $this->getColdProductsCalendar->all();
+        $items = [];
+        $week = $this->getWeek();
+
+        foreach ($this->storage->getItems() as $key => $item) {
+            $product = $products[$item->productId];
+
+            // check calendar, if any of products is not available then remove them
+            if ($product->isTurkey === true && ($calendar[$week->year][$week->number][$product->turkeyType] ?? null) === null) {
+                $this->storage->removeItem($key);
+                continue;
+            }
+
+            $items[] = new ProductInCart(
+                $item->quantity,
+                $product,
+                $item->slice,
+                $item->pack,
+            );
+        }
+
+        return $items;
+    }
+
     public function totalPrice(): Price
     {
         $totalPrice = new Price(0);
@@ -71,38 +101,6 @@ readonly final class CartService
         }
 
         return $totalPrice;
-    }
-
-    /**
-     * @return list<ProductInCart>
-     */
-    public function getItems(): array
-    {
-        $products = $this->getProducts->all();
-        $calendar = $this->getColdProductsCalendar->all();
-        $items = [];
-        $date = $this->storage->getDate();
-
-        foreach ($this->storage->getItems() as $key => $item) {
-            $product = $products[$item->productId];
-
-            // check calendar, if any of products is not available then remove them
-            if ($date !== null && $product->isTurkey === true) {
-                if (isset($calendar[$date->format('Y')][$date->format('W')][$product->turkeyType]) === false) {
-                    $this->storage->removeItem($key);
-                    continue;
-                }
-            }
-
-            $items[] = new ProductInCart(
-                $item->quantity,
-                $product,
-                $item->slice,
-                $item->pack,
-            );
-        }
-
-        return $items;
     }
 
     public function getOrderData(): null|OrderFormData

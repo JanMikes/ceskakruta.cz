@@ -76,10 +76,14 @@ final class ProductsController extends AbstractController
             }
         }
 
+        $now = new \DateTimeImmutable();
+
         return $this->render($routeName === 'products' ? 'products.html.twig' : 'products_cold.html.twig', [
             'products' => $products,
             'products_halves' => $this->getProducts->getHalves(),
             'add_to_cart_forms' =>  $formViews,
+            'current_year' => $now->format('Y'),
+            'current_week' => $now->format('W'),
             'calendar' => $this->getColdProductsCalendar->all(),
         ]);
     }

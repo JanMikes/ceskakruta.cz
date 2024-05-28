@@ -393,16 +393,20 @@ main {
     overflow: hidden;
     text-align: right;
 
+    &.active {
+        background: #fe4042;
+    }
+
     &::before {
         content: '';
         display: block;
         position: absolute;
         background: #fff;
-        width: 150px;
-        height: 150px;
-        left: -150px;
+        width: 180px;
+        height: 180px;
+        left: -180px;
         top: 50%;
-        margin-top: -75px;
+        margin-top: -90px;
         transform: rotate(45deg);
     }
 }

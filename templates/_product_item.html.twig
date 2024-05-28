@@ -36,6 +36,9 @@
                             <div class="product-price">
                                 {% if products_halves[product.id].turkeyType %}
                                     Hhmotnost: <strong>{{ products_halves[product.id].weightFrom }} až {{ products_halves[product.id].weightTo }} kg</strong><br>
+                                    {% if cart.week.number is not same as current_week %}
+                                        <small class="text-muted">({{ cart.week.number }}. týden {{ firstDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }} - {{ lastDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }})</small><br>
+                                    {% endif %}
                                     Orientační cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ products_halves[product.id].price|price }}&nbsp;Kč/ks</strong>
                                 {% else %}
                                     Cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ products_halves[product.id].price|price }}&nbsp;Kč/kg</strong>
@@ -62,6 +65,9 @@
                         <div class="product-price">
                             {% if product.turkeyType %}
                                 Hhmotnost: <strong>{{ product.weightFrom }} až {{ product.weightTo }} kg</strong><br>
+                                {% if cart.week.number is not same as current_week %}
+                                    <small class="text-muted">({{ cart.week.number }}. týden {{ firstDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }} - {{ lastDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }})</small><br>
+                                {% endif %}
                                 Orientační cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ product.price|price }}&nbsp;Kč/ks</strong>
                             {% else %}
                                 Cena{% if cart.pickupPlace is null %} od{% endif %}:&nbsp;<strong>{{ product.price|price }}&nbsp;Kč/kg</strong>
