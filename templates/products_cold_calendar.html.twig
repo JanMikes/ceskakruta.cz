@@ -20,13 +20,13 @@
         <h2 class="h4 mt-4">Aktuální váhy pro tento týden</h2>
 
         <div class="row calendar-row mb-3">
-            <div class="col-3 pe-0">
+            <div class="col-md-3 pe-0">
                 <span class="ribbon">
                     <strong>{{ current_week }}. týden:</strong> {{ firstDayOfWeek(current_year, current_week).format('d.m.') }} - {{ lastDayOfWeek(current_year, current_week).format('d.m.') }}
                 </span>
             </div>
 
-            <div class="col-9 ps-0">
+            <div class="col-md-9 ps-0">
                 <div class="table-responsive shadow">
                     <table class="table">
                         <tbody>
@@ -57,13 +57,13 @@
             {% for week, types in weeks %}
                 {% if calendar[year][week] is defined and (current_week != week or current_year != year) %}
                     <div class="row calendar-row mb-3">
-                        <div class="col-3 pe-0">
+                        <div class="col-md-3 pe-0">
                             <span class="ribbon">
                                 <strong>{{ week }}. týden:</strong> {{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
                             </span>
                         </div>
 
-                        <div class="col-9 ps-0">
+                        <div class="col-md-9 ps-0">
                             <div class="table-responsive shadow">
                                 <table class="table">
                                     <tbody>

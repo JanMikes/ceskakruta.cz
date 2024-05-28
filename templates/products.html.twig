@@ -10,7 +10,7 @@
         {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
         <div class="row">
-            <div class="col-3 sales-places-nav pe-0">
+            <div class="col-md-3 sales-places-nav pe-0">
                 <ul class="list-unstyled">
                     <li>
                         <a class="active" href="{{ path('products') }}">
@@ -27,7 +27,7 @@
                 </ul>
             </div>
 
-            <div class="col-9 ps-5">
+            <div class="col-md-9 ps-5">
 
                 {% if cart.pickupPlace is null %}
                     <div class="alert alert-warning d-flex" role="alert">

@@ -9,7 +9,7 @@
         {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
         <div class="row">
-            <div class="col-3 sales-places-nav pe-0">
+            <div class="col-md-3 sales-places-nav pe-0">
                 <ul class="list-unstyled">
                     <li>
                         <a href="{{ path('products') }}">
@@ -26,7 +26,7 @@
                 </ul>
             </div>
 
-            <div class="col-9 ps-5">
+            <div class="col-md-9 ps-5">
 
                 <div class="alert alert-accent d-flex" role="alert">
                     <div class="alert-icon">
@@ -52,7 +52,7 @@
                         {% endif %}
                     {% endfor %}
 
-                    <div class="col-4 my-3">
+                    <div class="col-sm-4 my-3">
                         <a href="{{ path('products_cold_calendar') }}">
                             <div class="card text-center">
                                 <span class="my-3 card-img-top d-block text-center overflow-hidden" href="#">
