@@ -6,6 +6,7 @@ namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Query\GetAvailableDays;
+use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\Price;
@@ -19,6 +20,7 @@ readonly final class CartService
         private CartStorage $storage,
         private GetProducts $getProducts,
         private GetAvailableDays $getAvailableDays,
+        private GetColdProductsCalendar $getColdProductsCalendar,
     ) {
     }
 
@@ -56,10 +58,9 @@ readonly final class CartService
     public function totalPrice(): Price
     {
         $totalPrice = new Price(0);
-        $products = $this->getProducts->all();
 
-        foreach ($this->storage->getItems() as $item) {
-            $product = $products[$item->productId];
+        foreach ($this->getItems() as $item) {
+            $product = $item->product;
             $unitPrice = $product->price();
 
             $totalPrice = $totalPrice->add((int) ($item->quantity * $unitPrice));
@@ -78,12 +79,24 @@ readonly final class CartService
     public function getItems(): array
     {
         $products = $this->getProducts->all();
+        $calendar = $this->getColdProductsCalendar->all();
         $items = [];
+        $date = $this->storage->getDate();
 
-        foreach ($this->storage->getItems() as $item) {
+        foreach ($this->storage->getItems() as $key => $item) {
+            $product = $products[$item->productId];
+
+            // check calendar, if any of products is not available then remove them
+            if ($date !== null && $product->isTurkey === true) {
+                if (isset($calendar[$date->format('Y')][$date->format('W')][$product->turkeyType]) === false) {
+                    $this->storage->removeItem($key);
+                    continue;
+                }
+            }
+
             $items[] = new ProductInCart(
                 $item->quantity,
-                $products[$item->productId],
+                $product,
                 $item->slice,
                 $item->pack,
             );

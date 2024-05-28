@@ -290,11 +290,15 @@ final class CartStorage
             return $lockedWeek;
         }
 
-        $now = new \DateTimeImmutable();
+        $date = $this->getDate();
+
+        if ($date === null) {
+            $date = new \DateTimeImmutable();
+        }
 
         return new Week(
-            number: (int) $now->format('W'),
-            year: (int) $now->format('Y'),
+            number: (int) $date->format('W'),
+            year: (int) $date->format('Y'),
         );
     }
 }

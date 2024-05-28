@@ -20,11 +20,13 @@ readonly final class ChooseOrderDateHandler
 
     public function __invoke(ChooseOrderDate $message): void
     {
-        if ($this->getAvailableDays->isDateAvailable($message->date, $message->placeId) === false) {
+        $date = $message->date;
+
+        if ($this->getAvailableDays->isDateAvailable($date, $message->placeId) === false) {
             // TODO: own exception
             throw new \Exception('unavailable day .. todo');
         }
 
-        $this->cartStorage->storeDate($message->date);
+        $this->cartStorage->storeDate($date);
     }
 }

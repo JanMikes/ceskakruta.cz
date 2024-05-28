@@ -5,7 +5,6 @@ namespace CeskaKruta\Web\Query;
 
 use CeskaKruta\Web\Value\ColdProductCalendar;
 use CeskaKruta\Web\Value\ColdProductType;
-use CeskaKruta\Web\Value\Place;
 use Doctrine\DBAL\Connection;
 
 final class GetColdProductsCalendar
