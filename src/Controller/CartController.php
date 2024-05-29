@@ -54,8 +54,6 @@ final class CartController extends AbstractController
                 return $this->redirectToRoute('order_recapitulation');
             }
 
-            // TODO: what if place or date is empty
-
             return $this->redirectToRoute('cart');
         }
 

@@ -9,6 +9,7 @@ use CeskaKruta\Web\FormData\SubscribeNewsletterFormData;
 use CeskaKruta\Web\FormType\DeliveryFormType;
 use CeskaKruta\Web\FormType\SubscribeNewsletterFormType;
 use CeskaKruta\Web\Message\SubscribeNewsletter;
+use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,7 @@ final class HomepageController extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
+        private readonly CartStorage $cartStorage,
     ) {
     }
 
@@ -52,7 +54,7 @@ final class HomepageController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $deliveryFormData = new DeliveryFormData(); // TODO
+        $deliveryFormData = DeliveryFormData::fromAddress($this->cartStorage->getDeliveryAddress());
         $deliveryForm = $this->createForm(DeliveryFormType::class, $deliveryFormData, [
             'action' => $this->generateUrl('order_delivery'),
         ]);

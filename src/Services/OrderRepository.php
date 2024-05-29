@@ -28,19 +28,24 @@ readonly final class OrderRepository
             $orderData = $this->cartService->getOrderData();
             assert($orderData !== null);
 
+            $place = $this->cartService->getPlace();
+            assert($place !== null);
+
+            $deliveryAddress = $this->cartService->getDeliveryAddress();
+
             $now = new DateTimeImmutable();
 
             $this->connection->insert('`order`', [
                 'user_id'               => null, // TODO
-                'place_id'              => $this->cartService->getPickupPlace(), // TODO - muze byt delivery
+                'place_id'              => $place->id,
                 'date'                  => $date->format('Y-m-d'),
                 'email'                 => $orderData->email,
                 'phone'                 => $orderData->phone,
                 'name'                  => $orderData->name,
-                'pay_by_card'           => false, // TODO
-                'delivery_street'       => null, // TODO
-                'delivery_city'         => null, // TODO
-                'delivery_postal_code'  => null, // TODO
+                'pay_by_card'           => $orderData->payByCard,
+                'delivery_street'       => $deliveryAddress?->street,
+                'delivery_city'         => $deliveryAddress?->city,
+                'delivery_postal_code'  => $deliveryAddress?->postalCode,
                 'note'                  => $orderData->note,
                 'price_total'           => $this->cartService->totalPrice()->amount,
                 'ins_dt'                => $now->format('Y-m-d H:i:s'),

@@ -7,6 +7,7 @@ namespace CeskaKruta\Web\Controller;
 use CeskaKruta\Web\Message\ChooseOrderDate;
 use CeskaKruta\Web\Message\ChoosePickupPlace;
 use CeskaKruta\Web\Query\GetAvailableDays;
+use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ final class OrderDateController extends AbstractController
 {
     public function __construct(
         readonly private CartStorage $cartStorage,
+        readonly private CartService $cartService,
         readonly private GetAvailableDays $getAvailableDays,
         readonly private MessageBusInterface $bus,
     ) {
@@ -26,9 +28,9 @@ final class OrderDateController extends AbstractController
     #[Route(path: '/vybrat-datum-objednavky/{date}', name: 'choose_date', methods: ['GET'])]
     public function __invoke(null|string $date): Response
     {
-        $placeId = $this->cartStorage->getPickupPlace();
+        $place = $this->cartService->getPlace();
 
-        if ($placeId === null) {
+        if ($place === null) {
             $this->addFlash('warning', 'Pro možnost výběru termínu, prosím zvolte první způsob doručení - osobní odběr nebo rozvoz.');
 
             return $this->redirectToRoute('order_pickup_places');
@@ -39,7 +41,7 @@ final class OrderDateController extends AbstractController
 
             if ($chosenDate !== null) {
                 $this->bus->dispatch(
-                    new ChooseOrderDate($placeId, $chosenDate),
+                    new ChooseOrderDate($place->id, $chosenDate),
                 );
 
                 $this->addFlash('success', 'Zvolen datum');
@@ -48,10 +50,8 @@ final class OrderDateController extends AbstractController
             }
         }
 
-        // TODO: for delivery address -> maybe placeId unified in the future
-
         return $this->render('order_available_dates.html.twig', [
-            'available_days' => $this->getAvailableDays->forPlace($placeId),
+            'available_days' => $this->getAvailableDays->forPlace($place->id),
         ]);
     }
 }

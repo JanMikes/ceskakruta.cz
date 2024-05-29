@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class CartStorage
 {
     private const PICKUP_PLACE_SESSION_NAME = 'pickup_place';
+    private const DELIVERY_PLACE_SESSION_NAME = 'delivery_place';
     private const ITEMS_SESSION_NAME = 'cart_items';
     private const LOCKED_WEEK_SESSION_NAME = 'locked_week';
     private const DELIVERY_ADDRESS_SESSION_NAME = 'delivery_address';
@@ -146,24 +147,37 @@ final class CartStorage
         return $pickupPlace;
     }
 
+    public function storeDeliveryPlace(null|int $placeId): void
+    {
+        $this->requestStack->getSession()
+            ->set(self::DELIVERY_PLACE_SESSION_NAME, $placeId);
+    }
+
+    public function getDeliveryPlace(): null|int
+    {
+        /** @var null|int $deliveryPlace */
+        $deliveryPlace = $this->requestStack->getSession()
+            ->get(self::DELIVERY_PLACE_SESSION_NAME);
+
+        return $deliveryPlace;
+    }
+
     public function storeDeliveryAddress(null|Address $address): void
     {
-        // TODO: address to array
+        $data = $address?->toArray();
 
         $this->requestStack->getSession()
-            ->set(self::DELIVERY_ADDRESS_SESSION_NAME, null);
+            ->set(self::DELIVERY_ADDRESS_SESSION_NAME, $data);
     }
 
     public function getDeliveryAddress(): null|Address
     {
-        /** @var null|mixed $sessionData */
+        /** @var null|array{street: string, city: string, postalCode: string} $sessionData */
         $sessionData = $this->requestStack->getSession()
             ->get(self::DELIVERY_ADDRESS_SESSION_NAME);
 
-        // TODO: address from array
-
         if ($sessionData !== null) {
-            return new Address();
+            return Address::fromArray($sessionData);
         }
 
         return null;

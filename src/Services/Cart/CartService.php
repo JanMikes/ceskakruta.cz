@@ -7,8 +7,10 @@ namespace CeskaKruta\Web\Services\Cart;
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Query\GetAvailableDays;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
+use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Value\Address;
+use CeskaKruta\Web\Value\Place;
 use CeskaKruta\Web\Value\Price;
 use CeskaKruta\Web\Value\ProductInCart;
 use CeskaKruta\Web\Value\Week;
@@ -21,6 +23,7 @@ readonly final class CartService
         private GetProducts $getProducts,
         private GetAvailableDays $getAvailableDays,
         private GetColdProductsCalendar $getColdProductsCalendar,
+        private GetPlaces $getPlaces,
     ) {
     }
 
@@ -42,17 +45,34 @@ readonly final class CartService
     public function getDate(): null|DateTimeImmutable
     {
         $date = $this->storage->getDate();
-        $placeId = $this->getPickupPlace(); // TODO delivery
+        $place = $this->getPlace();
 
-        if ($date === null || $placeId === null) {
+        if ($date === null || $place === null) {
             return null;
         }
 
-        if ($this->getAvailableDays->isDateAvailable($date, $placeId) === false) {
+        if ($this->getAvailableDays->isDateAvailable($date, $place->id) === false) {
             return null;
         }
 
         return $date;
+    }
+
+    public function getPlace(): null|Place
+    {
+        $deliveryPlace = $this->getDeliveryPlace();
+
+        if ($deliveryPlace !== null) {
+            return $this->getPlaces->oneById($deliveryPlace);
+        }
+
+        $pickupPlace = $this->getPickupPlace();
+
+        if ($pickupPlace !== null) {
+            return $this->getPlaces->oneById($pickupPlace);
+        }
+
+        return null;
     }
 
     /**
@@ -136,5 +156,10 @@ readonly final class CartService
                 $this->storage->removeItem($key);
             }
         }
+    }
+
+    public function getDeliveryPlace(): null|int
+    {
+        return $this->storage->getDeliveryPlace();
     }
 }

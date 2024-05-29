@@ -22,7 +22,7 @@
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
                                     Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
-                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ item.product.price|price }} Kč/ks</strong>
+                                    Orientační cena{% if cart.place is null %} od{% endif %}: <strong>{{ item.product.price|price }} Kč/ks</strong>
                                 {% else %}
                                     <strong>{{ item.product.price  }} <small>Kč/kg</small></strong>
                                     {% if item.slice %}
@@ -47,11 +47,19 @@
             <div class="p-4 h-100 ms-auto border-start">
                 <div class="px-lg-2">
                     <div class="text-center py-3 border-bottom">
-                        <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
-                        <h3 class="h5 fw-normal mb-0">
-                            {{ places[cart.pickupPlace].name }}
-                        </h3>
-                        <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
+                        {% if cart.pickupPlace %}
+                            <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
+                            <h3 class="h5 fw-normal mb-0">
+                                {{ places[cart.pickupPlace].name }}
+                            </h3>
+                            <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
+                        {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                            <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
+                            <h3 class="h5 fw-normal mb-0">
+                                {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
+                            </h3>
+                            <a class="small" href="{{ path('order_delivery') }}">Změnit</a>
+                        {% endif %}
 
                         <h3 class="h5 fw-normal mt-3 mb-0">
                             {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}

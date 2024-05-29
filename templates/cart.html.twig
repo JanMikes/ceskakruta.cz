@@ -34,7 +34,7 @@
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
                                     Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
-                                    Orientační cena{% if cart.pickupPlace is null %} od{% endif %}: <strong>{{ item.product.price|price }} Kč/ks</strong>
+                                    Orientační cena{% if cart.place is null %} od{% endif %}: <strong>{{ item.product.price|price }} Kč/ks</strong>
                                 {% else %}
                                     <strong>{{ item.product.price|price }} <small>Kč/kg</small></strong>
                                     {% if item.slice %}
@@ -78,6 +78,12 @@
                                 {{ places[cart.pickupPlace].name }}
                             </h3>
                             <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
+                        {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                            <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
+                            <h3 class="h5 fw-normal mb-0">
+                                {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
+                            </h3>
+                            <a class="small" href="{{ path('order_delivery') }}">Změnit</a>
                         {% else %}
                             <h3 class="h5 fw-normal mb-0">
                                 Chybí doprava
@@ -90,7 +96,7 @@
                                 {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
                             </h3>
                             <a class="small" href="{{ path('order_available_dates') }}">Změnit</a>
-                        {% elseif cart.pickupPlace %}
+                        {% elseif cart.place %}
                             <h3 class="h5 fw-normal mt-3 mb-0">
                                 Chybí datum objednávky
                             </h3>
@@ -114,9 +120,10 @@
                             {{ form_row(orderForm.email) }}
                             {{ form_row(orderForm.phone) }}
                             {{ form_row(orderForm.note) }}
+                            {{ form_row(orderForm.payByCard) }}
                             {{ form_row(orderForm.subscribeToNewsletter) }}
 
-                            {% if cart.itemsCount > 0 and cart.date and cart.pickupPlace %}
+                            {% if cart.itemsCount > 0 and cart.date and cart.place %}
                                 <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
                             {% else %}
                                 <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>

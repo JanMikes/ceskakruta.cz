@@ -8,6 +8,8 @@ use CeskaKruta\Web\Exceptions\UnsupportedDeliveryToPostalCode;
 use CeskaKruta\Web\FormData\DeliveryFormData;
 use CeskaKruta\Web\FormType\DeliveryFormType;
 use CeskaKruta\Web\Message\ChooseDelivery;
+use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Value\Address;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,14 +20,14 @@ use Symfony\Component\Routing\Attribute\Route;
 final class OrderDeliveryController extends AbstractController
 {
     public function __construct(
-        readonly private MessageBusInterface $bus,
+        readonly private MessageBusInterface $bus, private readonly CartStorage $cartStorage,
     ) {
     }
 
     #[Route(path: '/doruceni-rozvozem', name: 'order_delivery', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        $formData = new DeliveryFormData(); // TODO: dynamic
+        $formData = DeliveryFormData::fromAddress($this->cartStorage->getDeliveryAddress());
         $deliveryForm = $this->createForm(DeliveryFormType::class, $formData);
         $deliveryForm->handleRequest($request);
 
@@ -33,13 +35,15 @@ final class OrderDeliveryController extends AbstractController
             try {
                 $this->bus->dispatch(
                     new ChooseDelivery(
-                        street: $formData->street,
-                        city: $formData->city,
-                        postalCode: $formData->postalCode,
+                        new Address(
+                            street: $formData->street,
+                            city: $formData->city,
+                            postalCode: $formData->postalCode,
+                        ),
                     ),
                 );
 
-                $this->addFlash('success', 'Adresa úspěšně nastavena!');
+                $this->addFlash('success', 'Doručíme na vámi zadanou adresu.');
             } catch (HandlerFailedException $handlerFailedException) {
                 $realException = $handlerFailedException->getPrevious();
 

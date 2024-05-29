@@ -50,7 +50,7 @@
 
         <p class="text-center mt-3">
             <a class="btn btn-outline-primary" href="{{ path('products') }}">Pokračovat v nákupu</a>
-            {% if cart.pickupPlace or cart.deliveryAddress %}
+            {% if cart.place %}
                 {% if cart.date %}
                     <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit objednávku</a>
                 {% else %}

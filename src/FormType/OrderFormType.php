@@ -39,6 +39,11 @@ final class OrderFormType extends AbstractType
             'required' => false,
         ]);
 
+        $builder->add('payByCard', CheckboxType::class, [
+            'required' => false,
+            'label' => 'Platba kartou při předávce',
+        ]);
+
         $builder->add('subscribeToNewsletter', CheckboxType::class, [
             'required' => false,
             'label' => 'Chci zasílat informace a novinky z České Krůty',

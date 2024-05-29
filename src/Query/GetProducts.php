@@ -28,7 +28,7 @@ final class GetProducts
         if ($this->products === null) {
             $calendar = $this->getColdProductsCalendar->all();
             $week = $this->cartStorage->getWeek();
-            $chosenPlaceId = $this->cartStorage->getPickupPlace(); // TODO: can be delivery
+            $chosenPlaceId = $this->cartStorage->getPickupPlace() ?? $this->cartStorage->getDeliveryPlace();
             $chosenPlace = $chosenPlaceId !== null ? $this->getPlaces->oneById($chosenPlaceId) : null;
 
             $productRows = $this->connection

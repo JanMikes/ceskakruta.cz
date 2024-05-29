@@ -54,12 +54,12 @@
 
             {% if products_halves[product.id] is defined %}
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
-                    <strong>{% if cart.pickupPlace is null %} od{% endif %} {{ (products_halves[product.id].pricePerUnit * average_weight / 2 )|price }} Kč</strong>
+                    <strong>{% if cart.place is null %} od{% endif %} {{ (products_halves[product.id].pricePerUnit * average_weight / 2 )|price }} Kč</strong>
                 </div>
             {% endif %}
 
             <div class="toggleable visible" data-turkey-half-toggle-target="whole">
-                <strong>{% if cart.pickupPlace is null %} od{% endif %} {{ (product.pricePerUnit * average_weight)|price }} Kč</strong>
+                <strong>{% if cart.place is null %} od{% endif %} {{ (product.pricePerUnit * average_weight)|price }} Kč</strong>
             </div>
         </td>
 
