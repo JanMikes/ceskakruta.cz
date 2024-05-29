@@ -31,113 +31,52 @@
             </div>
         </div>
 
-        <div class="row calendar-row">
-            <div class="col-sm-3 pe-0">
-                <span class="ribbon">
-                    <strong>16. týden:</strong> 15.4.-21.4.
-                </span>
-            </div>
+        {% for year, weeks in calendars %}
+            {% for week, turkeys in weeks %}
+                <div class="row calendar-row my-3">
+                    <div class="col-sm-3 pe-0">
+                        <span class="ribbon {{ current_week == week ? 'active' }}">
+                            <strong>{{ week }}. týden</strong><br>{{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
+                        </span>
+                    </div>
 
-            <div class="col-sm-9 ps-0">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td>
-                                Stáří<br>
-                                <strong>10 týdnů</strong><br>
-                                Přiblizná váha<br>
-                                <strong>19 až 21 kg</strong>
-                            </td>
+                    <div class="col-sm-9 ps-0">
+                        <div class="table-responsive shadow">
+                            <table class="table">
+                                <tbody>
+                                    {% for calendar in turkeys %}
+                                        <tr>
+                                            <td>
+                                                Stáří<br>
+                                                <strong>{{ calendar.weeks}} týdnů</strong><br>
+                                                Přiblizná váha<br>
+                                                <strong>{{ calendar.weight }}</strong>
+                                            </td>
 
-                            <td>
-                                <strong>Cena za Kg</strong><br>
-                                Mix: 100 Kč<br>
-                                Krocan: 100 Kč<br>
-                                Krůta: 100 Kč
-                            </td>
-                            <td>
-                                <a href="#">Farma doubrava</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Stáří<br>
-                                <strong>10 týdnů</strong><br>
-                                Přiblizná váha<br>
-                                <strong>19 až 21 kg</strong>
-                            </td>
+                                            <td>
+                                                <strong>Cena</strong><br>
+                                                Mix: {{ calendar.priceMix }}<br>
+                                                Krocan: {{ calendar.priceMan }}<br>
+                                                Krůta: {{ calendar.priceWoman }}
+                                            </td>
+                                            <td>
+                                                {% if calendar.doubravaAvailable %}
+                                                    <p class="m-0"><a href="{{ path('farms') }}">Farma Doubrava</a></p>
+                                                {% endif %}
+                                                {% if calendar.rychvaldAvailable %}
+                                                    <p class="m-0"><a href="{{ path('farms') }}">Farma Rychvald</a></p>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-                            <td>
-                                <strong>Cena za Kg</strong><br>
-                                Mix: 100 Kč<br>
-                                Krocan: 100 Kč<br>
-                                Krůta: 100 Kč
-                            </td>
-                            <td>
-                                <a href="#">Farma doubrava</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
                 </div>
-            </div>
-
-        </div>
-
-        <div class="row calendar-row">
-            <div class="col-sm-3 pe-0">
-                <span class="ribbon">
-                    <strong>16. týden:</strong> 15.4.-21.4.
-                </span>
-            </div>
-
-            <div class="col-sm-9 ps-0">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td>
-                                Stáří<br>
-                                <strong>10 týdnů</strong><br>
-                                Přiblizná váha<br>
-                                <strong>19 až 21 kg</strong>
-                            </td>
-
-                            <td>
-                                <strong>Cena za Kg</strong><br>
-                                Mix: 100 Kč<br>
-                                Krocan: 100 Kč<br>
-                                Krůta: 100 Kč
-                            </td>
-                            <td>
-                                <a href="#">Farma doubrava</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Stáří<br>
-                                <strong>10 týdnů</strong><br>
-                                Přiblizná váha<br>
-                                <strong>19 až 21 kg</strong>
-                            </td>
-
-                            <td>
-                                <strong>Cena za Kg</strong><br>
-                                Mix: 100 Kč<br>
-                                Krocan: 100 Kč<br>
-                                Krůta: 100 Kč
-                            </td>
-                            <td>
-                                <a href="#">Farma doubrava</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
+            {% endfor %}
+        {% endfor %}
 
 
     </section>

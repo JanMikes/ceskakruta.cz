@@ -27,7 +27,7 @@ final class GetColdProductsCalendar
             $year = $now->format('Y');
             $week = $now->format('W');
 
-            $placeRows = $this->connection
+            $rows = $this->connection
                 ->executeQuery('SELECT * FROM calendar_cold WHERE active_flag = 1 AND del_flag = 0 AND week_number >= :week AND year >= :year ORDER BY year, week_number', [
                     'year' => $year,
                     'week' => $week,
@@ -37,7 +37,7 @@ final class GetColdProductsCalendar
             /** @var array<int, array<int, array<int, ColdProductCalendar>>> $weights */
             $weights = [];
 
-            foreach ($placeRows as $placeRow) {
+            foreach ($rows as $row) {
                 /**
                  * @var array{
                  *     product_tp_id: int,
@@ -45,13 +45,13 @@ final class GetColdProductsCalendar
                  *     year: int,
                  *     weight_from: string,
                  *     weight_to: string,
-                 * } $placeRow
+                 * } $row
                  */
 
-                $weights[$placeRow['year']][$placeRow['week_number']][$placeRow['product_tp_id']] = new ColdProductCalendar(
-                    type: ColdProductType::from($placeRow['product_tp_id']),
-                    weightFrom: (float) $placeRow['weight_from'],
-                    weightTo: (float) $placeRow['weight_to'],
+                $weights[$row['year']][$row['week_number']][$row['product_tp_id']] = new ColdProductCalendar(
+                    type: ColdProductType::from($row['product_tp_id']),
+                    weightFrom: (float) $row['weight_from'],
+                    weightTo: (float) $row['weight_to'],
                 );
             }
 
