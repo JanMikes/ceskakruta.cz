@@ -49,7 +49,7 @@
                                             <td>
                                                 Stáří<br>
                                                 <strong>{{ calendar.weeks}} týdnů</strong><br>
-                                                Přiblizná váha<br>
+                                                Přibližná váha<br>
                                                 <strong>{{ calendar.weight }}</strong>
                                             </td>
 
@@ -60,9 +60,14 @@
                                                 Krůta: {{ calendar.priceWoman }}
                                             </td>
                                             <td>
+                                                {% if calendar.note %}
+                                                    <p class="mb-2">{{ calendar.note }}</p>
+                                                {% endif %}
+
                                                 {% if calendar.doubravaAvailable %}
                                                     <p class="m-0"><a href="{{ path('farms') }}">Farma Doubrava</a></p>
                                                 {% endif %}
+
                                                 {% if calendar.rychvaldAvailable %}
                                                     <p class="m-0"><a href="{{ path('farms') }}">Farma Rychvald</a></p>
                                                 {% endif %}
