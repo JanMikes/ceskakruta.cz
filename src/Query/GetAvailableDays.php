@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Query;
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Services\DeliveryService;
 use DateTimeImmutable;
 
 readonly final class GetAvailableDays
@@ -51,6 +52,13 @@ readonly final class GetAvailableDays
         $weekDay = (int) $date->format('w'); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
         $weekDay = $weekDay === 0 ? 7 : $weekDay; // Převedeme neděli na 7
 
+        if ($placeId === DeliveryService::CESKA_KRUTA_DELIVERY_PLACE_ID) {
+
+        }
+
+        if ($placeId === DeliveryService::COOLBALIK_DELIVERY_PLACE_ID) {
+
+        }
         // Zabalíme všechny proměnné pro dny do pole
         $allowDaysBefore = [
             1 => $place->day1AllowedDaysBefore,

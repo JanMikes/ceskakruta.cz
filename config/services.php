@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Services\Security\PasswordHasher;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 return static function(ContainerConfigurator $configurator): void
 {
@@ -34,4 +36,10 @@ return static function(ContainerConfigurator $configurator): void
     $services->load('CeskaKruta\\Web\\Query\\', __DIR__ . '/../src/Query/**/{*.php}');
 
     $services->set(CartStorage::class);
+
+    $services->set(PasswordHasher::class)
+        ->args([
+            '$leadingSalt' => env('SECURITY_SALT_1'),
+            '$trailingSalt' => env('SECURITY_SALT_2'),
+        ]);
 };

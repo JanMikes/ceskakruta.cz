@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Můj účet{% endblock %}
+
+{% block content %}
+
+   <ul>
+       <li>Objednávky</li>
+       <li><a href="{{ path('logout') }}">Odhlásit se</a></li>
+   </ul>
+
+    <p>
+        E-mail: {{ app.user.email }}
+    </p>
+
+{% endblock %}
