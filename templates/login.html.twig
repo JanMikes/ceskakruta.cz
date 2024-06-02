@@ -44,43 +44,25 @@
                 <div class="col-md-6 pt-4 mt-3 mt-md-0">
                     <h2 class="h4 mb-3">Nemáte účet? Zaregistrujte se</h2>
                     <p class="fs-sm text-muted mb-4">Registrace vám zabere méně než minutu, pomůže vám mít přehled o všech vašich objednávkách.</p>
-                    <form class="needs-validation" novalidate="">
+                    {{ form_start(registration_form) }}
                         <div class="row gx-4 gy-3">
                             <div class="col-sm-6">
-                                <label class="form-label" for="reg-fn">Jméno</label>
-                                <input class="form-control" type="text" required="" id="reg-fn">
-                                <div class="invalid-feedback">Please enter your first name!</div>
+                                {{ form_row(registration_form.name) }}
                             </div>
                             <div class="col-sm-6">
-                                <label class="form-label" for="reg-ln">Příjmení</label>
-                                <input class="form-control" type="text" required="" id="reg-ln">
-                                <div class="invalid-feedback">Please enter your last name!</div>
+                                {{ form_row(registration_form.phone) }}
                             </div>
                             <div class="col-sm-6">
-                                <label class="form-label" for="reg-email">E-mail</label>
-                                <input class="form-control" type="email" required="" id="reg-email">
-                                <div class="invalid-feedback">Please enter valid email address!</div>
+                                {{ form_row(registration_form.email) }}
                             </div>
                             <div class="col-sm-6">
-                                <label class="form-label" for="reg-phone">Telefon</label>
-                                <input class="form-control" type="text" required="" id="reg-phone">
-                                <div class="invalid-feedback">Please enter your phone number!</div>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="reg-password">Heslo</label>
-                                <input class="form-control" type="password" required="" id="reg-password">
-                                <div class="invalid-feedback">Please enter password!</div>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="reg-password-confirm">Kontrola hesla</label>
-                                <input class="form-control" type="password" required="" id="reg-password-confirm">
-                                <div class="invalid-feedback">Passwords do not match!</div>
+                                {{ form_row(registration_form.password) }}
                             </div>
                             <div class="col-12 text-end">
                                 <button class="btn btn-primary" type="submit"><i class="ci-user me-2 ms-n1"></i>Zaregistrovat se</button>
                             </div>
                         </div>
-                    </form>
+                    {{ form_end(registration_form) }}
                 </div>
             </div>
         </div>

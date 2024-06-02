@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
+use CeskaKruta\Web\FormData\RegistrationFormData;
+use CeskaKruta\Web\FormType\RegistrationFormType;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +31,15 @@ final class LoginController extends AbstractController
         // last username entered by the user
         $lastUsername = $this->authenticationUtils->getLastUsername();
 
+        $registrationData = new RegistrationFormData();
+        $registrationForm = $this->createForm(RegistrationFormType::class, $registrationData, [
+            'action' => $this->generateUrl('registration'),
+        ]);
+
         return $this->render('login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
+            'registration_form' => $registrationForm,
         ]);
     }
 }

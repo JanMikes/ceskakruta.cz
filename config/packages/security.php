@@ -22,7 +22,8 @@ return static function (SecurityConfig $securityConfig): void {
 
     $mainFirewall->formLogin()
         ->loginPath('login')
-        ->checkPath('login');
+        ->checkPath('login')
+        ->defaultTargetPath('/uzivatel/muj-ucet');
 
     $mainFirewall->logout()
         ->path('logout')

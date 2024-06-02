@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services\Security;
 
+use CeskaKruta\Web\Exceptions\UserNotRegistered;
 use CeskaKruta\Web\Value\User;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -34,6 +35,9 @@ readonly final class UserProvider implements UserProviderInterface
         return User::class === $class;
     }
 
+    /**
+     * @throws UserNotRegistered
+     */
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $data = $this->connection
@@ -43,7 +47,7 @@ readonly final class UserProvider implements UserProviderInterface
             ->fetchAssociative();
 
         if ($data === false) {
-            throw new \Exception(sprintf('Username "%s" does not exist.', $identifier));
+            throw new UserNotRegistered();
         }
 
         return new User(
