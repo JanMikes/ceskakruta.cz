@@ -48,6 +48,12 @@ final class GetPlaces
                  *     allow_order_day_5_days_before: null|int,
                  *     allow_order_day_6_days_before: null|int,
                  *     allow_order_day_7_days_before: null|int,
+                 *     address_1: null|string,
+                 *     address_2: null|string,
+                 *     address_3: null|string,
+                 *     map_url: null|string,
+                 *     phone: null|string,
+                 *     opening_hours: null|string,
                  * } $placeRow
                  */
 
@@ -63,6 +69,12 @@ final class GetPlaces
                     day5AllowedDaysBefore: $placeRow['allow_order_day_5_days_before'],
                     day6AllowedDaysBefore: $placeRow['allow_order_day_6_days_before'],
                     day7AllowedDaysBefore: $placeRow['allow_order_day_7_days_before'],
+                    address1: $placeRow['address_1'],
+                    address2: $placeRow['address_2'],
+                    address3: $placeRow['address_3'],
+                    mapUrl: $placeRow['map_url'],
+                    phone: $placeRow['phone'],
+                    openingHours: $placeRow['opening_hours'],
                 );
             }
 

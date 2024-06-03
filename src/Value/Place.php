@@ -18,6 +18,12 @@ readonly final class Place
         public null|int $day5AllowedDaysBefore,
         public null|int $day6AllowedDaysBefore,
         public null|int $day7AllowedDaysBefore,
+        public null|string $address1,
+        public null|string $address2,
+        public null|string $address3,
+        public null|string $mapUrl,
+        public null|string $phone,
+        public null|string $openingHours,
     ) {
     }
 }

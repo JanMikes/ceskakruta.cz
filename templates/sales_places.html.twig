@@ -35,9 +35,10 @@
                             <div class="col">
                                 <i class="ci-location fs-lg mt-2 mb-0 text-primary"></i>
                                 <p>
-                                    <strong>-</strong><br>
-                                    <span class="text-muted">-</span><br>
-                                    <a href="#">Mapa</a>
+                                    <strong>{{ place.address1 }}</strong><br>
+                                    <span class="text-muted">{{ place.address2 }}</span><br>
+                                    <small class="text-muted">{{ place.address3 }}</small><br>
+                                    {% if place.mapUrl %}<a href="{{ place.mapUrl }}">Mapa</a>{% endif %}
                                 </p>
                             </div>
 
@@ -45,7 +46,7 @@
                                 <i class="ci-phone fs-lg mt-2 mb-0 text-primary"></i>
                                 <p>
                                     <strong>Zavolejte nám</strong><br>
-                                    <span class="text-muted">-</span><br>
+                                    <span class="text-muted">{{ place.phone }}</span><br>
                                 </p>
                             </div>
 
@@ -54,7 +55,7 @@
 
                                 <p>
                                     <strong>Otevírací doba</strong><br>
-                                    <span class="text-muted">-</span>
+                                    <span class="text-muted">{{ place.openingHours }}</span>
                                 </p>
                             </div>
                         </div>
