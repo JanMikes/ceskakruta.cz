@@ -13,12 +13,12 @@ final class RegistrationFormData
 
     #[Assert\NotBlank]
     #[Assert\Email]
-    public string $email;
+    public string $email = '';
 
     #[Assert\Length(max: 255)]
     public ?string $phone = null;
 
     #[Assert\NotBlank]
     #[Assert\Length(min: 6)]
-    public string $password;
+    public string $password = '';
 }

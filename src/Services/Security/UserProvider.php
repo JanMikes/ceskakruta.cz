@@ -40,6 +40,13 @@ readonly final class UserProvider implements UserProviderInterface
      */
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
+        /**
+         * @var false|array{
+         *     id: int,
+         *     email: string,
+         *     password: string,
+         * } $data
+         */
         $data = $this->connection
             ->executeQuery('SELECT * FROM `user` WHERE active_flag = 1 AND del_flag = 0 AND email = :email', [
                 'email' => $identifier,
