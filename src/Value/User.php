@@ -15,6 +15,18 @@ readonly final class User implements UserInterface, PasswordAuthenticatedUserInt
         public string $password,
         /** @var array<string> */
         public array $roles,
+        public null|string $name,
+        public null|int $preferredPlaceId,
+        public null|string $phone,
+        public null|string $deliveryStreet,
+        public null|string $deliveryCity,
+        public null|string $deliveryZip,
+        public bool $companyInvoicing,
+        public null|string $companyName,
+        public null|string $companyId,
+        public null|string $invoicingStreet,
+        public null|string $invoicingCity,
+        public null|string $invoicingZip,
     ) {
     }
 

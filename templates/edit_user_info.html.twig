@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Můj účet{% endblock %}
+
+{% block content %}
+
+    <ul>
+        <li><a href="{{ path('user_my_orders') }}">Objednávky</a></li>
+        <li><a href="{{ path('logout') }}">Odhlásit se</a></li>
+    </ul>
+
+    {{ form_start(form) }}
+        <p>
+            <button class="btn btn-primary" type="submit">Uložit</button>
+        </p>
+    {{ form_end(form) }}
+
+{% endblock %}

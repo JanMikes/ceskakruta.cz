@@ -45,6 +45,18 @@ readonly final class UserProvider implements UserProviderInterface
          *     id: int,
          *     email: string,
          *     password: string,
+         *     name: null|string,
+         *     preferred_place_id: null|int,
+         *     phone: null|string,
+         *     delivery_street: null|string,
+         *     delivery_city: null|string,
+         *     delivery_zip: null|string,
+         *     company_name: null|string,
+         *     company_id: null|string,
+         *     company_invoicing: int,
+         *     invoicing_street: null|string,
+         *     invoicing_city: null|string,
+         *     invoicing_zip: null|string,
          * } $data
          */
         $data = $this->connection
@@ -58,10 +70,22 @@ readonly final class UserProvider implements UserProviderInterface
         }
 
         return new User(
-            $data['id'],
-            $data['email'],
-            $data['password'],
-            ['ROLE_USER'],
+            id: $data['id'],
+            email: $data['email'],
+            password: $data['password'],
+            roles: ['ROLE_USER'],
+            name: $data['name'],
+            preferredPlaceId: $data['preferred_place_id'],
+            phone: $data['phone'],
+            deliveryStreet: $data['delivery_street'],
+            deliveryCity: $data['delivery_city'],
+            deliveryZip: $data['delivery_zip'],
+            companyInvoicing: $data['company_invoicing'] === 1,
+            companyName: $data['company_name'],
+            companyId: $data['company_id'],
+            invoicingStreet: $data['invoicing_street'],
+            invoicingCity: $data['invoicing_city'],
+            invoicingZip: $data['invoicing_zip'],
         );
     }
 }

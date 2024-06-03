@@ -10,12 +10,14 @@ use CeskaKruta\Web\FormType\OrderFormType;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 final class CartController extends AbstractController
 {
@@ -29,7 +31,7 @@ final class CartController extends AbstractController
     #[Route(path: '/nakupni-kosik', name: 'cart', methods: ['GET', 'POST'])]
     #[Route(path: '/odebrat-z-kosiku/{cartItem}', name: 'remove_from_cart', methods: ['GET'])]
     #[Route(path: '/prepocitat-kosik', name: 'change_cart_item_quantity', methods: ['POST'])]
-    public function __invoke(Request $request, null|int $cartItem): Response
+    public function __invoke(Request $request, null|int $cartItem, #[CurrentUser] null|User $user): Response
     {
         /** @var string $routeName */
         $routeName = $request->attributes->get('_route');
@@ -42,7 +44,17 @@ final class CartController extends AbstractController
             return $this->redirectToRoute('cart');
         }
 
-        $orderData = $this->cartStorage->getOrderData() ?? new OrderFormData();
+        $orderData = $this->cartStorage->getOrderData();
+
+        if ($orderData === null) {
+            $orderData = new OrderFormData();
+
+            if ($user !== null) {
+                $orderData->email = $user->email;
+                $orderData->name = $user->name ?? '';
+                // TODO more
+            }
+        }
 
         $orderForm = $this->createForm(OrderFormType::class, $orderData);
         $orderForm->handleRequest($request);

@@ -7,4 +7,12 @@
         <h1>Aktuality</h1>
     </section>
 
+    {% for actuality in actualities %}
+        <h2 class="h4 mb-0">{{ actuality.title }}</h2>
+        <p class="mt-0 mb-3 text-muted small">{{ actuality.date.format('d.m.Y') }}</p>
+        {{ actuality.text|raw }}
+
+        <hr class="my-4">
+    {% endfor %}
+
 {% endblock %}

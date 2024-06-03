@@ -6,4 +6,8 @@ namespace CeskaKruta\Web\Message;
 
 readonly final class CreateOrder
 {
+    public function __construct(
+        public null|int $userId,
+    ) {
+    }
 }

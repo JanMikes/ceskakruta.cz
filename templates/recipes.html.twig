@@ -7,4 +7,10 @@
         <h1>Recepty</h1>
     </section>
 
+    {% for recipe in recipes %}
+        <p>
+            {{ recipe.name }}<br>
+            {{ recipe.text|raw }}
+        </p>
+    {% endfor %}
 {% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Objednávka č. {{ order.id }}{% endblock %}
+
+{% block content %}
+    <h1>Objednávka č. {{ order.id }}</h1>
+
+    <ul>
+        <li><a href="{{ path('user_my_account') }}">Můj účet</a></li>
+        <li><a href="{{ path('user_my_orders') }}">Mé objednávky</a></li>
+        <li><a href="{{ path('logout') }}">Odhlásit se</a></li>
+    </ul>
+
+
+    <p>
+        Číslo: {{ order.id }}<br>
+        Objednáno na: {{ order.date.format('d.m.Y') }}<br>
+        Objednáno: {{ order.orderedAt.format('d.m.Y H:i') }}<br>
+        Doprava: {{ places[order.placeId].name }}<br>
+        Cena: {{ order.priceTotal }} Kč<br>
+        {{ order.email }}<br>
+        {{ order.phone }}<br>
+        {{ order.deliveryStreet }}<br>
+        {{ order.deliveryCity }}<br>
+        {{ order.deliveryPostalCode }}<br>
+        {{ order.payByCard }}<br>
+        {{ order.note }}
+    </p>
+
+    {% for order_item in order_items %}
+        {% set product = products[order_item.productId] %}
+        <p>
+            {{ product.title }}<br>
+            {{ order_item.amount }}x<br>
+            {{ order_item.pricePerUnit }} Kč<br>
+            {{ order_item.priceTotal }} Kč<br>
+            {{ order_item.weightFrom }} Kč<br>
+            {{ order_item.weightTo }} Kg<br>
+        </p>
+    {% endfor %}
+
+
+{% endblock %}

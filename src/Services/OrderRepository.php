@@ -16,7 +16,7 @@ readonly final class OrderRepository
     ) {
     }
 
-    public function createOrder(): int
+    public function createOrder(null|int $userId): int
     {
         // TODO: data as parameter
 
@@ -36,7 +36,7 @@ readonly final class OrderRepository
             $now = new DateTimeImmutable();
 
             $this->connection->insert('`order`', [
-                'user_id'               => null, // TODO
+                'user_id'               => $userId,
                 'place_id'              => $place->id,
                 'date'                  => $date->format('Y-m-d'),
                 'email'                 => $orderData->email,
