@@ -63,14 +63,14 @@ jobs:
             - docker
         environment:
             name: prod
-            url: https://new.ceskakruta.cz
+            url: https://ceskakruta.janmikes.cz
         steps:
             -   name: Checkout
                 uses: actions/checkout@v4
 
             -   uses: appleboy/ssh-action@master
                 with:
-                    host: new.ceskakruta.cz
+                    host: ceskakruta.janmikes.cz
                     username: ${{ secrets.DEPLOY_USERNAME }}
                     key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
                     script_stop: true
