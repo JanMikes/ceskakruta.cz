@@ -21,16 +21,8 @@
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="theme-color" content="#ffffff">
 
-        <!-- Vendor Styles including: Font Icons, Plugins, etc.-->
-        <link rel="stylesheet" media="screen" href="{{ asset('vendor/simplebar/dist/simplebar.min.css') }}"/>
-        <link rel="stylesheet" media="screen" href="{{ asset('vendor/tiny-slider/dist/tiny-slider.css') }}"/>
-
-        <!-- Main Theme Styles + Bootstrap-->
-        <link rel="stylesheet" media="screen" href="{{ asset('css/theme.min.css') }}">
-
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_script_tags('app') }}
     </head>
     <body>
         <header class="shadow-sm fixed-top">
@@ -43,26 +35,7 @@
                         <img width="74" src="{{ asset('img/ceska-kruta-logo.svg') }}" alt="Českákrůta.cz"/>
                     </a>
 
-                        <div class="navbar navbar-expand-lg navbar-light bg-light mt-n2 pt-0 pb-0 px-3 px-lg-0">
-                            <div class="container">
-                                <div class="collapse navbar-collapse" id="navbarCollapse">
-                                    <ul class="navbar-nav">
-                                        <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}">Úvod</a></li>
-                                        <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a></li>
-                                        <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('products') or app.request.pathInfo == path('products_cold') or app.request.pathInfo == path('products_cold_calendar') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a></li>
-                                        <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}#kontakty">Kontakty</a></li>
-                                        <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('sales_places') or app.request.pathInfo == path('farms') ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    <div class="navbar-toolbar d-flex align-items-center">
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
+                    <div class="navbar-toolbar d-flex align-items-center order-lg-3">
                         {% if app.user %}
                             <a class="navbar-tool ms-1 ms-lg-0 me-n1 me-lg-2" href="{{ path('user_my_account') }}">
                                 <div class="navbar-tool-icon-box">
@@ -85,6 +58,21 @@
                             </div>
                             <div class="navbar-tool-text"><small>Můj košík</small>{{ cart.totalPrice.amount|price }} Kč</div>
                         </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+
+                    <div class="collapse navbar-collapse me-auto order-lg-2" id="navbarCollapse">
+                        <hr class="d-lg-none my-3">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}">Úvod</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('products') or app.request.pathInfo == path('products_cold') or app.request.pathInfo == path('products_cold_calendar') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}#kontakty">Kontakty</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('sales_places') or app.request.pathInfo == path('farms') ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -121,18 +109,5 @@
                 <a class="p-2 {{ app.request.pathInfo == path('recipes') ? 'active' }}" href="{{ path('recipes') }}">Recepty</a>
             </div>
         </footer>
-
-        <!-- Vendor scrits: js libraries and plugins-->
-        <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('vendor/simplebar/dist/simplebar.min.js') }}"></script>
-        <script src="{{ asset('vendor/tiny-slider/dist/min/tiny-slider.js') }}"></script>
-        <script src="{{ asset('vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js') }}"></script>
-
-        <!-- Main theme script-->
-        <script src="{{ asset('js/theme.min.js') }}"></script>
-
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
     </body>
 </html>
