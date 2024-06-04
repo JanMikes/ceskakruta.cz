@@ -80,6 +80,7 @@
                             <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
                         {% elseif cart.deliveryPlace and cart.deliveryAddress %}
                             <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
+                            <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'Rozvoz CoolBalík' }}</small><br>
                             <h3 class="h5 fw-normal mb-0">
                                 {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
                             </h3>
