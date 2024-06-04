@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
+use Symfony\Config\FrameworkConfig;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (ContainerConfigurator $containerConfigurator, FrameworkConfig $framework): void {
     $containerConfigurator->extension('framework', [
         'secret' => '%env(APP_SECRET)%',
         'http_method_override' => false,
@@ -24,4 +25,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             'path' => '_fragments'
         ],
     ]);
+
+    $framework->httpClient()->scopedClient('coolbalik.client')
+        ->baseUri('https://api.boxxi-logistics.cz')
+        ->header('x-api-key', env('COOLBALIK_TOKEN'))
+        ->header('accept', 'application/json');
 };

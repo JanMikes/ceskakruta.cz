@@ -9,6 +9,8 @@ use CeskaKruta\Web\Exceptions\UserNotRegistered;
 use CeskaKruta\Web\Message\RegisterUser;
 use CeskaKruta\Web\Services\Security\UserProvider;
 use CeskaKruta\Web\Services\UserService;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -20,6 +22,7 @@ readonly final class RegisterUserHandler
         private UserProvider $userProvider,
         private UserService $userService,
         private TokenStorageInterface $tokenStorage,
+        private MailerInterface $mailer,
     ) {
     }
 
@@ -39,6 +42,16 @@ readonly final class RegisterUserHandler
             $user = $this->userProvider->loadUserByIdentifier($message->email);
             $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
             $this->tokenStorage->setToken($token);
+
+            $email = (new TemplatedEmail())
+                ->to('j.mikes@me.com')
+                ->subject('Thanks for signing up!')
+                ->htmlTemplate('emails/registration.html.twig')
+                ->context([
+                    'user' => $user,
+                ]);
+
+            $this->mailer->send($email);
         }
     }
 }
