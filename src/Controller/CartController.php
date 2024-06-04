@@ -52,7 +52,7 @@ final class CartController extends AbstractController
             if ($user !== null) {
                 $orderData->email = $user->email;
                 $orderData->name = $user->name ?? '';
-                // TODO more
+                $orderData->phone = $user->phone ?? '';
             }
         }
 

@@ -201,6 +201,7 @@ main {
 
 .home-contact {
     padding: 60px 0;
+    min-height: 80vh;
 }
 
 .separator {
@@ -296,7 +297,7 @@ main {
     padding: 60px 0;
 
     h2 {
-        color: #EE787F;
+        color: $primary;
     }
 }
 
@@ -461,4 +462,19 @@ main {
         font-weight: bold;
         padding-left: 4px;
     }
+}
+
+.section-contact {
+    padding: 60px 0;
+    min-height: 78vh;
+}
+
+.my-account {
+    padding: 60px 0;
+    min-height: 78vh
+}
+
+.navbar-my-account {
+    border: 1px solid #efefef;
+    border-radius: 4px;
 }

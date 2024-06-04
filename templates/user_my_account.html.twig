@@ -3,19 +3,46 @@
 {% block title %}Můj účet{% endblock %}
 
 {% block content %}
+    <section class="my-account">
+        <h1>Můj účet</h1>
 
-   <ul>
-       <li><a href="{{ path('user_my_orders') }}">Objednávky</a></li>
-       <li><a href="{{ path('logout') }}">Odhlásit se</a></li>
-   </ul>
+       {{ include('_my_account_panel.html.twig') }}
 
-    <p>
-        Jméno: {{ app.user.name }}<br>
-        E-mail: {{ app.user.email }}<br>
-        Telefon: {{ app.user.phone }}<br>
-        Doručovací adresa: {{ app.user.deliveryStreet }}, {{ app.user.deliveryCity }} {{ app.user.deliveryZip }}<br>
-        Fakturovat na společnost: {{ app.user.companyInvoicing }} {{ app.user.companyName }} ({{ app.user.companyId }}): {{ app.user.invoicingStreet }}, {{ app.user.invoicingCity }} {{ app.user.invoicingZip }}<br>
-    </p>
-    <a href="{{ path('edit_user_info') }}">Upravit údaje</a>
+        <div class="shadow p-3 my-3">
+            <table class="table">
+                <tr>
+                    <th style="max-width: 100px;">Jméno:</th>
+                    <td>{{ app.user.name }}</td>
+                </tr>
+                <tr>
+                    <th style="max-width: 100px;">E-mail:</th>
+                    <td>{{ app.user.email }}</td>
+                </tr>
+                <tr>
+                    <th style="max-width: 100px;">Telefon:</th>
+                    <td>{{ app.user.phone }}</td>
+                </tr>
+                <tr>
+                    <th style="max-width: 100px;">Doručovací adresa:</th>
+                    <td>
+                        {{ app.user.deliveryStreet }}, {{ app.user.deliveryCity }} {{ app.user.deliveryZip }}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="max-width: 100px;">Fakturovat na společnost:</th>
+                    <td>
+                        {% if app.user.companyInvoicing %}
+                            {{ app.user.companyName }} ({{ app.user.companyId }})<br>
+                            {{ app.user.invoicingStreet }}, {{ app.user.invoicingCity }} {{ app.user.invoicingZip }}
+                        {% else %}
+                            <small class="text-muted">Ne</small>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('edit_user_info') }}">Upravit údaje</a>
+        </div>
+    </section>
 
 {% endblock %}

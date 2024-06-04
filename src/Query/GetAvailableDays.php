@@ -72,7 +72,7 @@ readonly final class GetAvailableDays
             $allowDaysBefore = $this->ceskaKrutaDelivery->getAllowedDaysBeforeForPostalCode($postalCode);
         }
 
-        if ($placeId === $this->coolBalikDelivery::DELIVERY_PLACE_ID) {
+        if ($postalCode !== null && $placeId === $this->coolBalikDelivery::DELIVERY_PLACE_ID) {
             $allowDaysBefore = $this->coolBalikDelivery->getAllowedDaysBeforeForPostalCode($postalCode);
         }
 

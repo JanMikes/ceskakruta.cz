@@ -13,7 +13,7 @@ final class CoolBalikDelivery
      */
     public function getAllowedDaysBeforeForPostalCode(string $postalCode): array
     {
-        $mapping = self::$mapping[$postalCode] ?? [];
+        $mapping = self::$mapping[(int) $postalCode] ?? [];
 
         return [
             1 => in_array(1, $mapping, true) ? 1 : null,
@@ -28,13 +28,13 @@ final class CoolBalikDelivery
 
     public function canDeliverToPostalCode(string $postalCode): bool
     {
-        return isset(self::$mapping[$postalCode]);
+        return isset(self::$mapping[(int) $postalCode]);
     }
 
     /**
-     * @var array<string|int, array<int>>
+     * @var array<int, array<int>>
      */
     private static $mapping = [
-        '10000' => [1, 2, 3, 4, 5, 6, 7],
+        10000 => [1, 2, 3, 4, 5, 6, 7],
     ];
 }

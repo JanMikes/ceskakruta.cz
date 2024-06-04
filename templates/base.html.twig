@@ -70,7 +70,7 @@
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a></li>
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('products') or app.request.pathInfo == path('products_cold') or app.request.pathInfo == path('products_cold_calendar') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a></li>
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}#kontakty">Kontakty</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('contact') ? 'active' }}" href="{{ path('contact') }}">Kontakty</a></li>
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('sales_places') or app.request.pathInfo == path('farms') ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a></li>
                         </ul>
                     </div>
@@ -80,7 +80,7 @@
 
         <main>
             {% for label, messages in app.flashes %}
-                <div class="container mt-4">
+                <div class="container mt-3">
                     {% for message in messages %}
                         <div class="alert-dismissible fade show alert alert-{{ label }}" role="alert">
                             {{ message }}
@@ -97,13 +97,13 @@
             {% endblock %}
         </main>
 
-        <footer class="bg-secondary mt-4">
+        <footer class="bg-secondary">
             <div class="container py-4">
                 <a class="p-2" href="{{ path('homepage') }}">Úvod</a>
                 <a class="p-2 {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a>
                 <a class="p-2 {{ app.request.pathInfo == path('products') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a>
                 <a class="p-2 {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a>
-                <a class="p-2" href="{{ path('homepage') }}#kontakty">Kontakty</a>
+                <a class="p-2 {{ app.request.pathInfo == path('contact') ? 'active' }}" href="{{ path('contact') }}">Kontakty</a>
                 <a class="p-2 {{ app.request.pathInfo == path('sales_places') ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a>
                 <a class="p-2 {{ app.request.pathInfo == path('actuality') ? 'active' }}" href="{{ path('actuality') }}">Aktuality</a>
                 <a class="p-2 {{ app.request.pathInfo == path('recipes') ? 'active' }}" href="{{ path('recipes') }}">Recepty</a>

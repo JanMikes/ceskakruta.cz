@@ -3,16 +3,27 @@
 {% block title %}Můj účet{% endblock %}
 
 {% block content %}
+    <section class="my-account">
+        <h1>Můj účet</h1>
 
-    <ul>
-        <li><a href="{{ path('user_my_orders') }}">Objednávky</a></li>
-        <li><a href="{{ path('logout') }}">Odhlásit se</a></li>
-    </ul>
+        {{ include('_my_account_panel.html.twig') }}
 
-    {{ form_start(form) }}
-        <p>
-            <button class="btn btn-primary" type="submit">Uložit</button>
-        </p>
-    {{ form_end(form) }}
+        {{ form_start(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.phone) }}
+            {{ form_row(form.deliveryStreet) }}
+            {{ form_row(form.deliveryCity) }}
+            {{ form_row(form.deliveryZip) }}
+            {{ form_row(form.companyInvoicing) }}
+            {{ form_row(form.companyName) }}
+            {{ form_row(form.companyId) }}
+            {{ form_row(form.invoicingStreet) }}
+            {{ form_row(form.invoicingCity) }}
+            {{ form_row(form.invoicingZip) }}
 
+            <p>
+                <button class="btn btn-primary" type="submit">Uložit</button>
+            </p>
+        {{ form_end(form) }}
+    </section>
 {% endblock %}
