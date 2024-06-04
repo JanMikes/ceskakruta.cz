@@ -17,7 +17,7 @@
 </div>
 
 {% if not product.isHalf %}
-    <div class="col-sm-4 my-3" data-controller="turkey-half-toggle">
+    <div class="col-sm-4 col-md-3 my-3" data-controller="turkey-half-toggle">
         <div class="card shadow">
             {% if products_halves[product.id] is defined %}
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
