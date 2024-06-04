@@ -32,7 +32,7 @@ final class GetProducts
             $chosenPlace = $chosenPlaceId !== null ? $this->getPlaces->oneById($chosenPlaceId) : null;
 
             $productRows = $this->connection
-                ->executeQuery('SELECT * FROM product WHERE active_flag = 1 AND del_flag = 0')
+                ->executeQuery('SELECT * FROM product WHERE active_flag = 1 AND del_flag = 0 ORDER BY `order` DESC')
                 ->fetchAllAssociative();
 
             $productPlaceRows = $this->connection

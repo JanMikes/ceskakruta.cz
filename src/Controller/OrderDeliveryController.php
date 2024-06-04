@@ -54,7 +54,7 @@ final class OrderDeliveryController extends AbstractController
                 }
             }
 
-            return $this->redirectToRoute('order_delivery');
+            return $this->redirectToRoute('order_available_dates');
         }
 
         return $this->render('order_delivery.html.twig', [

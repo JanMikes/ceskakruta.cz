@@ -28,7 +28,7 @@ final class GetPlaces
     {
         if ($this->places === null) {
             $placeRows = $this->connection
-                ->executeQuery('SELECT * FROM place WHERE active_flag = 1 AND del_flag = 0')
+                ->executeQuery('SELECT * FROM place WHERE active_flag = 1 AND del_flag = 0 ORDER BY `order` DESC')
                 ->fetchAllAssociative();
 
             /** @var array<int, Place> $places */
@@ -41,6 +41,7 @@ final class GetPlaces
                  *     name: string,
                  *     force_delivery_address: int,
                  *     force_packing: int,
+                 *     is_cool_balik: null|int,
                  *     allow_order_day_1_days_before: null|int,
                  *     allow_order_day_2_days_before: null|int,
                  *     allow_order_day_3_days_before: null|int,
@@ -61,6 +62,7 @@ final class GetPlaces
                     id: $placeRow['id'],
                     name: $placeRow['name'],
                     isDelivery: $placeRow['force_delivery_address'] === 1,
+                    isOwnDelivery: $placeRow['is_cool_balik'] !== 1,
                     forcePacking: $placeRow['force_packing'] === 1,
                     day1AllowedDaysBefore: $placeRow['allow_order_day_1_days_before'],
                     day2AllowedDaysBefore: $placeRow['allow_order_day_2_days_before'],

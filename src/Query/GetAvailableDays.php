@@ -69,11 +69,25 @@ readonly final class GetAvailableDays
         $postalCode = $this->cartStorage->getDeliveryAddress()?->postalCode;
 
         if ($postalCode !== null && $placeId === $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID) {
-            $allowDaysBefore = $this->ceskaKrutaDelivery->getAllowedDaysBeforeForPostalCode($postalCode);
+            $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
+
+            // Set to null days that we do not deliver to the address
+            foreach ($allowDaysBefore as $allowedDay => $daysBefore) {
+                if (!in_array($allowedDay, $allowedDays, true)) {
+                    $allowDaysBefore[$allowedDay] = null;
+                }
+            }
         }
 
         if ($postalCode !== null && $placeId === $this->coolBalikDelivery::DELIVERY_PLACE_ID) {
-            $allowDaysBefore = $this->coolBalikDelivery->getAllowedDaysBeforeForPostalCode($postalCode);
+            $allowedDays = $this->coolBalikDelivery->getAllowedDaysForPostalCode($postalCode);
+
+            // Set to null days that we do not deliver to the address
+            foreach ($allowDaysBefore as $allowedDay => $daysBefore) {
+                if (!in_array($allowedDay, $allowedDays, true)) {
+                    $allowDaysBefore[$allowedDay] = null;
+                }
+            }
         }
 
         $daysBefore = $allowDaysBefore[$weekDay] ?? null;

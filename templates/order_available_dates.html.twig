@@ -32,7 +32,7 @@
         </div>
 
         {% if cart.lockedWeek %}
-            <div class="alert alert-accent my-3">Vybrali jste si ve váhovém kalendáři {{ cart.lockedWeek.number }}. týden. <a href="{{ path('products_cold_calendar') }}">Vybrat jiný</a></div>
+            <div class="alert alert-accent my-3">Vybrali jste si ve váhovém kalendáři {{ cart.lockedWeek.number }}. týden. <a href="{{ path('products_cold_calendar') }}">Vybrat jiný týden</a>. V jiném termínu se váhy a dostupnost chlazených kusů liší.</div>
         {% else %}
             <p class="my-3">
                 <a href="#" class="btn btn-primary btn-sm"><i class="ci-calendar me-1"></i> Vybrat z kalendáře</a>

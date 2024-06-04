@@ -9,6 +9,7 @@ use CeskaKruta\Web\FormType\ChangeCartItemQuantityFormType;
 use CeskaKruta\Web\FormType\OrderFormType;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetPlaces;
+use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,7 @@ final class CartController extends AbstractController
         private readonly CartStorage $cartStorage,
         private readonly GetColdProductsCalendar $getColdProductsCalendar,
         private readonly GetPlaces $getPlaces,
+        private readonly CartService $cartService,
     ) {
     }
 
@@ -37,7 +39,7 @@ final class CartController extends AbstractController
         $routeName = $request->attributes->get('_route');
 
         if ($routeName === 'remove_from_cart' && $cartItem !== null) {
-            $this->cartStorage->removeItem($cartItem);
+            $this->cartService->removeItem($cartItem);
 
             $this->addFlash('success', 'Odstraněno z košíku');
 

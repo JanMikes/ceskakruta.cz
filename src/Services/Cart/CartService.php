@@ -15,6 +15,7 @@ use CeskaKruta\Web\Value\Price;
 use CeskaKruta\Web\Value\ProductInCart;
 use CeskaKruta\Web\Value\Week;
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
 
 readonly final class CartService
 {
@@ -161,5 +162,14 @@ readonly final class CartService
     public function getDeliveryPlace(): null|int
     {
         return $this->storage->getDeliveryPlace();
+    }
+
+    public function removeItem(int $keyToRemove): void
+    {
+        $this->storage->removeItem($keyToRemove);
+
+        if ($this->containsTurkey() === false) {
+            $this->storage->storeLockedWeek(null, null);
+        }
     }
 }

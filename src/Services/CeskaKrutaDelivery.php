@@ -6,24 +6,14 @@ namespace CeskaKruta\Web\Services;
 
 final class CeskaKrutaDelivery
 {
-    public const DELIVERY_PLACE_ID = 8;
+    public const DELIVERY_PLACE_ID = 20;
 
     /**
-     * @return array<int, int|null>
+     * @return array<int>
      */
-    public function getAllowedDaysBeforeForPostalCode(string $postalCode): array
+    public function getAllowedDaysForPostalCode(string $postalCode): array
     {
-        $mapping = self::$mapping[(int) $postalCode] ?? [];
-
-        return [
-            1 => in_array(1, $mapping, true) ? 1 : null,
-            2 => in_array(2, $mapping, true) ? 1 : null,
-            3 => in_array(3, $mapping, true) ? 1 : null,
-            4 => in_array(4, $mapping, true) ? 1 : null,
-            5 => in_array(5, $mapping, true) ? 1 : null,
-            6 => in_array(6, $mapping, true) ? 1 : null,
-            7 => in_array(7, $mapping, true) ? 1 : null,
-        ];
+        return self::$mapping[(int) $postalCode] ?? [];
     }
 
     public function canDeliverToPostalCode(string $postalCode): bool

@@ -10,6 +10,7 @@ readonly final class Place
         public int $id,
         public string $name,
         public bool $isDelivery,
+        public bool $isOwnDelivery,
         public bool $forcePacking,
         public null|int $day1AllowedDaysBefore,
         public null|int $day2AllowedDaysBefore,

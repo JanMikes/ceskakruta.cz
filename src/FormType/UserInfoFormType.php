@@ -58,17 +58,17 @@ final class UserInfoFormType extends AbstractType
         ]);
 
         $builder->add('invoicingStreet', TextType::class, [
-            'label' => 'Doručovací ulice',
+            'label' => 'Fakturační ulice',
             'required' => false,
         ]);
 
         $builder->add('invoicingCity', TextType::class, [
-            'label' => 'Doručovací město',
+            'label' => 'Fakturační město',
             'required' => false,
         ]);
 
         $builder->add('invoicingZip', TextType::class, [
-            'label' => 'Doručovací PSČ',
+            'label' => 'Fakturační PSČ',
             'required' => false,
         ]);
     }

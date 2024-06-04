@@ -23,7 +23,7 @@
                                 {% if cart.pickupPlace %}
                                     Osobní odběr
                                 {% elseif cart.deliveryAddress %}
-                                    Rozvoz
+                                    Rozvoz <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
                                 {% else %}
                                     Doručení
                                 {% endif %}
