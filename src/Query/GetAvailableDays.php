@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Query;
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
-use CeskaKruta\Web\Services\DeliveryService;
+use CeskaKruta\Web\Services\CeskaKrutaDelivery;
+use CeskaKruta\Web\Services\CoolBalikDelivery;
 use DateTimeImmutable;
 
 readonly final class GetAvailableDays
@@ -14,6 +15,8 @@ readonly final class GetAvailableDays
         private GetPlaces $getPlaces,
         private CartStorage $cartStorage,
         private GetPlaceClosedDays $getPlaceClosedDays,
+        private CeskaKrutaDelivery $ceskaKrutaDelivery,
+        private CoolBalikDelivery $coolBalikDelivery,
     ) {
     }
 
@@ -52,13 +55,6 @@ readonly final class GetAvailableDays
         $weekDay = (int) $date->format('w'); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
         $weekDay = $weekDay === 0 ? 7 : $weekDay; // Převedeme neděli na 7
 
-        if ($placeId === DeliveryService::CESKA_KRUTA_DELIVERY_PLACE_ID) {
-
-        }
-
-        if ($placeId === DeliveryService::COOLBALIK_DELIVERY_PLACE_ID) {
-
-        }
         // Zabalíme všechny proměnné pro dny do pole
         $allowDaysBefore = [
             1 => $place->day1AllowedDaysBefore,
@@ -69,6 +65,16 @@ readonly final class GetAvailableDays
             6 => $place->day6AllowedDaysBefore,
             7 => $place->day7AllowedDaysBefore,
         ];
+
+        $postalCode = $this->cartStorage->getDeliveryAddress()?->postalCode;
+
+        if ($postalCode !== null && $placeId === $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID) {
+            $allowDaysBefore = $this->ceskaKrutaDelivery->getAllowedDaysBeforeForPostalCode($postalCode);
+        }
+
+        if ($placeId === $this->coolBalikDelivery::DELIVERY_PLACE_ID) {
+            $allowDaysBefore = $this->coolBalikDelivery->getAllowedDaysBeforeForPostalCode($postalCode);
+        }
 
         $daysBefore = $allowDaysBefore[$weekDay] ?? null;
 

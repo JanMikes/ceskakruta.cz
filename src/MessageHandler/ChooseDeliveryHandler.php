@@ -7,7 +7,8 @@ namespace CeskaKruta\Web\MessageHandler;
 use CeskaKruta\Web\Exceptions\UnsupportedDeliveryToPostalCode;
 use CeskaKruta\Web\Message\ChooseDelivery;
 use CeskaKruta\Web\Services\Cart\CartStorage;
-use CeskaKruta\Web\Services\DeliveryService;
+use CeskaKruta\Web\Services\CeskaKrutaDelivery;
+use CeskaKruta\Web\Services\CoolBalikDelivery;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -15,7 +16,8 @@ readonly final class ChooseDeliveryHandler
 {
     public function __construct(
         private CartStorage $cartStorage,
-        private DeliveryService $deliveryService,
+        private CeskaKrutaDelivery $ceskaKrutaDelivery,
+        private CoolBalikDelivery $coolBalikDelivery,
     ) {
     }
 
@@ -29,13 +31,13 @@ readonly final class ChooseDeliveryHandler
 
         $postalCode = $message->address->postalCode;
 
-        if ($this->deliveryService->canCeskaKrutaDeliverToPostalCode($postalCode)) {
-            $this->cartStorage->storeDeliveryPlace($this->deliveryService::CESKA_KRUTA_DELIVERY_PLACE_ID);
+        if ($this->ceskaKrutaDelivery->canDeliverToPostalCode($postalCode)) {
+            $this->cartStorage->storeDeliveryPlace($this->ceskaKrutaDelivery::DELIVERY_PLACE_ID);
             return;
         }
 
-        if ($this->deliveryService->canCoolbalikDeliverToPostalCode($postalCode)) {
-            $this->cartStorage->storeDeliveryPlace($this->deliveryService::COOLBALIK_DELIVERY_PLACE_ID);
+        if ($this->coolBalikDelivery->canDeliverToPostalCode($postalCode)) {
+            $this->cartStorage->storeDeliveryPlace($this->coolBalikDelivery::DELIVERY_PLACE_ID);
             return;
         }
 
