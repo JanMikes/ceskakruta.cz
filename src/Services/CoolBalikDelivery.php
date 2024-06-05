@@ -47,18 +47,58 @@ final class CoolBalikDelivery
             self::$mapping = $this->cache->get($cacheKey, function (ItemInterface $item): array {
                 $item->expiresAt(new \DateTimeImmutable('+1 day'));
 
-                // $response = $this->coolbalikClient->request('GET', '/areas');
-                // $content = $response->getContent();
-                // $json = json_decode($content, true);
-                // TODO parsing + mapping
+                $response = $this->coolbalikClient->request('GET', '/areas');
+                $content = $response->getContent();
 
-                return [
-                    10000 => [1, 2, 3, 4, 5, 6],
-                    10001 => [1, 2, 3, 4, 5, 6],
-                ];
+                /**
+                 * @var array<array{
+                 *     Days: array<string>,
+                 *     CodesArray: array<int>
+                 *  }> $json
+                 */
+                $json = json_decode($content, true);
+
+                return $this->parseResponseToPostalCodesAllowedDays($json);
             });
         }
 
         return self::$mapping ?? [];
+    }
+
+    /**
+     * @param array<array{
+     *     Days: array<string>,
+     *     CodesArray: array<int>
+     *  }> $data
+     * @return array<int, array<int>>
+     */
+    private function parseResponseToPostalCodesAllowedDays(array $data): array
+    {
+        $daysMapping = [
+            'Monday' => 1,
+            'Tuesday' => 2,
+            'Wednesday' => 3,
+            'Thursday' => 4,
+            'Friday' => 5,
+            'Saturday' => 6,
+            'Sunday' => 7,
+        ];
+
+        /** @var array<int, array<int>> $postalCodes */
+        $postalCodes = [];
+
+        foreach ($data as $area) {
+
+            foreach ($area['CodesArray'] as $postalCode) {
+                $postalCodes[$postalCode] = [];
+
+                foreach ($area['Days'] as $day) {
+                    $postalCodes[$postalCode][] = $daysMapping[$day] ?? -1;
+                }
+            }
+
+        }
+
+        return $postalCodes;
     }
 }
