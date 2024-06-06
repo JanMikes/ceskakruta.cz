@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services;
 
+use CeskaKruta\Web\Exceptions\UserNotRegistered;
 use CeskaKruta\Web\Message\EditUserInfo;
 use CeskaKruta\Web\Message\RegisterUser;
 use CeskaKruta\Web\Services\Security\PasswordHasher;
+use CeskaKruta\Web\Value\User;
 use Doctrine\DBAL\Connection;
 
 readonly final class UserService
@@ -15,6 +17,29 @@ readonly final class UserService
         private PasswordHasher $passwordHasher,
         private Connection $connection,
     ) {
+    }
+
+    /**
+     * @throws UserNotRegistered
+     */
+    public function getEmailById(int $id): string
+    {
+        /**
+         * @var false|array{
+         *     email: string,
+         * } $data
+         */
+        $data = $this->connection
+            ->executeQuery('SELECT * FROM `user` WHERE active_flag = 1 AND del_flag = 0 AND id = :id', [
+                'id' => $id,
+            ])
+            ->fetchAssociative();
+
+        if ($data === false) {
+            throw new UserNotRegistered();
+        }
+
+        return $data['email'];
     }
 
     public function register(RegisterUser $message): void

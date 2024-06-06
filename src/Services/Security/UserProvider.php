@@ -21,7 +21,7 @@ readonly final class UserProvider implements UserProviderInterface
     ) {
     }
 
-    public function refreshUser(UserInterface $user): UserInterface
+    public function refreshUser(UserInterface $user): User
     {
         if (!$user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
@@ -38,7 +38,7 @@ readonly final class UserProvider implements UserProviderInterface
     /**
      * @throws UserNotRegistered
      */
-    public function loadUserByIdentifier(string $identifier): UserInterface
+    public function loadUserByIdentifier(string $identifier): User
     {
         /**
          * @var false|array{
