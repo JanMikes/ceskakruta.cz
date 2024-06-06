@@ -117,6 +117,11 @@
                 <a class="p-2 {{ app.request.pathInfo == path('actuality') ? 'active' }}" href="{{ path('actuality') }}">Aktuality</a>
                 <a class="p-2 {{ app.request.pathInfo == path('recipes') ? 'active' }}" href="{{ path('recipes') }}">Recepty</a>
             </div>
+
+            {% set newsletter_form = newsletterForm() %}
+            {{ form_start(newsletter_form, {'action': path('subscribe_newsletter') }) }}
+                <button type="submit">Uložit</button>
+            {{ form_end(newsletter_form) }}
         </footer>
     </body>
 </html>

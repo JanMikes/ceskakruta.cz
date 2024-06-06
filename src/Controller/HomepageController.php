@@ -20,7 +20,6 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomepageController extends AbstractController
 {
     public function __construct(
-        private readonly MessageBusInterface $bus,
         private readonly CartStorage $cartStorage,
     ) {
     }
@@ -28,39 +27,12 @@ final class HomepageController extends AbstractController
     #[Route(path: '/', name: 'homepage', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        $subscribeNewsletterForm = $this->createForm(SubscribeNewsletterFormType::class);
-        $subscribeNewsletterForm->handleRequest($request);
-
-        if ($subscribeNewsletterForm->isSubmitted() && $subscribeNewsletterForm->isValid()) {
-            $formData = $subscribeNewsletterForm->getData();
-            assert($formData instanceof SubscribeNewsletterFormData);
-
-            try {
-                $this->bus->dispatch(
-                    new SubscribeNewsletter($formData->email)
-                );
-
-                $this->addFlash('bg-success text-white', 'Děkujeme za subscribe! Budeme tě informovat o nových kolekcích, akčních slevách, chystajících se collabech a podobně!');
-            } catch (HandlerFailedException $handlerFailedException) {
-                $previousException = $handlerFailedException->getPrevious();
-
-                if ($previousException instanceof EmailAlreadySubscribedToNewsletter) {
-                    $this->addFlash('bg-warning text-white', 'Tvůj e-mail byl již v minulosti subscribnut. O žádnou z našich novinek nepřijdeš! ;-)');
-                } else {
-                    throw $handlerFailedException;
-                }
-            }
-
-            return $this->redirectToRoute('homepage');
-        }
-
         $deliveryFormData = DeliveryFormData::fromAddress($this->cartStorage->getDeliveryAddress());
         $deliveryForm = $this->createForm(DeliveryFormType::class, $deliveryFormData, [
             'action' => $this->generateUrl('order_delivery'),
         ]);
 
         return $this->render('homepage.html.twig', [
-            'subscribe_newsletter_form' => $subscribeNewsletterForm,
             'delivery_form' => $deliveryForm,
         ]);
     }

@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services\Twig;
 
+use CeskaKruta\Web\FormType\SubscribeNewsletterFormType;
 use DateTimeImmutable;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -14,6 +18,7 @@ final class TwigExtension extends AbstractExtension
 {
     public function __construct(
         readonly private KernelInterface $kernel,
+        readonly private FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -37,6 +42,7 @@ final class TwigExtension extends AbstractExtension
             new TwigFunction('asset_exists', $this->asset_exists(...)),
             new TwigFunction('firstDayOfWeek', [$this, 'getFirstDayOfWeek']),
             new TwigFunction('lastDayOfWeek', [$this, 'getLastDayOfWeek']),
+            new TwigFunction('newsletterForm', [$this, 'getNewsletterForm']),
         ];
     }
 
@@ -96,5 +102,10 @@ final class TwigExtension extends AbstractExtension
     public function formatPrice(float|int $price): string
     {
         return number_format($price, thousands_separator: ' ');
+    }
+
+    public function getNewsletterForm(): FormView
+    {
+        return $this->formFactory->create(SubscribeNewsletterFormType::class)->createView();
     }
 }

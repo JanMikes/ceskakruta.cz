@@ -9,6 +9,9 @@
        {{ include('_my_account_panel.html.twig') }}
 
         <div class="shadow p-3 my-3">
+            <a class="btn btn-sm btn-primary" href="{{ path('edit_user_info') }}">Upravit údaje</a>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('change_user_password') }}"><i class="ci-locked"></i>  Změnit heslo</a>
+
             <table class="table">
                 <tr>
                     <th style="max-width: 100px;">Jméno:</th>
@@ -40,8 +43,6 @@
                     </td>
                 </tr>
             </table>
-
-            <a class="btn btn-sm btn-outline-primary" href="{{ path('edit_user_info') }}">Upravit údaje</a>
         </div>
     </section>
 

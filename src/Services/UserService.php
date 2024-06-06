@@ -56,4 +56,19 @@ readonly final class UserService
             ],
         );
     }
+
+    public function changePassword(string $email, string $newPlainTextPassword): void
+    {
+        $password = $this->passwordHasher->hash($newPlainTextPassword);
+
+        $this->connection->update(
+            '`user`',
+            [
+                'password' => $password,
+            ],
+            [
+                'email' => $email,
+            ],
+        );
+    }
 }
