@@ -45,7 +45,7 @@ readonly final class RegisterUserHandler
 
             $email = (new TemplatedEmail())
                 ->to('j.mikes@me.com')
-                ->subject('Thanks for signing up!')
+                ->subject('Potvrzení registrace účtu na ceskakruta.cz')
                 ->htmlTemplate('emails/registration.html.twig')
                 ->context([
                     'user' => $user,

@@ -1,1 +1,19 @@
-<h1>Registration!</h1>
+{% apply inline_css(source('@styles/email.css')) %}
+    <html lang="cs">
+    <body>
+
+    <div class="newsletterContainer">
+        <img src="{{ email.image('@images/logo.png') }}" alt="Logo">
+
+        <h1 class="newsletter">Vítejte v České Krůtě!</h1>
+
+        <div class="newsletterBody">
+            <p>Potvrzujeme registraci vašeho uživatelského účtu.</p>
+        </div>
+
+    </div>
+
+    </body>
+    </html>
+
+{% endapply %}
