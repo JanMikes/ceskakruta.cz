@@ -11,6 +11,7 @@ use CeskaKruta\Web\Services\Security\UserProvider;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 readonly final class RequestPasswordResetHandler
@@ -19,6 +20,7 @@ readonly final class RequestPasswordResetHandler
         private MailerInterface $mailer,
         private PasswordResetTokenService $passwordResetTokenService,
         private UserProvider $userProvider,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -36,7 +38,11 @@ readonly final class RequestPasswordResetHandler
             ->subject('Obnovení hesla na ČeskáKrůta.cz')
             ->htmlTemplate('emails/forgotten_password.html.twig')
             ->context([
-                'token_link' => $token, // TODO link
+                'token_link' => $this->urlGenerator->generate(
+                    'reset_password',
+                    ['token' => $token],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                ),
             ]);
 
         $this->mailer->send($email);

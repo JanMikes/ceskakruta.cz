@@ -16,8 +16,8 @@ readonly final class PasswordResetTokenService
 
     public function create(int $userId): string
     {
-        $bytes = random_bytes(20);
-        $token = substr(bin2hex($bytes), 0, 20);
+        $bytes = random_bytes(30);
+        $token = substr(bin2hex($bytes), 0, 30);
 
         $now = new \DateTimeImmutable();
         $validUntil = new \DateTimeImmutable('+12 hours');
