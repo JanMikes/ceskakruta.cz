@@ -11,6 +11,7 @@ use CeskaKruta\Web\FormType\ChangePasswordFormType;
 use CeskaKruta\Web\FormType\RequestPasswordResetFormType;
 use CeskaKruta\Web\Message\RequestPasswordReset;
 use CeskaKruta\Web\Message\ResetPassword;
+use CeskaKruta\Web\Services\PasswordResetTokenService;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +25,7 @@ final class ResetPasswordController extends AbstractController
 {
     public function __construct(
         readonly private MessageBusInterface $bus,
+        readonly private PasswordResetTokenService $passwordResetTokenService,
     ) {}
 
     #[Route(path: '/obnoveni-hesla/{token}', name: 'reset_password', methods: ['GET', 'POST'])]
@@ -31,6 +33,12 @@ final class ResetPasswordController extends AbstractController
     {
         if ($user !== null) {
             return $this->redirectToRoute('user_my_account');
+        }
+
+        if ($this->passwordResetTokenService->isTokenValid($token) === false) {
+            $this->addFlash('danger', 'Neplatný odkaz pro obnovu hesla, zkuste prosím obnovit znovu.');
+
+            return $this->redirectToRoute('forgotten_password');
         }
 
         $formData = new ChangePasswordFormData();
@@ -50,7 +58,7 @@ final class ResetPasswordController extends AbstractController
                 $realException = $failedException->getPrevious();
 
                 if ($realException instanceof InvalidResetPasswordToken) {
-                    $this->addFlash('danger', 'Neplatný odkaz pro obnovu hesla, zkuste to prosím znovu.');
+                    $this->addFlash('danger', 'Neplatný odkaz pro obnovu hesla, zkuste prosím obnovit znovu.');
 
                     return $this->redirectToRoute('forgotten_password');
                 }

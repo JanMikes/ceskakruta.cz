@@ -14,6 +14,17 @@ readonly final class PasswordResetTokenService
     ) {
     }
 
+    public function isTokenValid(string $token): bool
+    {
+        try {
+            $this->getTokenUserId($token);
+
+            return true;
+        } catch (InvalidResetPasswordToken) {
+            return false;
+        }
+    }
+
     public function create(int $userId): string
     {
         $bytes = random_bytes(30);

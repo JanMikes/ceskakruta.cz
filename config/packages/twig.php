@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Services\Cart\CartService;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -17,4 +16,6 @@ return static function (\Symfony\Config\TwigConfig $twig): void {
         'timezone' => 'Europe/Prague',
     ]);
 
+    $twig->path('%kernel.project_dir%/public/img', 'images');
+    $twig->path('%kernel.project_dir%/public/css', 'styles');
 };
