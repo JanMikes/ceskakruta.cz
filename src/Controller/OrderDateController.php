@@ -43,7 +43,7 @@ final class OrderDateController extends AbstractController
 
                 $this->addFlash('success', 'Zvolen datum');
 
-                return $this->redirectToRoute('order_available_dates');
+                return $this->redirectToRoute('cart');
             }
         }
 

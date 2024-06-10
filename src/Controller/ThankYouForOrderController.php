@@ -5,7 +5,7 @@ namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartStorage;
-use CeskaKruta\Web\Services\OrderRepository;
+use CeskaKruta\Web\Services\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,7 +14,7 @@ final class ThankYouForOrderController extends AbstractController
 {
     public function __construct(
         private readonly CartStorage $cartStorage,
-        private readonly OrderRepository $orderService,
+        private readonly OrderService $orderService,
     ) {
     }
 

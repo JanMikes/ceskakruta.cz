@@ -8,7 +8,7 @@ use CeskaKruta\Web\Services\Cart\CartService;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 
-readonly final class OrderRepository
+readonly final class OrderService
 {
     public function __construct(
         private Connection $connection,

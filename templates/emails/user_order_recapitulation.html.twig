@@ -1,226 +1,91 @@
-<html>
-<body>
+{% apply inline_css(source('@styles/email.css')) %}
+    <html lang="cs">
+    <body>
 
-<div style="{!$s['newsletterContainer']}">
-    <img src="http://ceskakruta.cz/img/logo.png" alt="Logo Česká Krůta">
+        <div class="newsletterContainer">
+            <img src="{{ email.image('@images/logo.png') }}" alt="Logo">
 
-    <h1 style="{!$s['h1']}">Potvrzení přijetí objednávky</h1>
+            <h1 class="newsletter">Potvrzení přijetí objednávky č. {{ order_id }}</h1>
 
-    <p style="{!$s['p']}">Děkujeme za objednávku provedenou na <a style="{!$s['a']}" href="http://www.ceskakruta.cz">Ceskakruta.cz</a>.<br> Tímto potvrzujeme její přijetí. Objednávka bude připravena na níže uvedené prodejní místo a datum. <br>Pokud jste objednali rozvoz, den předem Vám zašleme sms ohledně doručení.</p>
-    <p style="{!$s['p']}">Prosíme o pečlivou kontrolu níže uvedených údajů.</p>
+            <div class="newsletterBody">
+
+                <p>Děkujeme za objednávku. Tímto potvrzujeme její přijetí. Objednávka bude připravena na níže uvedené prodejní místo a datum. <br>Pokud jste objednali rozvoz, den předem Vám zašleme sms ohledně doručení.</p>
+                <p>Prosíme o pečlivou kontrolu níže uvedených údajů.</p>
 
 
-    <h2 style="{!$s['h2']}">Kontaktní údaje</h2>
-    <table style="{!$s['table']};border: 0;width: 100%;">
-        <tr>
-            <th style="{!$s['th']}">Jméno a příjmení:</th>
-            <td style="{!$s['td']}">{$order["name"]}</td>
-        </tr>
-        <tr>
-            <th style="{!$s['th'] . $s['.odd']}">Email:</th>
-            <td style="{!$s['td'] . $s['.odd']}">{$order["email"]}</td>
-        </tr>
-        <tr>
-            <th style="{!$s['th']}">Telefon:</th>
-            <td style="{!$s['td']}">{$order["phone"]}</td>
-        </tr>
-        <tr>
-            <th style="{!$s['th'] . $s['.odd']}">Prodejní místo:</th>
-            <td style="{!$s['td'] . $s['.odd']}">
-                {$placeRow->title}
-            </td>
-        </tr>
-        <tr>
-            <th style="{!$s['th']}">Datum:</th>
-            <td style="{!$s['td']}">{\Nette\DateTime::from($order["date"])->format("d.m.Y")}</td>
-        </tr>
-        <tr>
-            <th style="{!$s['th'] . $s['.odd']}">Poznámka:</th>
-            <td style="{!$s['td'] . $s['.odd']}">{$order["note"]}</td>
-        </tr>
-        {if $placeRow->force_delivery_address}
-        <tr>
-            <th style="{!$s['th']}">
-                Rozvoz na adresu:
-            <td style="{!$s['td']}">
-                {$order["delivery_street"]}<br>
-                {$order["delivery_city"]}<br>
-                {$order["delivery_zip"]}
-            </td>
-        </tr>
-        <tr>
-            <th style="{!$s['th'] . $s['.odd']}">Platba kartou při převzetí:</th>
-            <td style="{!$s['td'] . $s['.odd']}">
-                {if $order['delivery_pay_with_card']}
-                <strong>ANO</strong><br>
-                {else}
-                Ne
-                {/if}
-            </td>
-        </tr>
-        {/if}
-    </table>
+                <div class="text-center py-3 border-bottom">
+                    {% if cart.pickupPlace %}
+                        <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
+                        <h3 class="h5 fw-normal mb-0">
+                            {{ places[cart.pickupPlace].name }}
+                        </h3>
+                    {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                        <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
+                        <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
+                        <h3 class="h5 fw-normal mb-0">
+                            {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }} {{ cart.deliveryAddress.postalCode }}
+                        </h3>
+                    {% endif %}
 
-    <h2 style="{!$s['h2']}">Obsah objednávky</h2>
+                    <h3 class="h5 fw-normal mt-3 mb-0">
+                        {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+                    </h3>
+                </div>
 
-    {var $price = 0}
+                <div class="text-center mb-4 py-3 border-bottom">
+                    <h2 class="h6 mb-3 pb-1">Orientační cena: {{ cart.totalPrice.amount|price }} Kč</h2>
+                </div>
 
-    <h3 style="{!$s['h3']}">Krůty a krocani</h3>
+                <hr>
 
-    <table style="{!$s['table']};border: 0;width: 100%;">
-        <thead>
-        <tr>
-            <th style="{!$s['th']}">Zboží</th>
-            <th style="{!$s['th']}">Počet</th>
-            <th style="{!$s['th']}">Váha 1 ks cca</th>
-            <th style="{!$s['th']}">Orientační cena Kč/ks</th>
-            <th style="{!$s['th']}">Orientační cena</th>
-        </tr>
-        </thead>
-        <tbody>
-        {var $i = 0}
-        {foreach $order["weeklyProducts"] as $productId => $info}
-        <tr n:if="$info[amount] > 0">
-            {var $totalProductPrice = (($weeklyProducts[$productId]->weight_from+$weeklyProducts[$productId]->weight_to)/2) * $productsPrices[1] * $info["amount"]}
+                <div class="mb-4 pb-3">
+                    <p>
+                        <strong>Jméno a příjmení</strong><br>
+                        {{ cart.orderData.name }}
+                    </p>
+                    <p>
+                        <strong>E-mail</strong><br>
+                        {{ cart.orderData.email }}
+                    </p>
+                    <p>
+                        <strong>Telefon</strong><br>
+                        {{ cart.orderData.phone }}
+                    </p>
+                    <p>
+                        <strong>Poznámka</strong><br>
+                        {{ cart.orderData.note ?: '-' }}
+                    </p>
+                </div>
 
-            <td style="{!$s['td']}">{$weeklyProducts[$productId]->product_tp->name} s droby</td>
-            <td style="{!$s['td']}">{$info["amount"]} ks</td>
-            <td style="{!$s['td']}">{$weeklyProducts[$productId]->weight_from} až {$weeklyProducts[$productId]->weight_to} Kg</td>
-            <td style="{!$s['td']}">{$totalProductPrice/$info["amount"]|number:0:"":"."} Kč</td>
-            <td style="{!$s['td']}">{$totalProductPrice|number:0:"":"."} Kč</td>
-            {php $price += $totalProductPrice}
-        </tr>
-        {/foreach}
+                <hr>
 
-        {foreach $order["weeklyProductsHalf"] as $productId => $info}
-        <tr n:if="$info[amount] > 0">
-            {var $totalProductPrice = (($weeklyProducts[$productId]->weight_from+$weeklyProducts[$productId]->weight_to)/4) * $productsPrices[2] * $info["amount"]}
-            <td style="{!$s['td']}">{$weeklyProducts[$productId]->product_tp->name} půlka bez drobů</td>
-            <td style="{!$s['td']}">{$info["amount"]} ks</td>
-            <td style="{!$s['td']}">{$weeklyProducts[$productId]->weight_from/2} až {$weeklyProducts[$productId]->weight_to/2} Kg</td>
-            <td style="{!$s['td']}">{$totalProductPrice/$info["amount"]|number:0:"":"."} Kč</td>
-            <td style="{!$s['td']}">{$totalProductPrice|number:0:"":"."} Kč</td>
-            {php $price += $totalProductPrice}
-        </tr>
-        {/foreach}
+                {% for item in cart.items %}
+                    <div class="d-block d-sm-flex align-items-center py-4 border-bottom">
+                        <div class="text-center text-sm-start">
+                            <h3 class="h6 product-title mb-2">{{ item.product.title }}</h3>
+                            <div class="d-inline-block">
+                                {% if item.product.turkeyType %}
+                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
+                                    Orientační cena{% if cart.place is null %} od{% endif %}: <strong>{{ item.product.price|price }} Kč/ks</strong>
+                                {% else %}
+                                    <strong>{{ item.product.price  }} <small>Kč/kg</small></strong>
+                                    {% if item.slice %}
+                                        <br>+ Nakrájet
+                                    {% endif %}
+                                    {% if item.pack %}
+                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                    {% endif %}
+                                {% endif %}
+                                <br>
+                                Množství: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
-        {foreach $order["weeklyProductsSliced"] as $productId => $info}
-        <tr n:if="$info[amount] > 0">
-            {var $totalProductPrice = (($weeklyProducts[$productId]->weight_from+$weeklyProducts[$productId]->weight_to)/2) * $productsPrices[41] * $info["amount"]}
+        </div>
 
-            <td style="{!$s['td']}">Porcovaný/á {$weeklyProducts[$productId]->product_tp->name} - celý kus</td>
-            <td style="{!$s['td']}">{$info["amount"]} ks</td>
-            <td style="{!$s['td']}">{$weeklyProducts[$productId]->weight_from} až {$weeklyProducts[$productId]->weight_to} Kg</td>
-            <td style="{!$s['td']}">{$totalProductPrice/$info["amount"]|number:0:"":"."} Kč</td>
-            <td style="{!$s['td']}">{$totalProductPrice|number:0:"":"."} Kč</td>
-            {php $price += $totalProductPrice}
-        </tr>
-        {/foreach}
-
-        {foreach $order["weeklyProductsHalfSliced"] as $productId => $info}
-        <tr n:if="$info[amount] > 0">
-            {var $totalProductPrice = (($weeklyProducts[$productId]->weight_from+$weeklyProducts[$productId]->weight_to)/4) * $productsPrices[42] * $info["amount"]}
-            <td style="{!$s['td']}">Porcovaný/á {$weeklyProducts[$productId]->product_tp->name} - půlka</td>
-            <td style="{!$s['td']}">{$info["amount"]} ks</td>
-            <td style="{!$s['td']}">{$weeklyProducts[$productId]->weight_from/2} až {$weeklyProducts[$productId]->weight_to/2} Kg</td>
-            <td style="{!$s['td']}">{$totalProductPrice/$info["amount"]|number:0:"":"."} Kč</td>
-            <td style="{!$s['td']}">{$totalProductPrice|number:0:"":"."} Kč</td>
-            {php $price += $totalProductPrice}
-        </tr>
-        {/foreach}
-        </tbody>
-    </table>
-
-    <div style="{!$s['hr.gray']}"></div>
-
-    <h3 style="{!$s['h3']}">Maso a výrobky</h3>
-
-    <table style="{!$s['table']};border: 0;width: 100%;">
-        <thead>
-        <tr>
-            <th style="{!$s['th']}">Zboží</th>
-            <th style="{!$s['th']}">Množství kg</th>
-            <th style="{!$s['th']}">Vakuově zabalit</th>
-            <th style="{!$s['th']}">Nakrájet</th>
-            <th style="{!$s['th']}">Cena Kč/kg</th>
-            <th style="{!$s['th']}">Cena</th>
-        </tr>
-        </thead>
-        <tbody>
-        {var $i = 0}
-        {foreach $order["products"] as $productId => $info}
-        <tr n:if="$info[amount] > 0">
-            <td style="{!$s['td']}">{$products[$productId]->name}</td>
-            <td style="{!$s['td']}">{$info["amount"]} Kg</td>
-            <td style="{!$s['td']}">
-                {if $products[$productId]->can_be_packed_flag}
-                {if !empty($info["packed_amount"])}
-                Ano (+{$products[$productId]->price_pack} Kč)
-                {php $price += $products[$productId]->price_pack }
-                {else}
-                Ne
-                {/if}
-                {else}
-                -
-                {/if}
-            </td>
-            <td style="{!$s['td']}">
-                {if $products[$productId]->can_be_sliced_flag}
-                {if !empty($info["slicing"])}
-                Ano
-                {else}
-                Ne
-                {/if}
-                {else}
-                -
-                {/if}
-            </td>
-            <td style="{!$s['td']}">
-                {$productsPrices[$productId]} Kč
-            </td>
-            <td style="{!$s['td']}">
-                {var $totalPrice = $productsPrices[$productId] * $info["amount"]}
-                {$totalPrice|number:0} Kč
-                {php $price += $totalPrice}
-            </td>
-        </tr>
-        {/foreach}
-        </tbody>
-    </table>
-
-    {if $placeRow->force_delivery_address}
-    <table style="{!$s['table']};border: 0;width: 100%;">
-        <tbody>
-        <tr>
-            <td style="{!$s['td']}">Doprava</td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}">
-                195 Kč
-                {php $price += 195}
-            </td>
-        </tr>
-        <tr>
-            <td style="{!$s['td']}">Balné</td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}"></td>
-            <td style="{!$s['td']}">
-                35 Kč
-                {php $price += 35}
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    {/if}
-
-    <div style="{!$s['hr.gray']}"></div>
-
-    <h3 style="{!$s['h3']}"><strong>Orientační cena: {$price|number:0:".":"."} Kč</strong></h3>
-
-</div>
-
-</html>
+    </body>
+    </html>
+{% endapply %}

@@ -4,10 +4,10 @@
         <meta charset="UTF-8">
         <title>{% block title %}{% endblock %} | Česká Krůta</title>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
-        <meta name="description" content="">
-        <meta name="keywords" content="">
+        <meta name="description" content="Objevte kvalitní krůtí maso z rodinné farmy Rychvald. Nabízíme zdravé, dietní a chutné maso a výrobky z krůtího masa. Česká krůta – zdravá volba pro vás.">
+        <meta name="keywords" content="krůtí maso, rodinná farma, zdravé maso, dietní krůtí maso, česká krůta, farma Rychvald, čerstvé krůtí maso, prodej krůtího masa">
 
         <meta name="turbo-prefetch" content="false">
         <meta name="turbo-refresh-method" content="morph">
@@ -20,6 +20,8 @@
         <link rel="manifest" href="{{ asset('site.webmanifest') }}">
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="theme-color" content="#ffffff">
+
+        <meta name="author" content="Jan Mikeš - janmikes.cz">
 
         {{ encore_entry_link_tags('app') }}
         {{ encore_entry_script_tags('app') }}
