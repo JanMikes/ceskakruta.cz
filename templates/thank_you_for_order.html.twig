@@ -17,4 +17,18 @@
         </div>
     </div>
 
+    {% if last_order and total_price %}
+        <script>
+            fbq('track', 'Purchase', { value: {{ total_price }}, currency: 'CZK' });
+        </script>
+
+        <script>
+            gtag('event', 'purchase', {
+                transaction_id: {{ last_order }},
+                value: {{ total_price }},
+                currency: 'CZK'
+            });
+        </script>
+    {% endif %}
+
 {% endblock %}
