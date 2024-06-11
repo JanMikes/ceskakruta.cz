@@ -133,20 +133,6 @@
             <div class="py-4">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-4 order-sm-last mt-4 mt-md-0">
-                            <div class="widget">
-                                <h3 class="widget-title text-light mb-2">Odběr novinek</h3>
-
-                                {% set newsletter_form = newsletterForm() %}
-
-                                {{ form_start(newsletter_form, {'action': path('subscribe_newsletter') }) }}
-                                <div class="input-group flex-nowrap" style="max-width: 300px;"><i class="ci-mail position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
-                                    {{ form_widget(newsletter_form.email, { 'attr': {'class': 'form-control rounded-start'} }) }}
-                                    <button class="btn btn-primary" type="submit" name="subscribe">Odebírat</button>
-                                </div>
-                                {{ form_end(newsletter_form) }}
-                            </div>
-                        </div>
                         <div class="col-xl-5 col-md-5 col-sm-8 order-sm-first widget widget-links widget-light">
                             <div class="row">
                                 <div class="col-6">
@@ -167,13 +153,28 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 col-sm-4">
+
+                        <div class="col-md-3 col-sm-4 mt-4 mt-sm-0">
                             <div class="widget widget-light">
-                                <h3 class="widget-title text-light">Sledujte nás</h3></a><a class="btn-social bs-light bs-facebook me-2 mb-2" href="#"><i class="ci-facebook"></i></a><a class="btn-social bs-light bs-instagram me-2 mb-2" href="#"><i class="ci-instagram"></i></a>
+                                <h3 class="widget-title text-light mb-3">Sledujte nás</h3><a class="btn-social bs-light bs-facebook me-2 mb-2" href="#"><i class="ci-facebook"></i></a><a class="btn-social bs-light bs-instagram me-2 mb-2" href="#"><i class="ci-instagram"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-4 mt-md-0">
+                            <div class="widget">
+                                <h3 class="widget-title text-light mb-3">Odběr novinek</h3>
+
+                                {% set newsletter_form = newsletterForm() %}
+
+                                {{ form_start(newsletter_form, {'action': path('subscribe_newsletter') }) }}
+                                <div class="input-group flex-nowrap" style="max-width: 300px;"><i class="ci-mail position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
+                                    {{ form_widget(newsletter_form.email, { 'attr': {'class': 'form-control rounded-start'} }) }}
+                                    <button class="btn btn-primary" type="submit" name="subscribe">Odebírat</button>
+                                </div>
+                                {{ form_end(newsletter_form) }}
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="bg-darker py-3">
