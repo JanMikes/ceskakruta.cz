@@ -4,13 +4,13 @@
 
 {% block content %}
     <div class="content-section">
-        <div class="card py-3 mt-sm-3">
+        <div class="card shadow py-3 mt-sm-3 mx-auto" style="max-width: 800px;">
             <div class="card-body text-center">
                 <h1 class="h3 pb-3">Děkujeme za objednávku!</h1>
 
                 <p class="fs-sm mb-2">Vaše objednávka dostala <strong>číslo {{ last_order }}</strong>.<br>Rekapitulaci jsme společně s informacemi o tom, co bude dál, jsme vám poslali na e-mail.</p>
 
-                <a class="btn btn-secondary mt-3 me-3" href="{{ path('products') }}">Zpět k naší nabídce</a>
+                <a class="btn btn-outline-primary mt-3 me-3" href="{{ path('products') }}">Zpět k naší nabídce</a>
             </div>
         </div>
     </div>
