@@ -99,7 +99,7 @@
                     <div class="collapse navbar-collapse me-auto order-lg-2" id="navbarCollapse">
                         <hr class="d-lg-none my-3">
                         <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" href="{{ path('homepage') }}">Úvod</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('homepage') ? 'active' }}" href="{{ path('homepage') }}">Úvod</a></li>
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a></li>
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('products') or app.request.pathInfo == path('products_cold') or app.request.pathInfo == path('products_cold_calendar') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a></li>
                             <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a></li>
@@ -129,22 +129,58 @@
             {% endblock %}
         </main>
 
-        <footer class="bg-secondary">
-            <div class="container py-4">
-                <a class="p-2" href="{{ path('homepage') }}">Úvod</a>
-                <a class="p-2 {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a>
-                <a class="p-2 {{ app.request.pathInfo == path('products') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a>
-                <a class="p-2 {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a>
-                <a class="p-2 {{ app.request.pathInfo == path('contact') ? 'active' }}" href="{{ path('contact') }}">Kontakty</a>
-                <a class="p-2 {{ app.request.pathInfo == path('sales_places') ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a>
-                <a class="p-2 {{ app.request.pathInfo == path('actuality') ? 'active' }}" href="{{ path('actuality') }}">Aktuality</a>
-                <a class="p-2 {{ app.request.pathInfo == path('recipes') ? 'active' }}" href="{{ path('recipes') }}">Recepty</a>
-            </div>
+        <footer class="footer bg-dark">
+            <div class="py-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4 order-sm-last mt-4 mt-md-0">
+                            <div class="widget">
+                                <h3 class="widget-title text-light mb-2">Odběr novinek</h3>
 
-            {% set newsletter_form = newsletterForm() %}
-            {{ form_start(newsletter_form, {'action': path('subscribe_newsletter') }) }}
-                <button type="submit">Uložit</button>
-            {{ form_end(newsletter_form) }}
+                                {% set newsletter_form = newsletterForm() %}
+
+                                {{ form_start(newsletter_form, {'action': path('subscribe_newsletter') }) }}
+                                <div class="input-group flex-nowrap" style="max-width: 300px;"><i class="ci-mail position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
+                                    {{ form_widget(newsletter_form.email, { 'attr': {'class': 'form-control rounded-start'} }) }}
+                                    <button class="btn btn-primary" type="submit" name="subscribe">Odebírat</button>
+                                </div>
+                                {{ form_end(newsletter_form) }}
+                            </div>
+                        </div>
+                        <div class="col-xl-5 col-md-5 col-sm-8 order-sm-first widget widget-links widget-light">
+                            <div class="row">
+                                <div class="col-6">
+                                    <ul class="widget-list">
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('homepage') ? 'active' }}"><a class="widget-list-link" href="{{ path('homepage') }}">Úvod</a></li>
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('about_us') ? 'active' }}"><a class="widget-list-link" href="{{ path('about_us') }}">O nás</a></li>
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('products') ? 'active' }}"><a class="widget-list-link" href="{{ path('products') }}">Naše nabídka</a></li>
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('delivery_info') ? 'active' }}"><a class="widget-list-link" href="{{ path('delivery_info') }}">Rozvoz</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <ul class="widget-list">
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('contact') ? 'active' }}"><a class="widget-list-link" href="{{ path('contact') }}">Kontakty</a></li>
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('sales_places') ? 'active' }}"><a class="widget-list-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('actuality') ? 'active' }}"><a class="widget-list-link" href="{{ path('actuality') }}">Aktuality</a></li>
+                                        <li class="widget-list-item {{ app.request.pathInfo == path('recipes') ? 'active' }}"><a class="widget-list-link" href="{{ path('recipes') }}">Recepty</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-4">
+                            <div class="widget widget-light">
+                                <h3 class="widget-title text-light">Sledujte nás</h3></a><a class="btn-social bs-light bs-facebook me-2 mb-2" href="#"><i class="ci-facebook"></i></a><a class="btn-social bs-light bs-instagram me-2 mb-2" href="#"><i class="ci-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="bg-darker py-3">
+                <div class="container fs-xs text-light opacity-50 text-center text-sm-start">
+                    © Všechna práva vyhrazena, B+K FARMA Rychvald s.r.o.
+                </div>
+            </div>
         </footer>
     </body>
 </html>
