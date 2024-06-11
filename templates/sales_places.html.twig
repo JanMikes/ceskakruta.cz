@@ -5,7 +5,7 @@
 {% block content %}
     <section class="sales-places content-section">
         <div class="row">
-            <div class="col-md-3 sales-places-nav pe-0">
+            <div class="col-md-3 sales-places-nav pe-md-0">
                 <ul class="list-unstyled">
                     <li>
                         <a class="active" href="{{ path('sales_places') }}">
@@ -28,7 +28,7 @@
                 <h1 class="d-none d-md-block">Naše prodejny</h1>
 
                 {% for place in places %}
-                    <h2 class="h3 my-3 mt-md-5">{{ place.name }}</h2>
+                    <h2 class="h3 my-3 {{ loop.first ? 'mt-md-5' : 'mt-5' }}">{{ place.name }}</h2>
 
                     <div class="card shadow">
                         <div class="card-body row-place-item row d-flex text-center">

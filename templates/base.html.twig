@@ -168,7 +168,7 @@
 
                                 {{ form_start(newsletter_form, {'action': path('subscribe_newsletter') }) }}
                                 <div class="input-group flex-nowrap" style="max-width: 300px;"><i class="ci-mail position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
-                                    {{ form_widget(newsletter_form.email, { 'attr': {'class': 'form-control rounded-start'} }) }}
+                                    {{ form_widget(newsletter_form.email, { 'attr': {'class': 'form-control rounded-start', 'placeholder': 'Váš e-mail'} }) }}
                                     <button class="btn btn-primary" type="submit" name="subscribe">Odebírat</button>
                                 </div>
                                 {{ form_end(newsletter_form) }}

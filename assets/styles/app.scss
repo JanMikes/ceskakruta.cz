@@ -313,14 +313,12 @@ main {
 }
 
 .sales-places-nav {
-    background: #fff;
-    position: sticky;
-    top: 130px;
-    left: 0;
-    height: 130px;
-
     @include media-breakpoint-up(md) {
+        background: #fff;
         top: 174px;
+        position: sticky;
+        left: 0;
+        height: 130px;
     }
 
     a {
