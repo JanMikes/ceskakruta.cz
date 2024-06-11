@@ -294,20 +294,39 @@ main {
 }
 
 .sales-places {
-    padding: 60px 0;
-
     h2 {
         color: $primary;
+    }
+
+    .places-col {
+        border-left: 1px solid #ECECEC;
+    }
+
+    .row-place-item {
+        > div:nth-child(2) {
+            @include media-breakpoint-up(sm) {
+                border-left: 1px solid #ECECEC;
+                border-right: 1px solid #ECECEC;
+            }
+        }
     }
 }
 
 .sales-places-nav {
-    border-right: 1px solid #ECECEC;
+    background: #fff;
+    position: sticky;
+    top: 130px;
+    left: 0;
+    height: 130px;
+
+    @include media-breakpoint-up(md) {
+        top: 174px;
+    }
 
     a {
         display: block;
         width: 100%;
-        padding: 15px;
+        padding: 15px 25px 15px 15px;
         line-height: 25px;
         color: #575756;
         position: relative;
@@ -342,7 +361,7 @@ main {
 
         .ci-arrow-down,
         .ci-arrow-right {
-            display: block;
+            display: none;
             font-size: 10px;
             width: 20px;
             height: 20px;
@@ -350,10 +369,14 @@ main {
             text-align: center;
             background: #ECECEC;
             position: absolute;
-            right: 20px;
+            right: 8px;
             top: 50%;
             margin-top: -10px;
             border-radius: 20px;
+
+            @include media-breakpoint-up(md) {
+                display: block;
+            }
         }
     }
 }

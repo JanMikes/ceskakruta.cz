@@ -3,9 +3,9 @@
 {% block title %}Naše farmy{% endblock %}
 
 {% block content %}
-    <section class="sales-places">
+    <section class="sales-places content-section">
         <div class="row">
-            <div class="col-sm-3 sales-places-nav pe-0">
+            <div class="col-md-3 sales-places-nav pe-0">
                 <ul class="list-unstyled">
                     <li>
                         <a href="{{ path('sales_places') }}">
@@ -24,14 +24,14 @@
                 </ul>
             </div>
 
-            <div class="col-sm-9 ps-5">
-                <h1>Naše farmy</h1>
+            <div class="places-col col-md-9 ps-md-4 ps-lg-5">
+                <h1 class="d-none d-md-block">Naše farmy</h1>
 
-                <h2 class="my-3 mt-4">Rychvald</h2>
+                <h2 class="h3 my-3 mt-md-5">Rychvald</h2>
 
                 <div class="card">
-                    <div class="card-body row d-flex text-center">
-                        <div class="col">
+                    <div class="card-body row row-place-item d-flex text-center">
+                        <div class="col-sm">
                             <i class="ci-location fs-lg mt-2 mb-0 text-primary"></i>
                             <p>
                                 <strong>Rychvald 1215</strong><br>
@@ -41,7 +41,7 @@
                             </p>
                         </div>
 
-                        <div class="col border-start border-end">
+                        <div class="col-sm">
                             <i class="ci-time fs-lg mt-2 mb-0 text-primary"></i>
 
                             <p>
@@ -50,7 +50,7 @@
                             </p>
                         </div>
 
-                        <div class="col">
+                        <div class="col-sm">
                             <i class="ci-time fs-lg mt-2 mb-0 text-primary"></i>
 
                             <p>
@@ -61,11 +61,11 @@
                     </div>
                 </div>
 
-                <h2 class="my-3 mt-4">Doubrava</h2>
+                <h2 class="h3 my-3 mt-5">Doubrava</h2>
 
                 <div class="card">
-                    <div class="card-body row d-flex text-center">
-                        <div class="col">
+                    <div class="card-body row-place-item row d-flex text-center">
+                        <div class="col-sm">
                             <i class="ci-location fs-lg mt-2 mb-0 text-primary"></i>
                             <p>
                                 <strong>Doubrava 1</strong><br>
@@ -75,7 +75,7 @@
                             </p>
                         </div>
 
-                        <div class="col border-start border-end">
+                        <div class="col-sm">
                             <i class="ci-time fs-lg mt-2 mb-0 text-primary"></i>
 
                             <p>
@@ -83,7 +83,7 @@
                             </p>
                         </div>
 
-                        <div class="col">
+                        <div class="col-sm">
                             <i class="ci-time fs-lg mt-2 mb-0 text-primary"></i>
 
                             <p>
