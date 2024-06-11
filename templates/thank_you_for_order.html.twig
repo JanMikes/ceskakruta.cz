@@ -3,19 +3,19 @@
 {% block title %}Děkujeme za objednávku{% endblock %}
 
 {% block content %}
+    <div class="content-section">
+        <div class="card py-3 mt-sm-3">
+            <div class="card-body text-center">
+                <h1 class="h3 pb-3">Děkujeme za objednávku!</h1>
 
-    <div class="container pb-5 mb-sm-4">
-        <div class="pt-5">
-            <div class="card py-3 mt-sm-3">
-                <div class="card-body text-center">
-                    <h2 class="h4 pb-3">Děkujeme za objednávku!</h2>
-                    <p class="fs-sm mb-2">Your order has been placed and will be processed as soon as possible.</p>
-                    <p class="fs-sm mb-2">Make sure you make note of your order number, which is <span class="fw-medium">{{ last_order }}.</span></p>
-                    <p class="fs-sm">You will be receiving an email shortly with confirmation of your order. <u>You can now:</u></p><a class="btn btn-secondary mt-3 me-3" href="{{ path('products') }}">Zpět k naší nabídce</a><a class="btn btn-primary mt-3" href="{{ path('products') }}"><i class="ci-location"></i>&nbsp;Sledovat objednávku</a>
-                </div>
+                <p class="fs-sm mb-2">Vaše objednávka dostala <strong>číslo {{ last_order }}</strong>.<br>Rekapitulaci jsme společně s informacemi o tom, co bude dál, jsme vám poslali na e-mail.</p>
+
+                <a class="btn btn-secondary mt-3 me-3" href="{{ path('products') }}">Zpět k naší nabídce</a>
             </div>
         </div>
     </div>
+
+
 
     {% if last_order and total_price %}
         <script>
