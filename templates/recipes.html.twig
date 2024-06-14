@@ -3,14 +3,27 @@
 {% block title %}Recepty{% endblock %}
 
 {% block content %}
-    <section class="recipes">
+    <section class="content-section">
         <h1>Recepty</h1>
-    </section>
 
-    {% for recipe in recipes %}
-        <p>
-            {{ recipe.name }}<br>
-            {{ recipe.text|raw }}
-        </p>
-    {% endfor %}
+        <div class="masonry-grid" data-columns="3">
+            {% for recipe in recipes %}
+                <div class="masonry-grid-item">
+                    <a href="{{ path('recipe_detail', {'recipeId': recipe.id}) }}">
+                        <div class="card border border-primary">
+                            <div class="card-body">
+                                <h5 class="card-title mb-0">
+                                    {{ recipe.name }}
+                                </h5>
+                            </div>
+                            {% if recipe.filename %}
+                                <img class="card-img-bottom" alt="{{ recipe.name }}" src="https://ceskakruta.cz/{{ recipe.path }}/{{ recipe.filename }}">
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+    </section>
 {% endblock %}

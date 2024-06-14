@@ -11,6 +11,8 @@ readonly final class Recipe
         public int $productId,
         public string $name,
         public string $text,
+        public null|string $filename,
+        public null|string $path,
     )
     {
 

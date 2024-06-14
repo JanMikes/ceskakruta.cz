@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ recipe.name }}{% endblock %}
+
+{% block content %}
+    <section class="content-section">
+        <h1>{{ recipe.name }}</h1>
+
+        <p>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('recipes') }}"><i class="ci-arrow-left"></i> Všechny recepty</a>
+        </p>
+
+        {% if recipe.filename %}
+            <img class="ms-3 rounded-3 float-end" style="max-width: 400px;" src="https://ceskakruta.cz/{{ recipe.path }}/{{ recipe.filename }}" alt="{{ recipe.name }}">
+        {% endif %}
+
+        {{ recipe.text|raw }}
+
+    </section>
+{% endblock %}

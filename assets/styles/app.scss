@@ -514,11 +514,18 @@ main {
     padding: 30px 0 40px;
     min-height: calc(100vh - 335px); // 100vh - (Header + footer)
 
+    h1 {
+        margin-bottom: 25px;
+    }
+
     @include media-breakpoint-up(sm) {
         padding: 40px 0 50px;
+        margin-bottom: 30px;
     }
 
     @include media-breakpoint-up(md) {
         padding: 50px 0 60px;
+        margin-bottom: 35px;
     }
+
 }

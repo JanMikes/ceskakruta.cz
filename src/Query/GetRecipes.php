@@ -23,8 +23,15 @@ final class GetRecipes
     public function all(): array
     {
         if ($this->recipes === null) {
+            $query = <<<SQL
+SELECT recipe.*, photo.filename, photo.path
+FROM recipe
+LEFT JOIN photo ON photo.id = recipe.photo_id
+WHERE recipe.active_flag = 1 AND recipe.del_flag = 0
+ORDER BY photo_id IS NULL, name
+SQL;
             $rows = $this->connection
-                ->executeQuery('SELECT * FROM recipe WHERE active_flag = 1 AND del_flag = 0 ORDER BY id')
+                ->executeQuery($query)
                 ->fetchAllAssociative();
 
             $recipes = [];
@@ -36,6 +43,8 @@ final class GetRecipes
                  *     product_id: int,
                  *     name: string,
                  *     text: null|string,
+                 *     filename: null|string,
+                 *     path: null|string,
                  * } $row
                  */
 
@@ -46,6 +55,8 @@ final class GetRecipes
                     productId: $row['product_id'],
                     name: $row['name'],
                     text: $row['text'] ?? '',
+                    filename: $row['filename'],
+                    path: $row['path'],
                 );
             }
 
@@ -55,7 +66,7 @@ final class GetRecipes
         return $this->recipes;
     }
 
-    public function oneById(int $recipeId): Recipe
+    public function oneById(int|string $recipeId): Recipe
     {
         return $this->all()[$recipeId] ?? throw new \Exception('Recipe not found');
     }
