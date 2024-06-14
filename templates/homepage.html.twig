@@ -14,68 +14,70 @@
     </section>
 
     <section class="home-squares">
-        <div class="container">
-            <h2>Naše nabídka</h2>
+        <div class="container py-5">
+            <h2 class="h1">Naše nabídka</h2>
 
             <div class="row">
-                <div class="col-sm-4 my-3">
-                    <a class="home-img-maso-a-uzeniny" href="{{ path('products') }}"><span>Maso a uzeniny</span></a>
+                <div class="col-sm-6 col-md-4 my-3">
+                    <a class="home-img-maso-a-uzeniny" href="{{ path('products') }}"><span class="h1 mb-0 px-2 py-3 py-lg-4">Maso a uzeniny</span></a>
                 </div>
 
-                <div class="col-sm-4 my-3">
-                    <a class="home-img-chlazene-kruty" href="{{ path('products_cold') }}"><span>Chlazené krůty</span></a>
+                <div class="col-sm-6 col-md-4 my-3">
+                    <a class="home-img-chlazene-kruty" href="{{ path('products_cold') }}"><span class="h1 mb-0 px-2 py-3 py-lg-4">Chlazené krůty</span></a>
                 </div>
 
-                <div class="col-sm-4 my-3">
-                    <a class="home-img-krutata" href="{{ path('alive_turkeys') }}"><span>Krůťata k chovu</span></a>
+                <div class="col-sm-6 col-md-4 my-3">
+                    <a class="home-img-krutata" href="{{ path('alive_turkeys') }}"><span class="h1 mb-0 px-2 py-3 py-lg-4">Krůťata k chovu</span></a>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="home-advantages">
-        <div class="container">
-            <h2>Proč naše maso?</h2>
+        <div class="container overflow-hidden">
+            <h2 class="h1">Proč naše maso?</h2>
 
-            <div class="row">
-                <div class="col-sm-4">
+            <div class="row gx-sm-5 gx-lg-10 gy-3 gy-md-4 gy-lg-5">
+                <div class="col-sm-6 col-md-4">
                     <i class="icon icon-1"></i>
                     <h3>Vlastní chov</h3>
                     <p>Jsme hrdí na to, že veškeré maso a zvířata, které nabízíme, pochází výhradně z našeho vlastního chovu, nikde jinde je nenakupujeme.</p>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-6 col-md-4">
                     <i class="icon icon-2"></i>
                     <h3>Imunitní sytém</h3>
                     <p>V našem chovu se spoléháme na přírodní doplňky, jako je česnek, chlorella, oregano a echinacea, které přispívají k podpoře zdraví našich zvířat.</p>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-6 col-md-4">
                     <i class="icon icon-3"></i>
                     <h3>Žádné stimulátory</h3>
                     <p>S pečlivostí a ohledem na kvalitu vám zaručujeme, že u zvířat nepoužíváme žádné růstové stimulátory ani hormony.</p>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-6 col-md-4">
                     <i class="icon icon-4"></i>
                     <h3>Bez stresu</h3>
                     <p>Celý proces výkrmu i zpracování masa probíhá pod naším osobním dohledem na naší farmě. Drůbež není vystavena  stresu z převozu, držena v bednách bez přístupu k vodě či krmivu</p>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-6 col-md-4">
                     <i class="icon icon-5"></i>
                     <h3>Přímo na stůl</h3>
                     <p>Naše maso a výrobky neprochází dlouhým logistickým řetězcem, a proto uměle neprodlužujeme jejich trvanlivost</p>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-6 col-md-4">
                     <i class="icon icon-6"></i>
                     <h3>Welfare požadavky</h3>
                     <p>O naše zvířata se staráme sami, což znamená nesrovnatelné podmínky welfare. Dostatek prostoru, denní světlo i potřebný čas na odpočinek je pro nás samozřejmostí</p>
                 </div>
             </div>
 
-            <a href="{{ path('about_meat') }}">Výhody krůtího masa</a>
+            <p class="mb-0 mt-3">
+                <a class="btn btn-sm btn-light" href="{{ path('about_meat') }}">Výhody krůtího masa</a>
+            </p>
         </div>
     </section>
 
@@ -89,12 +91,12 @@
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card shadow">
                         <div class="card-body text-center">
-                            <strong>B+K Farma Rychvald</strong><br>
+                            <strong>B+K Farma Rychvald s.r.o.</strong><br>
                             Rychvald 1215<br>
                             735 32 Rychvald<br>
-                            IČ: 268 66 935<br>
+                            IČ: <span class="no-phone-link">26866935</span><br>
 
-                            <a href="#" class="mt-2 btn btn-sm btn-outline-primary">Zobrazit na mapě</a>
+                            <a href="https://maps.app.goo.gl/Ms7ybxKxftKqENh66" target="_blank" class="mt-2 btn btn-sm btn-outline-primary">Zobrazit na mapě</a>
                         </div>
                     </div>
                 </div>
@@ -110,7 +112,7 @@
                     <p class="text-center mt-3">Společnost je vedena u Krajského soudu v Ostravě pod spisovou značkou C 50789/KSOS </p>
                 </div>
 
-                <div class="col-md-4 col-sm-6 mb-4 text-center pt-4">
+                <div class="col-md-4 col-sm-6 mb-4 text-center pt-2 pt-lg-4">
                     <p>
                         <a href="{{ path('sales_places') }}" class="btn btn-primary btn-lg">Naše prodejny masa</a>
                     </p>

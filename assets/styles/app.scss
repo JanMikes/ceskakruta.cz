@@ -48,8 +48,9 @@ main {
 }
 
 .home-header {
-    background: url('../img/home-header.png') center top no-repeat;
-    min-height: 800px;
+    background: url('../img/home-header.png') center top no-repeat #7E352F;
+    height: calc(100vh - 129px); // 100vh - (Header + footer)
+    max-height: 980px;
 
     h1, p, a {
         color: #fff;
@@ -64,20 +65,13 @@ main {
     background: #F6CE7E;
     color: #fff;
 
-    .container {
-        padding-top: 65px;
-        padding-bottom: 65px;
-    }
-
     h2 {
         color: #fff;
-        margin-bottom: 40px;
     }
 
     a {
+        height: 300px;
         display: block;
-        max-width: 440px;
-        height: 400px;
         border: 6px solid #fff;
         text-align: center;
         color: #fff;
@@ -99,9 +93,7 @@ main {
         span {
             display: block;
             width: 100%;
-            padding: 30px 0;
-            font-size: 36px;
-            font-weight: 700;
+            color: #fff;
             background: rgba(135, 43, 38, 0.6);
             position: absolute;
             left: 0;
@@ -113,6 +105,12 @@ main {
             span {
                 background: rgba(135, 43, 38, 0.88);
             }
+        }
+    }
+
+    @include media-breakpoint-up(sm) {
+        a {
+            height: 400px;
         }
     }
 }
@@ -156,12 +154,43 @@ main {
 }
 
 .home-delivery {
-    background: url('../img/home-doprava.png') left center no-repeat #E6E6E6;
-    padding: 100px 0;
+    padding: 30px 0 360px;
+    min-height: calc(100vh - 335px); // 100vh - (Header + footer)
+    background: #E6E6E6 url('../img/home-doprava.png') no-repeat center bottom;
+    background-size: 360px auto;
 
-    .container {
-        @media (min-width: 1200px) {
-            padding-left: 700px;
+    .row-delivery-inputs {
+        max-width: 560px;
+    }
+
+    h1 {
+        margin-bottom: 25px;
+    }
+
+    @include media-breakpoint-up(sm) {
+        padding-top: 40px;
+    }
+
+    @include media-breakpoint-up(md) {
+        padding: 50px 0;
+        background-position: right 60%;
+        background-size: 420px auto;
+    }
+
+    @include media-breakpoint-up(lg) {
+        background-size: 55% auto;
+        background-position: left center;
+
+        .container {
+            padding-left: 50%;
+        }
+    }
+
+    @include media-breakpoint-up(xl) {
+        background-size: contain;
+
+        .container {
+            padding-left: 650px;
         }
     }
 }
@@ -201,7 +230,6 @@ main {
 
 .home-contact {
     padding: 60px 0;
-    min-height: 80vh;
 }
 
 .separator {
@@ -527,5 +555,9 @@ main {
         padding: 50px 0 60px;
         margin-bottom: 35px;
     }
+}
 
+.no-phone-link {
+    user-select: none; /* Standard */
+    -webkit-touch-callout: none; /* Safari iOS */
 }

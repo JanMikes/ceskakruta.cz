@@ -1,18 +1,35 @@
 <section class="home-delivery">
     <div class="container">
-        <h2>Rozvoz</h2>
+        <h2 class="h1">Rozvoz</h2>
 
         <p>Zadejte vaši adresu a my najdeme optimální doručení na vaši adresu, dle našich možností.</p>
 
         {{ form_start(delivery_form) }}
-            {{ form_row(delivery_form.street) }}
-            {{ form_row(delivery_form.city) }}
-            {{ form_row(delivery_form.postalCode) }}
+            <div class="row row-delivery-inputs g-2">
+                <div class="col-6">
+                    <div class="form-floating mb-2">
+                        {{ form_widget(delivery_form.street, {'attr': {'class': 'form-control', 'placeholder': 'Ulice s č.p.'}}) }}
+                        {{ form_label(delivery_form.street, 'Ulice s č.p.', {'label_attr': {'for': 'fl-text'}}) }}
+                    </div>
+                </div>
 
-            <button class="btn btn-primary" type="submit">Potvrdit</button>
+                <div class="col-6">
+                    <div class="form-floating mb-2">
+                        {{ form_widget(delivery_form.city, {'attr': {'class': 'form-control', 'placeholder': 'Město'}}) }}
+                        {{ form_label(delivery_form.city, 'Město', {'label_attr': {'for': 'fl-text'}}) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-floating mb-3" style="max-width: 150px;">
+                {{ form_widget(delivery_form.postalCode, {'attr': {'class': 'form-control', 'placeholder': 'PSČ'}}) }}
+                {{ form_label(delivery_form.postalCode, 'PSČ', {'label_attr': {'for': 'fl-text'}}) }}
+            </div>
+
+            <button class="btn btn-primary" type="submit"><i class="ci-delivery me-1"></i> Doručit na tuto adresu</button>
         {{ form_end(delivery_form) }}
 
-        <h3 class="my-5">Jednoduchá objednávka ve 3 krocích</h3>
+        <h3 class="mt-5 mb-3">Jednoduchá objednávka ve 3 krocích</h3>
 
         <div class="home-delivery-steps">
             <div class="d-flex align-items-center py-3 step-1">
