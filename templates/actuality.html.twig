@@ -3,16 +3,16 @@
 {% block title %}Aktuality{% endblock %}
 
 {% block content %}
-    <section class="actuality">
+    <section class="content-section">
         <h1>Aktuality</h1>
+
+        <ul class="list-unstyled">
+            {% for actuality in actualities %}
+                <li class="mb-4">
+                    <h2 class="h4 mb-0"><a href="{{ path('actuality_detail', {'actualityId': actuality.id}) }}">{{ actuality.title }}</a></h2>
+                    <p class="mt-0 text-muted small">{{ actuality.date.format('d.m.Y') }}</p>
+                </li>
+            {% endfor %}
+        </ul>
     </section>
-
-    {% for actuality in actualities %}
-        <h2 class="h4 mb-0">{{ actuality.title }}</h2>
-        <p class="mt-0 mb-3 text-muted small">{{ actuality.date.format('d.m.Y') }}</p>
-        {{ actuality.text|raw }}
-
-        <hr class="my-4">
-    {% endfor %}
-
 {% endblock %}

@@ -60,7 +60,7 @@ final class GetActualities
         return $this->actualities;
     }
 
-    public function oneById(int $actualityId): Actuality
+    public function oneById(int|string $actualityId): Actuality
     {
         return $this->all()[$actualityId] ?? throw new \Exception('Actuality not found');
     }

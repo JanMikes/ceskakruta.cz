@@ -99,12 +99,12 @@
                     <div class="collapse navbar-collapse me-auto order-lg-2" id="navbarCollapse">
                         <hr class="d-lg-none my-3">
                         <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('homepage') ? 'active' }}" href="{{ path('homepage') }}">Úvod</a></li>
-                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('about_us') ? 'active' }}" href="{{ path('about_us') }}">O nás</a></li>
-                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('products') or app.request.pathInfo == path('products_cold') or app.request.pathInfo == path('products_cold_calendar') ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a></li>
-                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('delivery_info') ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a></li>
-                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('contact') ? 'active' }}" href="{{ path('contact') }}">Kontakty</a></li>
-                            <li class="nav-item"><a class="nav-link {{ app.request.pathInfo == path('sales_places') or app.request.pathInfo == path('farms') ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.attributes.get('_route') == 'homepage' ? 'active' }}" href="{{ path('homepage') }}">Úvod</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.attributes.get('_route') == 'about_us' ? 'active' }}" href="{{ path('about_us') }}">O nás</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.attributes.get('_route') in ['products', 'products_cold', 'products_cold_calendar'] ? 'active' }}" href="{{ path('products') }}">Naše nabídka</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.attributes.get('_route') == 'delivery_info' ? 'active' }}" href="{{ path('delivery_info') }}">Rozvoz</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.attributes.get('_route') == 'contact' ? 'active' }}" href="{{ path('contact') }}">Kontakty</a></li>
+                            <li class="nav-item"><a class="nav-link {{ app.request.attributes.get('_route') in ['sales_places', 'farms'] ? 'active' }}" href="{{ path('sales_places') }}">Naše prodejny</a></li>
                         </ul>
                     </div>
                 </div>
@@ -137,18 +137,18 @@
                             <div class="row">
                                 <div class="col-6">
                                     <ul class="widget-list">
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('homepage') ? 'active' }}"><a class="widget-list-link" href="{{ path('homepage') }}">Úvod</a></li>
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('about_us') ? 'active' }}"><a class="widget-list-link" href="{{ path('about_us') }}">O nás</a></li>
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('products') ? 'active' }}"><a class="widget-list-link" href="{{ path('products') }}">Naše nabídka</a></li>
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('delivery_info') ? 'active' }}"><a class="widget-list-link" href="{{ path('delivery_info') }}">Rozvoz</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'homepage' ? 'active' }}"><a class="widget-list-link" href="{{ path('homepage') }}">Úvod</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'about_us' ? 'active' }}"><a class="widget-list-link" href="{{ path('about_us') }}">O nás</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'products' ? 'active' }}"><a class="widget-list-link" href="{{ path('products') }}">Naše nabídka</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'delivery_info' ? 'active' }}"><a class="widget-list-link" href="{{ path('delivery_info') }}">Rozvoz</a></li>
                                     </ul>
                                 </div>
                                 <div class="col-6">
                                     <ul class="widget-list">
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('contact') ? 'active' }}"><a class="widget-list-link" href="{{ path('contact') }}">Kontakty</a></li>
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('sales_places') ? 'active' }}"><a class="widget-list-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('actuality') ? 'active' }}"><a class="widget-list-link" href="{{ path('actuality') }}">Aktuality</a></li>
-                                        <li class="widget-list-item {{ app.request.pathInfo == path('recipes') ? 'active' }}"><a class="widget-list-link" href="{{ path('recipes') }}">Recepty</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'contact' ? 'active' }}"><a class="widget-list-link" href="{{ path('contact') }}">Kontakty</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'sales_places' ? 'active' }}"><a class="widget-list-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') in ['actuality', 'actuality_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('actuality') }}">Aktuality</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') in ['recipes', 'recipe_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('recipes') }}">Recepty</a></li>
                                     </ul>
                                 </div>
                             </div>

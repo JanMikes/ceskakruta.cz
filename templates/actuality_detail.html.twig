@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ actuality.title }}{% endblock %}
+
+{% block content %}
+    <section class="content-section">
+        <h1>{{ actuality.title }}</h1>
+        <p>
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('actuality') }}"><i class="ci-arrow-left"></i> Všechny aktuality</a>
+        </p>
+
+        <h2 class="h5">{{ actuality.date.format('d.m.Y') }}</h2>
+
+        {{ (actuality.textFull ?? actuality.text)|raw }}
+
+    </section>
+{% endblock %}
