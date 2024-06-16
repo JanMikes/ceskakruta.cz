@@ -13,4 +13,9 @@ readonly final class ProductInCart
         public null|bool $pack = null,
     ) {
     }
+
+    public function price(): int|float
+    {
+        return $this->quantity * $this->product->price();
+    }
 }
