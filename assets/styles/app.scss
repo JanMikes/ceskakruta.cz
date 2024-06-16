@@ -418,10 +418,6 @@ main {
     }
 }
 
-.alive-turkeys {
-    padding: 60px 0;
-}
-
 .alive-turkeys-row {
     background: #EBBD70;
     margin: 50px auto;
@@ -434,13 +430,17 @@ main {
 
 .alive-turkeys-img-1,
 .alive-turkeys-img-2 {
-    min-height: 736px;
     position: relative;
+
+    @include media-breakpoint-up(md) {
+        min-height: 736px !important;
+    }
 }
 
 .alive-turkeys-img-1 {
     background: url('../img/alive-turkeys-1.png') center center no-repeat;
     background-size: cover;
+    min-height: 300px;
 }
 
 .alive-turkeys-img-2 {
@@ -450,11 +450,14 @@ main {
 
 .content-wrap {
     background: #fff;
-    position: absolute;
-    bottom: 25%;
-    width: 80%;
-    left: 10%;
     padding: 20px;
+
+    @include media-breakpoint-up(md) {
+        position: absolute;
+        bottom: 25%;
+        width: 80%;
+        left: 10%;
+    }
 }
 
 .calendar-row {

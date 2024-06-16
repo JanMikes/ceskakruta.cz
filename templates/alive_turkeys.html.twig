@@ -3,25 +3,45 @@
 {% block title %}Drůbež k chovu{% endblock %}
 
 {% block content %}
-    <section class="alive-turkeys text-center">
+    <section class="alive-turkeys text-center content-section">
         <h1>Drůbež k chovu</h1>
 
         <p>Jestliže pro svůj chov nebo další užití hledáte rozkrmená krůťata nebo vykrmené krůty a krocany, kteří nejsou stresováni dlouhým převozem a pobytem v bednách bez přísunu vody a krmiva a u kterých je zaručena stálá kontrola zdravotního stavu a poctivý chov, obraťte se na nás. Nabízíme pouze drůbež těch nejlepších vlastností!</p>
 
         <a href="{{ path('farms') }}">Kde si můžeze koupit a vyzvednout?</a>
 
-        <div class="flex-row d-flex align-items-center alive-turkeys-row">
-            <div class="col alive-turkeys-img-1">
+        <div class="flex-md-row d-md-flex align-items-center alive-turkeys-row">
+            <div class="col-md alive-turkeys-img-1">
 
             </div>
-            <div class="col p-5">
+            <div class="col-md p-5">
                 <h2>Krůťata na chov</h2>
 
                 <p>Každý rok u nás můžete zakoupit kvalitní a zdravá krůťata k chovu. Nabízíme širokoprsá krůťata typu BUT 6, v jarních měsících také bronzová krůťata Kelly Bronze. Prodej probíhá střídavě na obou farmách tak jak nám krůťata rostou. Prodej od 5-ti do 9-ti týdnů stáří je na kusy, od stáří 10-ti týdnů na kg. Bronzová krůťata je nutné objednat předem</p>
 
-                <a href="#">Důležité informace k chovu</a>
+                <p>
+                    <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modal-info">
+                        Důležité informace k chovu
+                    </button>
+                </p>
+
+                <!-- Modal markup -->
+                <div class="modal" tabindex="-1" role="dialog" id="modal-info">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Informace k chovu</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="fs-sm">Jestliže pro svůj chov nebo další užití hledáte rozkrmená krůťata, která nejsou stresována dlouhým převozem a pobytem v bednách bez přísunu vody a krmiva a u kterých je zaručena stálá kontrola zdravotního stavu a poctivý chov, obraťte se na nás – nabízíme pouze drůbež těch nejlepších vlastností! Každý rok u nás můžete zakoupit</p>
+                                <p class="fs-sm">kvalitní a zdravá rozkrmená širokoprsá krůťata typu BUT 6 mix cca 50:50 (lze také objednat pouze krocany nebo krůty). Prodáváme krůťata od stáří šesti týdnů (po dohodě zkušeným chovatelům a za příznivého počasí i od stáří pěti týdnů). Do stáří osmi týdnů je cena stanovena za kus, od stáří devíti týdnů je cena stanovena za Kg.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col alive-turkeys-img-2">
+            <div class="col-md alive-turkeys-img-2">
                 <div class="content-wrap">
                     <h2>Vykrmené krůty a krocani</h2>
                     <p>Cena pro maloodběratele je 83,- Kč/Kg.</p>
@@ -33,14 +53,14 @@
 
         {% for year, weeks in calendars %}
             {% for week, turkeys in weeks %}
-                <div class="row calendar-row my-3">
-                    <div class="col-sm-3 pe-0">
+                <div class="row calendar-row my-4">
+                    <div class="col-md-3 pe-md-0">
                         <span class="ribbon {{ current_week == week ? 'active' }}">
                             <strong>{{ week }}. týden</strong><br>{{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
                         </span>
                     </div>
 
-                    <div class="col-sm-9 ps-0">
+                    <div class="col-md-9 ps-md-0">
                         <div class="table-responsive shadow">
                             <table class="table">
                                 <tbody>
