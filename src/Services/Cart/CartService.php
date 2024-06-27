@@ -121,7 +121,22 @@ readonly final class CartService
             }
         }
 
+        if ($totalPrice->amount > 0 && $this->getDeliveryAddress() !== null && $this->getDeliveryPlace() !== null) {
+            $totalPrice = $totalPrice->add($this->getDeliveryPrice());
+            $totalPrice = $totalPrice->add($this->getPackingPrice());
+        }
+
         return $totalPrice;
+    }
+
+    public function getDeliveryPrice(): int
+    {
+        return 195;
+    }
+
+    public function getPackingPrice(): int
+    {
+        return 35;
     }
 
     public function getOrderData(): null|OrderFormData

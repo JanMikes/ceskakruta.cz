@@ -71,8 +71,17 @@
                     <div>Váš košík je prázdný. Vyberte si něco <a class="alert-link" href="{{ path('products') }}">z naší nabídky</a>.</div>
                 </div>
             {% else %}
-                <div class="text-center py-4">
-                    <h2 class="h6 mb-2">Orientační cena celkem: {{ cart.totalPrice.amount|price }} Kč</h2>
+                <div class="py-4">
+
+                    <h2 class="h6 mb-2">
+                        {% if cart.deliveryPlace and cart.deliveryAddress %}
+                            <span class="fs-sm d-block mb-1">
+                                Doprava: {{ cart.deliveryPrice }} Kč<br>
+                                Balné: {{ cart.packingPrice }} Kč
+                            </span>
+                        {% endif %}
+                        Orientační cena celkem: {{ cart.totalPrice.amount|price }} Kč
+                    </h2>
                 </div>
             {% endif %}
         </section>

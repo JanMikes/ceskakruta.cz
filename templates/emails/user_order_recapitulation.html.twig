@@ -33,6 +33,13 @@
                 </div>
 
                 <div class="text-center mb-4 py-3 border-bottom">
+                    {% if cart.deliveryPlace and cart.deliveryAddress %}
+                        <p class="fs-sm d-block mb-1">
+                            Doprava: {{ cart.deliveryPrice }} Kč<br>
+                            Balné: {{ cart.packingPrice }} Kč
+                        </p>
+                    {% endif %}
+
                     <h2 class="h6 mb-3 pb-1">Orientační cena: {{ cart.totalPrice.amount|price }} Kč</h2>
                 </div>
 
