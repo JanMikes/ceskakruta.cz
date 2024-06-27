@@ -53,7 +53,7 @@ final class GetAliveCalendar
                  */
 
                 $calendar[$row['year']][$row['week_number']][] = new AliveCalendar(
-                    weeks: $row['week_number'],
+                    weeks: $row['week_age'],
                     weight: $row['weight'],
                     doubravaAvailable: $row['farma_doubrava'] === 1,
                     rychvaldAvailable: $row['farma_rychvald'] === 1,

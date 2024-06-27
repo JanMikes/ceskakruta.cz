@@ -30,7 +30,7 @@
                 <div class="row">
                     {% for place in places %}
                         <div class="col-md-4 mb-4">
-                            <div class="card {{ cart.pickupPlace == place.id ? 'border-primary' }}">
+                            <div class="card shadow {{ cart.pickupPlace == place.id ? 'border-primary' }}">
                                 <div class="card-body text-center">
                                     <strong>{{ place.name }}</strong><br>
 
