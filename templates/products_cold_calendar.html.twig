@@ -8,97 +8,97 @@
 
         {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
-        <div class="sales-places-nav">
-            <ul class="list-unstyled">
-                <li>
-                    <a href="{{ path('products') }}">
-                        Maso a uzeniny
-                        <i class="ci-arrow-down"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ path('products_cold') }}">
-                        Chlazené krůty a krocani
-                        <i class="ci-arrow-down"></i>
-                    </a>
-                </li>
-                <li>
-                    <a class="active" href="{{ path('products_cold_calendar') }}">
-                        Váhový kalendář
-                        <i class="ci-arrow-right"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <div class="row">
+            <div class="col-md-3 sales-places-nav pe-md-0">
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="{{ path('products') }}">
+                            Maso a uzeniny
+                            <i class="ci-arrow-down"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('products_cold') }}">
+                            Chlazené krůty a krocani
+                            <i class="ci-arrow-down"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="active" href="{{ path('products_cold_calendar') }}">
+                            Váhový kalendář
+                            <i class="ci-arrow-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-
-            {% if cart.place is null %}
-                <div class="alert alert-warning d-flex" role="alert">
-                    <div class="alert-icon">
-                        <i class="ci-security-announcement"></i>
+            <div class="places-col col-md-9 ps-md-4 ps-lg-5">
+                {% if cart.place is null %}
+                    <div class="alert alert-warning d-flex" role="alert">
+                        <div class="alert-icon">
+                            <i class="ci-security-announcement"></i>
+                        </div>
+                        <div>Zobrazené ceny se upřesní po výběru místa ...</div>
                     </div>
-                    <div>Zobrazené ceny se upřesní po výběru místa ...</div>
+                {% endif %}
+
+                <h2 class="h4 mt-4">Aktuální váhy pro tento týden</h2>
+
+                <div class="calendar-row mb-5">
+                    <span class="ribbon">
+                        <strong>{{ current_week }}. týden</strong><br>{{ firstDayOfWeek(current_year, current_week).format('d.m.') }} - {{ lastDayOfWeek(current_year, current_week).format('d.m.') }}
+                    </span>
+
+                    <div class="table-responsive shadow">
+                        <table class="table">
+                            <tbody>
+                            {% for product in products %}
+                                {% if calendar[current_year][current_week][product.turkeyType] is defined %}
+                                    {{ include('_cold_calendar_product_item.html.twig', {
+                                        week: current_week,
+                                        year: current_year,
+                                    }) }}
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            {% endif %}
 
-            <h2 class="h4 mt-4">Aktuální váhy pro tento týden</h2>
+                    <h2 class="h4 mt-4">Váhový kalendář pro další týdny</h2>
 
-            <div class="calendar-row mb-5">
-                <span class="ribbon">
-                    <strong>{{ current_week }}. týden</strong><br>{{ firstDayOfWeek(current_year, current_week).format('d.m.') }} - {{ lastDayOfWeek(current_year, current_week).format('d.m.') }}
-                </span>
+                    <div class="alert alert-warning d-flex" role="alert">
+                        <div class="alert-icon">
+                            <i class="ci-security-announcement"></i>
+                        </div>
+                        <div>Výběrem konkrétní váhy se vám omezí datum objednávky na vámi zvolený týden</div>
+                    </div>
 
-                <div class="table-responsive shadow">
-                    <table class="table">
-                        <tbody>
-                        {% for product in products %}
-                            {% if calendar[current_year][current_week][product.turkeyType] is defined %}
-                                {{ include('_cold_calendar_product_item.html.twig', {
-                                    week: current_week,
-                                    year: current_year,
-                                }) }}
+                    {% for year, weeks in calendar %}
+                        {% for week, types in weeks %}
+                            {% if calendar[year][week] is defined and (current_week != week or current_year != year) %}
+                                <div class="calendar-row mb-5">
+                                    <span class="ribbon {{ cart.week.number == week ? 'active' }}">
+                                        <strong>{{ week }}. týden</strong><br>{{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
+                                    </span>
+
+                                    <div class="table-responsive shadow">
+                                        <table class="table">
+                                            <tbody>
+                                            {% for product in products %}
+                                                {% if calendar[year][week][product.turkeyType] is defined %}
+                                                    {{ include('_cold_calendar_product_item.html.twig') }}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             {% endif %}
                         {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-                <h2 class="h4 mt-4">Váhový kalendář pro další týdny</h2>
-
-                <div class="alert alert-warning d-flex" role="alert">
-                    <div class="alert-icon">
-                        <i class="ci-security-announcement"></i>
-                    </div>
-                    <div>Výběrem konkrétní váhy se vám omezí datum objednávky na vámi zvolený týden</div>
-                </div>
-
-                {% for year, weeks in calendar %}
-                    {% for week, types in weeks %}
-                        {% if calendar[year][week] is defined and (current_week != week or current_year != year) %}
-                            <div class="calendar-row mb-5">
-                                <span class="ribbon {{ cart.week.number == week ? 'active' }}">
-                                    <strong>{{ week }}. týden</strong><br>{{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
-                                </span>
-
-                                <div class="table-responsive shadow">
-                                    <table class="table">
-                                        <tbody>
-                                        {% for product in products %}
-                                            {% if calendar[year][week][product.turkeyType] is defined %}
-                                                {{ include('_cold_calendar_product_item.html.twig') }}
-                                            {% endif %}
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        {% endif %}
                     {% endfor %}
-                {% endfor %}
-            </div>
+                </div>
         </div>
-
     </section>
 
 {% endblock %}

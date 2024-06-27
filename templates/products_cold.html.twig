@@ -8,7 +8,8 @@
 
         {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
 
-            <div class="sales-places-nav">
+        <div class="row">
+            <div class="col-md-3 sales-places-nav pe-md-0">
                 <ul class="list-unstyled">
                     <li>
                         <a href="{{ path('products') }}">
@@ -31,48 +32,51 @@
                 </ul>
             </div>
 
-            <div class="alert alert-accent d-flex" role="alert">
-                <div class="alert-icon">
-                    <i class="ci-security-announcement"></i>
-                </div>
-                <div class="small">Krůty a krocany prodávám vždy ve váze tak, jak nám dorůstají. Uvedené váhy jsou pro aktuální nabídku/vámi vybraný termín. Pokud vám nevyhovují váhy, vyberte si podle potřeby z <a href="{{ path('products_cold_calendar') }}">váhového kalendáře</a>.</div>
-            </div>
-
-
-            {% if cart.place is null %}
-                <div class="alert alert-warning d-flex" role="alert">
+            <div class="places-col col-md-9 ps-md-4 ps-lg-5">
+                <div class="alert alert-accent d-flex" role="alert">
                     <div class="alert-icon">
                         <i class="ci-security-announcement"></i>
                     </div>
-                    <div>Zobrazené ceny se upřesní po výběru místa ...</div>
+                    <div class="small">Krůty a krocany prodávám vždy ve váze tak, jak nám dorůstají. Uvedené váhy jsou pro aktuální nabídku/vámi vybraný termín. Pokud vám nevyhovují váhy, vyberte si podle potřeby z <a href="{{ path('products_cold_calendar') }}">váhového kalendáře</a>.</div>
                 </div>
-            {% endif %}
 
-            <div class="row">
-                {% for product in products %}
-                    {% if calendar[cart.week.year][cart.week.number][product.turkeyType] is defined %}
-                        {{ include('_product_item.html.twig') }}
-                    {% endif %}
-                {% endfor %}
 
-                <div class="col-sm-4 col-md-3 my-3">
-                    <a href="{{ path('products_cold_calendar') }}">
-                        <div class="card text-center">
-                            <span class="my-3 card-img-top d-block text-center overflow-hidden" href="#">
-                                <img src="{{ asset('img/turkey-icon.svg') }}" alt="Product">
-                            </span>
-                            <div class="card-body py-2">
-                                <h3 class="product-title h4">Jiná váha</h3>
-                                <p class="mb-2 mt-3 text-dark">Vyberte si jinou váhu podle kalendáře růstu</p>
-                            </div>
+                {% if cart.place is null %}
+                    <div class="alert alert-warning d-flex" role="alert">
+                        <div class="alert-icon">
+                            <i class="ci-security-announcement"></i>
                         </div>
-                    </a>
-                </div>
+                        <div>Zobrazené ceny se upřesní po výběru místa ...</div>
+                    </div>
+                {% endif %}
 
-                <p class="text-center mt-3">
-                    <a class="btn btn-primary" href="{{ path('cart') }}">Pokračovat do košíku</a>
-                </p>
+                <div class="row">
+                    {% for product in products %}
+                        {% if calendar[cart.week.year][cart.week.number][product.turkeyType] is defined %}
+                            {{ include('_product_item.html.twig') }}
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="col-sm-4 col-md-3 my-3">
+                        <a href="{{ path('products_cold_calendar') }}">
+                            <div class="card text-center">
+                                <span class="my-3 card-img-top d-block text-center overflow-hidden" href="#">
+                                    <img src="{{ asset('img/turkey-icon.svg') }}" alt="Product">
+                                </span>
+                                <div class="card-body py-2">
+                                    <h3 class="product-title h4">Jiná váha</h3>
+                                    <p class="mb-2 mt-3 text-dark">Vyberte si jinou váhu podle kalendáře růstu</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <p class="text-center mt-3">
+                        <a class="btn btn-primary" href="{{ path('cart') }}">Pokračovat do košíku</a>
+                    </p>
+                </div>
             </div>
+        </div>
     </section>
 
 {% endblock %}
