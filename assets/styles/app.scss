@@ -29,6 +29,22 @@
 
 main {
     padding-top: 129px;
+
+    > .container {
+        position: relative;
+
+    }
+}
+
+#toasts {
+    position: fixed;
+    right: 20px;
+    top: 149px;
+    z-index: 5;
+
+    .toast {
+        margin-bottom: 15px;
+    }
 }
 
 .topbar {

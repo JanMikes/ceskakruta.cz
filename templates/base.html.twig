@@ -84,12 +84,8 @@
                                 <div class="navbar-tool-text ms-n2">Přihlásit se</div>
                             </a>
                         {% endif %}
-                        <a class="navbar-tool ms-3" href="{{ path('cart') }}">
-                            <div class="navbar-tool-icon-box bg-secondary">
-                                <span class="navbar-tool-label">{{ cart.itemsCount }}</span>
-                                <i class="navbar-tool-icon ci-cart"></i>
-                            </div>
-                            <div class="navbar-tool-text"><small>Můj košík</small>{{ cart.totalPrice.amount|price|raw }} Kč</div>
+                        <a class="navbar-tool ms-3" href="{{ path('cart') }}" id="cart-nav">
+                            {{ include('_cart_nav.html.twig') }}
                         </a>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                             <span class="navbar-toggler-icon"></span>
@@ -122,8 +118,11 @@
                 </div>
             {% endfor %}
 
+            <div id="toasts"></div>
+
             {% block full_content %}
                 <section class="container">
+
                     {% block content %}{% endblock %}
                 </section>
             {% endblock %}

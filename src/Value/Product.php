@@ -12,6 +12,7 @@ readonly final class Product
     public function __construct(
         public int $id,
         public string $title,
+        public string $text,
         public int $priceFrom,
         public null|int $priceForChosenPlace,
         public bool $canBeSliced,

@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class ProductsController extends AbstractController
 {
@@ -72,6 +73,12 @@ final class ProductsController extends AbstractController
                         pack: $data->pack,
                     ),
                 );
+
+                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
+                    $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+                    return $this->render('cart_item_added.stream.html.twig');
+                }
 
                 $this->addFlash('success', 'Přidáno do košíku');
 

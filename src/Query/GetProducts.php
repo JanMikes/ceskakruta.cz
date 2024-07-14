@@ -74,6 +74,7 @@ final class GetProducts
                  * @var array{
                  *     id: int,
                  *     name: string,
+                 *     text: string|null,
                  *     can_be_packed_flag: int,
                  *     can_be_sliced_flag: int,
                  *     type: null|int,
@@ -122,6 +123,7 @@ final class GetProducts
                 $products[$productId] = new Product(
                     id: $productId,
                     title: $productRow['name'],
+                    text: $productRow['text'] ?? '',
                     priceFrom: $pricesFrom[$productId],
                     priceForChosenPlace: $priceForChosenPlace,
                     canBeSliced: $productRow['can_be_sliced_flag'] === 1,
