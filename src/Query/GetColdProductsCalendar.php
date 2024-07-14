@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Query;
 
+use CeskaKruta\Web\Services\Calendar;
 use CeskaKruta\Web\Value\ColdProductCalendar;
 use CeskaKruta\Web\Value\ColdProductType;
 use Doctrine\DBAL\Connection;
@@ -14,6 +15,7 @@ final class GetColdProductsCalendar
 
     public function __construct(
         readonly private Connection $connection,
+        readonly private Calendar $calendar,
     ) {
     }
 
@@ -23,14 +25,12 @@ final class GetColdProductsCalendar
     public function all(): array
     {
         if ($this->weights === null) {
-            $now = new \DateTimeImmutable();
-            $year = $now->format('Y');
-            $week = $now->format('W');
+            $currentWeek = $this->calendar->getCurrentWeek();
 
             $rows = $this->connection
                 ->executeQuery('SELECT * FROM calendar_cold WHERE active_flag = 1 AND del_flag = 0 AND week_number >= :week AND year >= :year ORDER BY year, week_number', [
-                    'year' => $year,
-                    'week' => $week,
+                    'year' => $currentWeek->year,
+                    'week' => $currentWeek->number,
                 ])
                 ->fetchAllAssociative();
 

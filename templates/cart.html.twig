@@ -38,12 +38,12 @@
                             {% if item.product.turkeyType %}
                                 <span class="text-muted fs-xs">
                                     Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
-                                    Orientační cena{% if cart.place is null %} od{% endif %}: {{ item.product.price|price }} Kč/ks
+                                    Orientační cena{% if cart.place is null %} od{% endif %}: {{ item.product.price|price|raw }} Kč/ks
                                 </span><br>
-                                Celkem: {{ item.price|price }} Kč
+                                Celkem: {{ item.price|price|raw }} Kč
                             {% else %}
-                                <span class="text-muted fs-xs">Cena{% if cart.place is null %} od{% endif %}: {{ item.product.price|price }} Kč/kg</span><br>
-                                Celkem: {{ item.price|price }} Kč
+                                <span class="text-muted fs-xs">Cena{% if cart.place is null %} od{% endif %}: {{ item.product.price|price|raw }} Kč/kg</span><br>
+                                Celkem: {{ item.price|price|raw }} Kč
                                 {% if item.slice %}
                                     <br>+ Nakrájet
                                 {% endif %}
@@ -80,7 +80,7 @@
                                 Balné: {{ cart.packingPrice }} Kč
                             </span>
                         {% endif %}
-                        Orientační cena celkem: {{ cart.totalPrice.amount|price }} Kč
+                        Orientační cena celkem: {{ cart.totalPrice.amount|price|raw }} Kč
                     </h2>
                 </div>
             {% endif %}

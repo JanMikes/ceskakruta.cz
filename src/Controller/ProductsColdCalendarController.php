@@ -8,6 +8,7 @@ use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
+use CeskaKruta\Web\Services\Calendar;
 use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,13 +27,12 @@ final class ProductsColdCalendarController extends AbstractController
         readonly private MessageBusInterface $bus,
         readonly private CartStorage $cartStorage,
         readonly private CartService $cartService,
+        readonly private Calendar $calendar,
     ) {}
 
     #[Route(path: '/nase-nabidka/kruty-a-krocani/vahovy-kalendar', name: 'products_cold_calendar', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        $now = new \DateTimeImmutable();
-
         $products = $this->getProducts->all();
 
         /** @var array<Form> $forms */
@@ -89,10 +89,12 @@ final class ProductsColdCalendarController extends AbstractController
             }
         }
 
+        $currentWeek = $this->calendar->getCurrentWeek();
+
         return $this->render('products_cold_calendar.html.twig', [
             'products' => $products,
-            'current_year' => $now->format('Y'),
-            'current_week' => $now->format('W'),
+            'current_year' => $currentWeek->year,
+            'current_week' => $currentWeek->number,
             'calendar' => $this->getColdProductsCalendar->all(),
             'products_halves' => $this->getProducts->getHalves(),
             'add_to_cart_forms' =>  $formViews,

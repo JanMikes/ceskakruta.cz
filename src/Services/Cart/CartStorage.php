@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
+use CeskaKruta\Web\Services\Calendar;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CartItem;
 use CeskaKruta\Web\Value\Week;
@@ -23,6 +24,7 @@ final class CartStorage
 
     public function __construct(
         private readonly RequestStack $requestStack,
+        private readonly Calendar $calendar,
     ) {
     }
 
@@ -307,7 +309,7 @@ final class CartStorage
         $date = $this->getDate();
 
         if ($date === null) {
-            $date = new \DateTimeImmutable();
+            return $this->calendar->getCurrentWeek();
         }
 
         return new Week(

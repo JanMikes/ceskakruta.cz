@@ -101,7 +101,7 @@ final class TwigExtension extends AbstractExtension
 
     public function formatPrice(float|int $price): string
     {
-        return number_format($price, thousands_separator: ' ');
+        return number_format($price, thousands_separator: '&nbsp;');
     }
 
     public function getNewsletterForm(): FormView
