@@ -67,6 +67,7 @@ readonly final class OrderService
                 'delivery_postal_code'  => $deliveryAddress?->postalCode,
                 'note'                  => $orderData->note,
                 'price_total'           => $this->cartService->totalPrice()->amount,
+                'source'                => 'Web 2.0',
                 'ins_dt'                => $now->format('Y-m-d H:i:s'),
             ]);
 
