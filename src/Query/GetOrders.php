@@ -86,7 +86,59 @@ final class GetOrders
         return $this->orders;
     }
 
-    public function oneById(int $userId, int $orderId): Order
+    public function oneById(int $orderId): Order
+    {
+        /**
+         * @var false|array{
+         *     id: int,
+         *     place_id: int,
+         *     date: string,
+         *     ins_dt: string,
+         *     email: string,
+         *     phone: null|string,
+         *     name: null|string,
+         *     pay_by_card: null|int,
+         *     delivery_street: null|string,
+         *     delivery_city: null|string,
+         *     delivery_postal_code: null|string,
+         *     note: null|string,
+         *     price_total: int|float,
+         * } $row
+         */
+        $row = $this->connection
+            ->executeQuery('SELECT * FROM `order` WHERE id = :orderId AND active_flag = 1 AND del_flag = 0', [
+                'id' => $orderId,
+            ])
+            ->fetchAssociative();
+
+        if (!is_array($row)) {
+            throw new OrderNotFound();
+        }
+
+        $date = \DateTimeImmutable::createFromFormat('Y-m-d', $row['date']);
+        assert($date instanceof \DateTimeImmutable);
+
+        $orderedAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $row['ins_dt']);
+        assert($orderedAt instanceof \DateTimeImmutable);
+
+        return new Order(
+            id: $row['id'],
+            placeId: $row['place_id'],
+            orderedAt: $orderedAt,
+            date: $date,
+            email: $row['email'],
+            phone: $row['phone'] ?? '',
+            name: $row['name'] ?? '',
+            payByCard: $row['pay_by_card'] === 1,
+            deliveryStreet: $row['delivery_street'],
+            deliveryCity: $row['delivery_city'],
+            deliveryPostalCode: $row['delivery_postal_code'],
+            note: $row['note'],
+            priceTotal: $row['price_total'],
+        );
+    }
+
+    public function oneForUserById(int $userId, int $orderId): Order
     {
         return $this->ofUser($userId)[$orderId] ?? throw new OrderNotFound();
     }

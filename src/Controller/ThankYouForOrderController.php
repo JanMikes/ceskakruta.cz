@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
+use CeskaKruta\Web\Query\GetPlaceClosedDays;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Services\OrderService;
@@ -13,8 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ThankYouForOrderController extends AbstractController
 {
     public function __construct(
-        private readonly CartStorage $cartStorage,
+        private readonly CartStorage  $cartStorage,
         private readonly OrderService $orderService,
+        private readonly GetPlaces    $getPlaces,
     ) {
     }
 
@@ -23,11 +25,14 @@ final class ThankYouForOrderController extends AbstractController
     {
         $lastOrderId = $this->cartStorage->getLastOrderId();
         $totalPrice = $this->orderService->getOrderTotalPrice($lastOrderId);
+        $place = $lastOrderId !== null ? $this->getPlaces->oneById($lastOrderId) : null;
+
         $this->cartStorage->storeLastOrderId(null);
 
         return $this->render('thank_you_for_order.html.twig', [
             'last_order' => $lastOrderId,
             'total_price' => $totalPrice,
+            'last_order_place' => $place,
         ]);
     }
 }

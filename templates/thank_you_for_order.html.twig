@@ -10,6 +10,20 @@
 
                 <p class="fs-sm mb-2">Vaše objednávka dostala <strong>číslo {{ last_order }}</strong>.<br>Rekapitulaci jsme společně s informacemi o tom, co bude dál, jsme vám poslali na e-mail.</p>
 
+                {% if last_order_place %}
+                    <p class="fs-ms mb-2">
+                        {% if last_order_place.isDelivery %}
+                            {% if last_order_place.isOwnDelivery %}
+                                Den před dodávkou odpoledne Vám zašleme SMS ohledně času doručení.
+                            {% else %}
+                                Den před dodávkou odpoledne Vám přepravce zašle SMS ohledně času doručení. V případě jakýchkoliv dotazů v den doručení kontaktujte prosím v době od 8:00 do 18:30 přepravce na telefonním čísle: 773 827 035.
+                            {% endif %}
+                        {% else %}
+                            Zboží bude na vybrané prodejně připraveno ve Vámi vybraném termínu hned od začátku prodejní doby.
+                        {% endif %}
+                    </p>
+                {% endif %}
+
                 <a class="btn btn-outline-primary mt-3 me-3" href="{{ path('products') }}">Zpět k naší nabídce</a>
             </div>
         </div>

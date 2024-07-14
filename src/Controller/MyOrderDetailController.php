@@ -25,7 +25,7 @@ final class MyOrderDetailController extends AbstractController
     #[Route(path: '/uzivatel/objednavky/{orderId}', name: 'user_my_order_detail', methods: ['GET'])]
     public function __invoke(#[CurrentUser] User $loggedUser, int $orderId): Response
     {
-        $order = $this->getOrders->oneById($loggedUser->id, $orderId);
+        $order = $this->getOrders->oneForUserById($loggedUser->id, $orderId);
         $items = $this->getOrders->getOrderItems($orderId);
 
         return $this->render('user_my_order_detail.html.twig', [
