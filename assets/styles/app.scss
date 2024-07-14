@@ -507,6 +507,18 @@ main {
 
 .products-list {
     padding: 60px 0;
+
+    .card-cold-meat {
+        overflow: hidden;
+
+        .image {
+            background: url('../img/home-chlazene-kruty.png') center center no-repeat;
+            background-size: cover;
+            display: block;
+            width: 100%;
+            min-height: 255px;
+        }
+    }
 }
 
 .products-calendar {

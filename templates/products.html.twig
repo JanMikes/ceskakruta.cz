@@ -50,13 +50,16 @@
                         {% endif %}
                     {% endfor %}
 
-                    {% for product in products %}
-                        {% if product.turkeyType %}
-                            {% if calendar[cart.week.year][cart.week.number][product.turkeyType] is defined %}
-                                {{ include('_product_item.html.twig') }}
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
+                    <div class="col-sm-6 col-md-4 my-3">
+                        <a href="{{ path('products_cold') }}">
+                            <div class="card shadow card-cold-meat">
+                                <span class="image"></span>
+                                <div class="card-body py-2">
+                                    <h3 class="h4 product-title text-center mt-2">Chlazené krůty</h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
                 <p class="text-center mt-3">
