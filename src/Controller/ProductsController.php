@@ -8,6 +8,7 @@ use CeskaKruta\Web\FormType\AddToCartFormType;
 use CeskaKruta\Web\Message\AddItemToCart;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetProducts;
+use CeskaKruta\Web\Query\GetRecipes;
 use CeskaKruta\Web\Services\Calendar;
 use CeskaKruta\Web\Services\Cart\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +27,7 @@ final class ProductsController extends AbstractController
         readonly private MessageBusInterface $bus,
         readonly private GetColdProductsCalendar $getColdProductsCalendar,
         readonly private Calendar $calendar,
+        readonly private GetRecipes $getRecipes,
     ) {}
 
     #[Route(path: '/nase-nabidka/kruty-a-krocani', name: 'products_cold', methods: ['GET', 'POST'])]
@@ -88,8 +90,14 @@ final class ProductsController extends AbstractController
 
         $currentWeek = $this->calendar->getCurrentWeek();
 
+        $recipesCount = [];
+        foreach ($products as $product) {
+            $recipesCount[$product->id] = $this->getRecipes->getCountForProduct($product->id);
+        }
+
         return $this->render($routeName === 'products' ? 'products.html.twig' : 'products_cold.html.twig', [
             'products' => $products,
+            'recipes_count' => $recipesCount,
             'products_halves' => $this->getProducts->getHalves(),
             'add_to_cart_forms' =>  $formViews,
             'current_year' => $currentWeek->year,

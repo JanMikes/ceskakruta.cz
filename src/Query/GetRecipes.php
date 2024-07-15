@@ -12,6 +12,9 @@ final class GetRecipes
     /** @var array<Recipe>|null  */
     private null|array $recipes = null;
 
+    /** @var array<int, array<Recipe>>|null  */
+    private null|array $recipesPerProduct = null;
+
     public function __construct(
         readonly private Connection $connection,
     ) {
@@ -23,6 +26,8 @@ final class GetRecipes
     public function all(): array
     {
         if ($this->recipes === null) {
+            $this->recipesPerProduct = [];
+
             $query = <<<SQL
 SELECT recipe.*, photo.filename, photo.path
 FROM recipe
@@ -49,8 +54,7 @@ SQL;
                  */
 
                 $id = $row['id'];
-
-                $recipes[$id] = new Recipe(
+                $recipe = new Recipe(
                     id: $id,
                     productId: $row['product_id'],
                     name: $row['name'],
@@ -58,6 +62,9 @@ SQL;
                     filename: $row['filename'],
                     path: $row['path'],
                 );
+
+                $recipes[$id] = $recipe;
+                $this->recipesPerProduct[$row['product_id']][] = $recipe;
             }
 
             $this->recipes = $recipes;
@@ -69,5 +76,30 @@ SQL;
     public function oneById(int|string $recipeId): Recipe
     {
         return $this->all()[$recipeId] ?? throw new \Exception('Recipe not found');
+    }
+
+    public function getCountForProduct(int $productId): int
+    {
+        if ($this->recipesPerProduct === null) {
+            // It initializes everything
+            $this->all();
+        }
+
+        assert($this->recipesPerProduct !== null);
+
+        return count($this->recipesPerProduct[$productId] ?? []);
+    }
+
+    /**
+     * @return array<Recipe>
+     */
+    public function getForProduct(int $productId): array
+    {
+        if ($this->recipesPerProduct === null) {
+            // It initializes everything
+            $this->all();
+        }
+
+        return $this->recipesPerProduct[$productId] ?? [];
     }
 }

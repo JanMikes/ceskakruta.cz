@@ -11,9 +11,11 @@
                         <div class="col-sm-8">
                             <div>{{ product.text|raw }}</div>
 
-                            <p class="mb-0 mt-3">
-                                <a href="#" class="btn btn-sm btn-outline-primary">Recepty (3)</a>
-                            </p>
+                            {% if recipes_count[product.id] ?? 0 > 0  %}
+                                <p class="mb-2 mb-sm-0 mt-3 text-center text-sm-start">
+                                    <a href="{{ path('recipes_for_product', {productId: product.id}) }}" class="btn btn-sm btn-outline-primary">Recepty ({{ recipes_count[product.id] }})</a>
+                                </p>
+                            {% endif %}
                         </div>
                         <div class="col-sm-4 text-center">
                             {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}

@@ -48,9 +48,9 @@
                     {% set first_day_of_week = month_start|date('N') %}
 
                     <div class="col-md-6 col-lg-4 mb-2">
-                        <div class="calendar-wrapper shadow">
+                        <div class="calendar-wrapper shadow p-1">
                             <h3 class="h5 my-0 pt-3 pb-2 text-center">{{ month_name }} {{ year }}</h3>
-                            <table class="table table-borderless text-center">
+                            <table class="table table-borderless text-center mb-0">
                                 <thead>
                                     <tr>
                                         {% for day in days %}
