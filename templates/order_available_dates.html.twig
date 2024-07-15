@@ -14,31 +14,128 @@
             </p>
         {% endif %}
 
-        <div class="list-group">
-            {% for available_date in available_days %}
-                {% if loop.index < 10 %}
-                    <a data-turbo-prefetch="false" href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}" class="list-group-item list-group-item-action p-3 {{ cart.date and cart.date.format('Y-m-d') == available_date.format('Y-m-d') ? 'active list-group-item-primary' }}">
-                        <div class="d-flex w-100 justify-content-between">
-                            {% if cart.date and cart.date.format('Y-m-d') == available_date.format('Y-m-d') %}
-                                <h6 class="m-0" style="color: #fff;">{{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}</h6>
-                                <small>Vybráno</small>
-                            {% else %}
-                                <h6 class="m-0">{{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}</h6>
-                            {% endif %}
-                        </div>
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </div>
-
         {% if cart.lockedWeek %}
             <div class="alert alert-accent my-3">Vybrali jste si ve váhovém kalendáři {{ cart.lockedWeek.number }}. týden. <a href="{{ path('products_cold_calendar') }}">Vybrat jiný týden</a>. V jiném termínu se váhy a dostupnost chlazených kusů liší.</div>
-        {% else %}
-            <p class="my-3">
-                <a href="#" class="btn btn-primary btn-sm"><i class="ci-calendar me-1"></i> Vybrat z kalendáře</a>
-            </p>
 
-            <input class="form-control invisible date-picker" data-datepicker-options='{"altInput": true, "altFormat": "d.m.Y", "dateFormat": "d.m.Y", "inline": true, "locale": "cs", "minDate": "today"}'>
+            <div class="list-group">
+                {% for available_date in available_days %}
+                    {% if loop.index < 10 %}
+                        <a data-turbo-prefetch="false" href="{{ path('choose_date', {date: available_date.format('Y-m-d')}) }}" class="list-group-item list-group-item-action p-3 {{ cart.date and cart.date.format('Y-m-d') == available_date.format('Y-m-d') ? 'active list-group-item-primary' }}">
+                            <div class="d-flex w-100 justify-content-between">
+                                {% if cart.date and cart.date.format('Y-m-d') == available_date.format('Y-m-d') %}
+                                    <h6 class="m-0" style="color: #fff;">{{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}</h6>
+                                    <small>Vybráno</small>
+                                {% else %}
+                                    <h6 class="m-0">{{ available_date|dayOfWeek }} - {{ available_date.format('d.m.Y') }}</h6>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="row calendars-picking">
+                {% set months = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'] %}
+                {% set days = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'] %}
+                {% set now = "now"|date("Y-m-01")|date_modify('first day of this month') %}
+                {% set today_date = "now"|date('Y-m-d') %}
+
+                {% for i in 0..5 %}
+                    {% set month_start = now|date_modify("+" ~ i ~ " months") %}
+                    {% set month_name = months[month_start|date('n') - 1] %}
+                    {% set year = month_start|date('Y') %}
+                    {% set days_in_month = month_start|date('t') %}
+                    {% set first_day_of_week = month_start|date('N') %}
+
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="calendar-wrapper shadow">
+                            <h3 class="h5 my-0 pt-3 pb-2 text-center">{{ month_name }} {{ year }}</h3>
+                            <table class="table table-borderless text-center">
+                                <thead>
+                                    <tr>
+                                        {% for day in days %}
+                                            <th>{{ day }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        {% set day_counter = 1 %}
+
+                                        {# Print blank days until the first day of the week #}
+                                        {% if first_day_of_week > 1 %}
+                                            {% for blank_day in 1..first_day_of_week - 1 %}
+                                                <td class="disallowed"></td>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {# Print the first week days #}
+                                        {% for day in first_day_of_week..7 %}
+                                            {% if day_counter <= days_in_month %}
+                                                {% set current_date = month_start|date_modify("+" ~ (day_counter - 1) ~ " days") %}
+                                                {% set date_string = current_date|date('Y-m-d') %}
+                                                {% set class_names = '' %}
+
+                                                {% if date_string == today_date %}
+                                                    {% set class_names = class_names ~ ' today' %}
+                                                {% endif %}
+
+                                                {% if cart.date and cart.date.format('Y-m-d') == date_string %}
+                                                    {% set class_names = class_names ~ ' selected' %}
+                                                {% endif %}
+
+                                                {% if available_days[date_string] is defined %}
+                                                    {% set class_names = class_names ~ ' allowed' %}
+                                                    <td class="{{ class_names|trim }}"><a href="{{ path('choose_date', {date: date_string}) }}">{{ day_counter }}</a></td>
+                                                {% else %}
+                                                    {% set class_names = class_names ~ ' disallowed' %}
+                                                    <td class="{{ class_names|trim }}">{{ day_counter }}</td>
+                                                {% endif %}
+                                                {% set day_counter = day_counter + 1 %}
+                                            {% else %}
+                                                <td class="disallowed"></td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+
+                                    {% for week_start in range(day_counter, days_in_month, 7) %}
+                                        <tr>
+                                            {% for day in 0..6 %}
+                                                {% if day_counter <= days_in_month %}
+                                                    {% set current_date = month_start|date_modify("+" ~ (day_counter - 1) ~ " days") %}
+                                                    {% set date_string = current_date|date('Y-m-d') %}
+                                                    {% set class_names = '' %}
+
+                                                    {% if date_string == today_date %}
+                                                        {% set class_names = class_names ~ ' today' %}
+                                                    {% endif %}
+
+                                                    {% if cart.date and cart.date.format('Y-m-d') == date_string %}
+                                                        {% set class_names = class_names ~ ' selected' %}
+                                                    {% endif %}
+
+                                                    {% if available_days[date_string] is defined %}
+                                                        {% set class_names = class_names ~ ' allowed' %}
+                                                        <td class="align-middle {{ class_names|trim }}">
+                                                            <a href="{{ path('choose_date', {date: date_string}) }}">{{ day_counter }}</a>
+                                                        </td>
+                                                    {% else %}
+                                                        {% set class_names = class_names ~ ' disallowed' %}
+                                                        <td class="align-middle {{ class_names|trim }}">{{ day_counter }}</td>
+                                                    {% endif %}
+                                                    {% set day_counter = day_counter + 1 %}
+                                                {% else %}
+                                                    <td class="disallowed"></td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
         <p class="text-center mt-3">
@@ -46,5 +143,6 @@
                 <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit nákup</a>
             {% endif %}
         </p>
+
     </section>
 {% endblock %}

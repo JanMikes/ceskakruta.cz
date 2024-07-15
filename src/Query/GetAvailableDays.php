@@ -31,7 +31,7 @@ readonly final class GetAvailableDays
         for ($i=0; $i<=365; $i++) {
 
             if ($this->isDateAvailable($date, $placeId)) {
-                $availableDays[] = $date;
+                $availableDays[$date->format('Y-m-d')] = $date;
             }
 
             $date = $date->modify('+1 day');

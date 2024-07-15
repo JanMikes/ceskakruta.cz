@@ -611,3 +611,38 @@ main {
         }
     }
 }
+
+.calendars-picking {
+    .table {
+        .disallowed {
+            color: #888 !important;
+        }
+
+        .allowed {
+            a {
+                display: inline-block;
+                border: 1px solid var(--cz-link-color);
+                padding: 4px;
+                border-radius: 4px;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .today {
+            background: #e8e8e8;
+            color: #000 !important;
+            border-radius: 4px;
+        }
+
+        .selected {
+            background: var(--cz-link-color);
+            font-weight: bold;
+            border-radius: 4px;
+
+            a {
+                color: #fff !important;
+            }
+        }
+    }
+}
