@@ -36,7 +36,7 @@ readonly final class CreateOrderHandler
 
         $email = (new TemplatedEmail())
             ->to($address)
-            ->addBcc('farma.rychvald@volny.cz')
+            ->addBcc('info@ceskakruta.cz')
             ->subject('Rekapitulace objednávky č. ' . $orderId)
             ->htmlTemplate('emails/user_order_recapitulation.html.twig')
             ->context([
