@@ -30,6 +30,7 @@ final class TwigExtension extends AbstractExtension
         return [
             new TwigFilter('dayOfWeek', $this->dayOfWeek(...)),
             new TwigFilter('price', $this->formatPrice(...)),
+            new TwigFilter('placeName', $this->formatPlaceName(...)),
         ];
     }
 
@@ -107,5 +108,23 @@ final class TwigExtension extends AbstractExtension
     public function getNewsletterForm(): FormView
     {
         return $this->formFactory->create(SubscribeNewsletterFormType::class)->createView();
+    }
+
+    public function formatPlaceName(string $place): string
+    {
+        if (!str_contains($place, '-')) {
+            return $place;
+        }
+
+        $placeParts = explode('-', $place);
+
+        if (count($placeParts) !== 2) {
+            return $place;
+        }
+
+        $place = trim($placeParts[0]);
+        $placeInfo = trim($placeParts[1]);
+
+        return sprintf('%s<span class="d-none d-sm-inline"> - </span><br class="d-sm-none"><span class="place-name-fs">%s</span>', $place, $placeInfo);
     }
 }
