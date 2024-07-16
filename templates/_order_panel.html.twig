@@ -22,7 +22,7 @@
                             <h6 class="media-tab-title text-nowrap mb-0">
                                 {% if cart.pickupPlace %}
                                     Osobní odběr
-                                {% elseif cart.deliveryAddress %}
+                                {% elseif cart.deliveryPlace and cart.deliveryAddress %}
                                     Rozvoz <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
                                 {% else %}
                                     Doručení

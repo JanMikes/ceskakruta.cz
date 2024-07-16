@@ -48,7 +48,15 @@ final class OrderDeliveryController extends AbstractController
                 $realException = $handlerFailedException->getPrevious();
 
                 if ($realException instanceof UnsupportedDeliveryToPostalCode) {
-                    $this->addFlash('danger', 'Je nám líto, na tuto adresu aktuálně nerozvážíme.');
+                    $this->addFlash('danger', 'Je nám líto, na tuto adresu aktuálně nerozvážíme. Máte-li zájem o doručení, napište nám na <a class="text-decoration-underline" href="mailto:info@ceskakruta.cz">info@ceskakruta.cz</a>.');
+
+                    $referer = $request->headers->get('referer');
+
+                    if (!is_string($referer)) {
+                        return $this->redirectToRoute('order_delivery');
+                    }
+
+                    return $this->redirect($referer);
                 } else {
                     throw $handlerFailedException;
                 }

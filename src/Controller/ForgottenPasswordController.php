@@ -40,7 +40,7 @@ final class ForgottenPasswordController extends AbstractController
                     new RequestPasswordReset($formData->email),
                 );
 
-                $this->addFlash('success', 'Poslali jsme vám e-mail s instrukcemi pro obnovu vašeho zapomenutého hesla.');
+                $this->addFlash('success', 'Poslali jsme vám e-mail s instrukcemi pro obnovu vašeho zapomenutého hesla. Pokud Vám zpráva nedorazí, zkontrolujte pro jistotu složku SPAM.');
 
                 return $this->redirectToRoute('homepage');
             } catch (HandlerFailedException $failedException) {
