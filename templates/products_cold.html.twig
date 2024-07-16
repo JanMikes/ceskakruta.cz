@@ -40,16 +40,6 @@
                     <div class="small">Krůty a krocany prodávám vždy ve váze tak, jak nám dorůstají. Uvedené váhy jsou pro aktuální nabídku/vámi vybraný termín. Pokud vám nevyhovují váhy, vyberte si podle potřeby z <a href="{{ path('products_cold_calendar') }}">váhového kalendáře</a>.</div>
                 </div>
 
-
-                {% if cart.place is null %}
-                    <div class="alert alert-warning d-flex" role="alert">
-                        <div class="alert-icon">
-                            <i class="ci-security-announcement"></i>
-                        </div>
-                        <div>Zobrazené ceny se upřesní po výběru místa odběru/rozvozu.</div>
-                    </div>
-                {% endif %}
-
                 <div class="row">
                     {% for product in products %}
                         {% if calendar[cart.week.year][cart.week.number][product.turkeyType] is defined %}

@@ -84,7 +84,7 @@
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
                                     Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
-                                    Orientační cena{% if cart.place is null %} od{% endif %}: <strong>{{ item.product.price|price|raw }} Kč/ks</strong>
+                                    Orientační cena: <strong>{{ item.product.price|price|raw }} Kč/ks</strong>
                                 {% else %}
                                     <strong>{{ item.product.price  }} <small>Kč/kg</small></strong>
                                     {% if item.slice %}

@@ -35,37 +35,6 @@ final class GetProducts
                 ->executeQuery('SELECT * FROM product WHERE active_flag = 1 AND del_flag = 0 ORDER BY `order` DESC')
                 ->fetchAllAssociative();
 
-            $productPlaceRows = $this->connection
-                ->executeQuery('SELECT * FROM product_place WHERE active_flag = 1 AND del_flag = 0')
-                ->fetchAllAssociative();
-
-
-            // $placePrices[$productId][$placeId] = $price
-            /** @var array<int, array<int, int>> $placePrices */
-            $placePrices = [];
-
-            /** @var array<int, int> $pricesFrom */
-            $pricesFrom = [];
-
-            foreach ($productPlaceRows as $productPlaceRow) {
-                /**
-                 * @var array{
-                 *     product_id: int,
-                 *     place_id: int,
-                 *     price: int,
-                 * } $productPlaceRow
-                 */
-
-                $placePrices[$productPlaceRow['product_id']][$productPlaceRow['place_id']] = $productPlaceRow['price'];
-
-                // PriceFrom is set always to the lowest price of the product
-                $productPriceFrom = $pricesFrom[$productPlaceRow['product_id']] ?? null;
-
-                if ($productPriceFrom === null || $productPriceFrom > $productPlaceRow['price']) {
-                    $pricesFrom[$productPlaceRow['product_id']] = $productPlaceRow['price'];
-                }
-            }
-
             /** @var array<int, Product> $products */
             $products = [];
 
@@ -74,6 +43,7 @@ final class GetProducts
                  * @var array{
                  *     id: int,
                  *     name: string,
+                 *     price: null|int,
                  *     text: string|null,
                  *     can_be_packed_flag: int,
                  *     can_be_sliced_flag: int,
@@ -84,17 +54,11 @@ final class GetProducts
                  * } $productRow
                  */
 
-                $productId = $productRow['id'];
-
-                if (!isset($pricesFrom[$productId])) {
+                if ($productRow['price'] === null) {
                     continue;
                 }
-                $priceForChosenPlace = null;
 
-                if ($chosenPlaceId !== null) {
-                    $priceForChosenPlace = $placePrices[$productId][$chosenPlaceId] ?? $pricesFrom[$productId];
-                }
-
+                $productId = $productRow['id'];
                 $type = $productRow['type'];
                 $turkeyType = null;
 
@@ -124,8 +88,7 @@ final class GetProducts
                     id: $productId,
                     title: $productRow['name'],
                     text: $productRow['text'] ?? '',
-                    priceFrom: $pricesFrom[$productId],
-                    priceForChosenPlace: $priceForChosenPlace,
+                    pricePerUnit: $productRow['price'],
                     canBeSliced: $productRow['can_be_sliced_flag'] === 1,
                     canBePacked: $productRow['can_be_packed_flag'] === 1,
                     packPrice: $productRow['price_pack'],

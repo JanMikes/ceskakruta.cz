@@ -13,8 +13,7 @@ readonly final class Product
         public int $id,
         public string $title,
         public string $text,
-        public int $priceFrom,
-        public null|int $priceForChosenPlace,
+        public int $pricePerUnit,
         public bool $canBeSliced,
         public bool $canBePacked,
         public null|int $packPrice,
@@ -32,21 +31,14 @@ readonly final class Product
         $this->weightTo = ($isHalf === true && $weightTo !== null) ? $weightTo / 2 : $weightTo;
     }
 
-    public function pricePerUnit(): int
-    {
-        return $this->priceForChosenPlace ?? $this->priceFrom;
-    }
-
     public function price(): int|float
     {
-        $pricePerUnit = $this->pricePerUnit();
-
         if ($this->isTurkey) {
             $averageWeight = ($this->weightFrom + $this->weightTo) / 2;
 
-            return $pricePerUnit * $averageWeight;
+            return $this->pricePerUnit * $averageWeight;
         }
 
-        return $pricePerUnit;
+        return $this->pricePerUnit;
     }
 }

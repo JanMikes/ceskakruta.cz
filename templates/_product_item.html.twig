@@ -52,9 +52,9 @@
                                     {% if cart.week.number is not same as current_week %}
                                         <small class="text-muted">({{ cart.week.number }}. týden {{ firstDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }} - {{ lastDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }})</small><br>
                                     {% endif %}
-                                    Orientační cena{% if cart.place is null %} od{% endif %}:&nbsp;<strong>{{ products_halves[product.id].price|price|raw }}&nbsp;Kč/ks</strong>
+                                    Orientační cena:&nbsp;<strong>{{ products_halves[product.id].price|price|raw }}&nbsp;Kč/ks</strong>
                                 {% else %}
-                                    Cena{% if cart.place is null %} od{% endif %}:&nbsp;<strong>{{ products_halves[product.id].price|price|raw }}&nbsp;Kč/kg</strong>
+                                    Cena:&nbsp;<strong>{{ products_halves[product.id].price|price|raw }}&nbsp;Kč/kg</strong>
                                 {% endif %}
                             </div>
                         </div>
@@ -81,9 +81,9 @@
                                 {% if cart.week.number is not same as current_week %}
                                     <small class="text-muted">({{ cart.week.number }}. týden {{ firstDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }} - {{ lastDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }})</small><br>
                                 {% endif %}
-                                Orientační cena{% if cart.place is null %} od{% endif %}:&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/ks</strong>
+                                Orientační cena:&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/ks</strong>
                             {% else %}
-                                Cena{% if cart.place is null %} od{% endif %}:&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/kg</strong>
+                                Cena:&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/kg</strong>
                             {% endif %}
                         </div>
                     </div>
