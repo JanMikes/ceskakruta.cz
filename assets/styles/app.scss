@@ -440,7 +440,7 @@ main {
 
 .alive-turkeys-row {
     background: #EBBD70;
-    margin: 50px auto;
+    margin: 50px auto 0;
 
     p {
         max-width: 450px;
@@ -466,6 +466,7 @@ main {
 .alive-turkeys-img-2 {
     background: url('../img/alive-turkeys-2.png') center center no-repeat;
     background-size: cover;
+    min-height: 440px;
 }
 
 .content-wrap {
