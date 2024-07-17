@@ -46,7 +46,7 @@
                                 <i class="ci-phone fs-lg mt-2 mb-0 text-primary"></i>
                                 <p>
                                     <strong>Zavolejte nám</strong><br>
-                                    <span class="text-muted">{{ place.phone }}</span><br>
+                                    <span class="text-muted"><a href="tel:{{ place.phone|replace({' ': ''}) }}">{{ place.phone }}</a></span><br>
                                 </p>
                             </div>
 
