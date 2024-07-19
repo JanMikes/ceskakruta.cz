@@ -8,12 +8,18 @@
             <div class="card-body text-center">
                 <h1 class="h3 pb-3">Děkujeme za objednávku!</h1>
 
-                <p class="fs-sm mb-2">Vaše objednávka dostala <strong>číslo {{ last_order }}</strong>.<br>Rekapitulaci jsme Vám poslali na e-mail.</p>
+                <p class="fs-sm mb-2">
+                    {% if last_order %}
+                        Vaše objednávka dostala <strong>číslo {{ last_order.id }}</strong>.<br>
+                    {% endif %}
+                    Rekapitulaci jsme Vám poslali na e-mail.
+                </p>
 
-                {% if last_order_place %}
+                {% if last_order %}
+                    {% set place = places[last_order.placeId] %}
                     <p class="fs-ms mb-2">
-                        {% if last_order_place.isDelivery %}
-                            {% if last_order_place.isOwnDelivery %}
+                        {% if place.isDelivery %}
+                            {% if place.isOwnDelivery %}
                                 Den před dodávkou odpoledne Vám zašleme SMS ohledně času doručení.
                             {% else %}
                                 Den před dodávkou odpoledne Vám přepravce zašle SMS ohledně času doručení. V případě jakýchkoliv dotazů v den doručení kontaktujte prosím v době od 8:00 do 18:30 přepravce na telefonním čísle: 773 827 035.
@@ -31,15 +37,15 @@
 
 
 
-    {% if last_order and total_price %}
+    {% if last_order %}
         <script>
-            fbq('track', 'Purchase', { value: {{ total_price }}, currency: 'CZK' });
+            fbq('track', 'Purchase', { value: {{ last_order.priceTotal }}, currency: 'CZK' });
         </script>
 
         <script>
             gtag('event', 'purchase', {
-                transaction_id: {{ last_order }},
-                value: {{ total_price }},
+                transaction_id: {{ last_order.id }},
+                value: {{ last_order.priceTotal }},
                 currency: 'CZK'
             });
         </script>

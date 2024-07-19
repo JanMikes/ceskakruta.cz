@@ -16,25 +16,6 @@ readonly final class OrderService
     ) {
     }
 
-    public function getOrderTotalPrice(null|int $orderId): float|null
-    {
-        if ($orderId === null) {
-            return null;
-        }
-
-        $totalPrice = $this->connection
-            ->executeQuery('SELECT price_total FROM `order` WHERE id = :orderId', [
-                'orderId' => $orderId,
-            ])
-            ->fetchNumeric();
-
-        if (isset($totalPrice[0]) && is_numeric($totalPrice[0])) {
-            return (float) $totalPrice[0];
-        }
-
-        return null;
-    }
-
     public function createOrder(null|int $userId): int
     {
         // TODO: data as parameter

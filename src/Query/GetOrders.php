@@ -107,7 +107,7 @@ final class GetOrders
          */
         $row = $this->connection
             ->executeQuery('SELECT * FROM `order` WHERE id = :orderId AND active_flag = 1 AND del_flag = 0', [
-                'id' => $orderId,
+                'orderId' => $orderId,
             ])
             ->fetchAssociative();
 
