@@ -1,37 +1,7 @@
 {% if not product.isHalf %}
-    <div class="modal fade" id="{{ 'product-modal-' ~ product.id }}" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ product.title }}</h5>
-                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <div>{{ product.text|raw }}</div>
-
-                            {% if recipes_count[product.id] ?? 0 > 0  %}
-                                <p class="mb-2 mb-sm-0 mt-3 text-center text-sm-start">
-                                    <a href="{{ path('recipes_for_product', {productId: product.id}) }}" class="btn btn-sm btn-outline-primary">Recepty ({{ recipes_count[product.id] }})</a>
-                                </p>
-                            {% endif %}
-                        </div>
-                        <div class="col-sm-4 text-center">
-                            {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
-                                <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 150px;" alt="Product">
-                            {% else %}
-                                <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="col-sm-6 col-md-4 my-3" data-controller="turkey-half-toggle">
         <div class="card shadow">
+
             {% if products_halves[product.id] is defined %}
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
                     <div style="height: 150px;" class="overflow-hidden">
@@ -149,3 +119,34 @@
         </div>
     </div>
 {% endif %}
+
+<div class="modal fade" id="{{ 'product-modal-' ~ product.id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ product.title }}</h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div>{{ product.text|raw }}</div>
+
+                        {% if recipes_count[product.id] ?? 0 > 0  %}
+                            <p class="mb-2 mb-sm-0 mt-3 text-center text-sm-start">
+                                <a href="{{ path('recipes_for_product', {productId: product.id}) }}" class="btn btn-sm btn-outline-primary">Recepty ({{ recipes_count[product.id] }})</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
+                            <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 150px;" alt="Product">
+                        {% else %}
+                            <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
