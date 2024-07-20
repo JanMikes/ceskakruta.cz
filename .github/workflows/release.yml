@@ -56,5 +56,5 @@ jobs:
                     host: ${{ secrets.FTP_SERVER }}
                     user: ${{ secrets.FTP_USERNAME }}
                     password: ${{ secrets.FTP_PASSWORD }}
-                    remoteDirectories: "/App_Data/TEMP"
+                    remoteDirectories: "cache/prod"
                     workingDir: "./web/"
