@@ -46,9 +46,14 @@ jobs:
                         **/.docker/**
                         **/.github/**
                         **/assets/**
-                        **/bin/**
                         **/var/**
                         .env.local
-                        .phpstorm.meta.php
-                        docker-compose.yml
-                        Dockerfile
+
+            -   name: Clear cache
+                uses: StephanThierry/ftp-delete-action@v2.1
+                with:
+                    host: ${{ secrets.FTP_SERVER }}
+                    user: ${{ secrets.FTP_USERNAME }}
+                    password: ${{ secrets.FTP_PASSWORD }}
+                    remoteDirectories: "/App_Data/TEMP"
+                    workingDir: "./web/"
