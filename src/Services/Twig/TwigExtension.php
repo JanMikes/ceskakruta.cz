@@ -125,6 +125,6 @@ final class TwigExtension extends AbstractExtension
         $place = trim($placeParts[0]);
         $placeInfo = trim($placeParts[1]);
 
-        return sprintf('%s<span class="d-none d-sm-inline"> - </span><br class="d-sm-none"><span class="place-name-fs">%s</span>', $place, $placeInfo);
+        return sprintf('<span class="place-name">%s</span><span class="d-none d-sm-inline name-delimiter"> - </span><br class="break-line d-sm-none"><span class="place-type">%s</span>', $place, $placeInfo);
     }
 }

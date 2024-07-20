@@ -58,3 +58,4 @@ jobs:
                     password: ${{ secrets.FTP_PASSWORD }}
                     remoteDirectories: "cache/prod"
                     workingDir: "./web/"
+                    ignoreSSL: 1

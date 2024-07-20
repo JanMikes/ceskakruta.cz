@@ -544,6 +544,18 @@ main {
 
 .order-pickup-places {
     padding: 60px 0;
+
+    .name-delimiter {
+        display: none !important;
+    }
+
+    .place-type {
+        display: block;
+    }
+
+    .place-name {
+        font-weight: bold;
+    }
 }
 
 .choose-date {
@@ -652,7 +664,7 @@ main {
     }
 }
 
-.place-name-fs {
+.place-type {
     @include media-breakpoint-down(sm) {
         font-size: 1.25rem;
     }

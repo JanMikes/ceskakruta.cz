@@ -32,7 +32,11 @@
                         <div class="col-md-4 mb-4">
                             <div class="card shadow {{ cart.pickupPlace == place.id ? 'border-primary' }}">
                                 <div class="card-body text-center">
-                                    <strong>{{ place.name }}</strong><br>
+                                    <p class="m-0">
+                                        {{ place.name|placeName|raw }}
+                                    </p>
+                                    <small class="text-muted">{{ place.address1 }}</small><br>
+                                    <small class="text-muted">{{ place.address2 }}</small><br>
 
                                     {% if cart.pickupPlace == place.id %}
                                         <a data-turbo-prefetch="false" class="mt-2 btn btn-sm btn-primary" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Vybráno</a>
@@ -45,18 +49,19 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                <p class="text-center mt-3">
+                    <a class="btn btn-outline-primary" href="{{ path('products') }}">Pokračovat v nákupu</a>
+                    {% if cart.place %}
+                        {% if cart.date %}
+                            <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit objednávku</a>
+                        {% else %}
+                            <a class="btn btn-primary" href="{{ path('order_available_dates') }}">Další krok: zvolit datum</a>
+                        {% endif %}
+                    {% endif %}
+                </p>
             </div>
         </div>
 
-        <p class="text-center mt-3">
-            <a class="btn btn-outline-primary" href="{{ path('products') }}">Pokračovat v nákupu</a>
-            {% if cart.place %}
-                {% if cart.date %}
-                    <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit objednávku</a>
-                {% else %}
-                    <a class="btn btn-primary" href="{{ path('order_available_dates') }}">Další krok: zvolit datum</a>
-                {% endif %}
-            {% endif %}
-        </p>
     </section>
 {% endblock %}
