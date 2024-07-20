@@ -39,15 +39,15 @@ jobs:
                     username: ${{ secrets.FTP_USERNAME }}
                     password: ${{ secrets.FTP_PASSWORD }}
                     dry-run: true
-                    server-dir: "./web/test-deploy"
+                    server-dir: "./web/test-deploy/"
                     exclude: |
                         **/.git*
                         **/.git*/**
                         **/node_modules/**
-                        .docker/
-                        .github/
-                        assets/
-                        bin/
+                        **/.docker/**
+                        **/.github/**
+                        **/assets/**
+                        **/bin/**
                         .phpstorm.meta.php
                         docker-compose.yml
                         Dockerfile
