@@ -7,6 +7,7 @@ use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Services\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,7 +16,6 @@ final class OrderRecapitulationController extends AbstractController
 {
     public function __construct(
         private readonly CartService $cartService,
-        private readonly CartStorage $cartStorage,
         private readonly GetPlaces $getPlaces,
         private readonly GetColdProductsCalendar $getColdProductsCalendar,
     ) {
@@ -24,19 +24,7 @@ final class OrderRecapitulationController extends AbstractController
     #[Route(path: '/rekapitulace-objednavky', name: 'order_recapitulation', methods: ['GET'])]
     public function __invoke(): Response
     {
-        if ($this->cartService->getPlace() === null) {
-            return $this->redirectToRoute('cart');
-        }
-
-        if ($this->cartStorage->getDate() === null) {
-            return $this->redirectToRoute('cart');
-        }
-
-        if ($this->cartStorage->getOrderData() === null) {
-            return $this->redirectToRoute('cart');
-        }
-
-        if ($this->cartStorage->itemsCount() === 0) {
+        if ($this->cartService->isOrderReadyToBePlaced() === false) {
             return $this->redirectToRoute('cart');
         }
 

@@ -28,6 +28,20 @@ readonly final class CartService
     ) {
     }
 
+    public function isMinimalPriceMet(): bool
+    {
+        return $this->totalPrice()->amount >= $this->getMinimalPrice();
+    }
+
+    public function getMinimalPrice(): int
+    {
+        if ($this->getPlace()?->isDelivery) {
+            return 1000;
+        }
+
+        return 0;
+    }
+
     public function itemsCount(): int
     {
         return count($this->getItems());
@@ -53,6 +67,7 @@ readonly final class CartService
         }
 
         if ($this->getAvailableDays->isDateAvailable($date, $place->id) === false) {
+            $this->storage->storeDate(null);
             return null;
         }
 
@@ -186,5 +201,30 @@ readonly final class CartService
         if ($this->containsTurkey() === false) {
             $this->storage->storeLockedWeek(null, null);
         }
+    }
+
+    public function isOrderReadyToBePlaced(): bool
+    {
+        if ($this->getPlace() === null) {
+            return false;
+        }
+
+        if ($this->getDate() === null) {
+            return false;
+        }
+
+        if ($this->getOrderData() === null) {
+            return false;
+        }
+
+        if ($this->storage->itemsCount() <= 0) {
+            return false;
+        }
+
+        if ($this->isMinimalPriceMet()) {
+            return false;
+        }
+
+        return true;
     }
 }

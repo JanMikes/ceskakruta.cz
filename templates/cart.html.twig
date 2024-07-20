@@ -16,6 +16,12 @@
                 </div>
             {% endif %}
 
+            {% if not cart.minimalPriceMet %}
+                <div class="alert alert-warning">
+                    Minimální hodnota objednávky pro rozvoz je {{ cart.minimalPrice|price|raw }}&nbsp;Kč. Abyste mohli pokračovat k dokončení objednávky, prosím přidejte si ještě něco do košíku.
+                </div>
+            {% endif %}
+
             {% for item in cart.items %}
                 <div class="d-flex border-bottom cart-items-row py-3">
                     <div class="cart-item-image">
@@ -156,7 +162,13 @@
                         {{ form_row(orderForm.subscribeToNewsletter) }}
 
                         {% if cart.itemsCount > 0 and cart.date and cart.place %}
-                            <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
+                            {% if cart.minimalPriceMet %}
+                                <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
+                            {% else %}
+                                <small class="text-primary">Pro dokončení objednávky není splněna minimální potřebná hodnota objednávky.</small>
+
+                                <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
+                            {% endif %}
                         {% else %}
                             <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
                         {% endif %}

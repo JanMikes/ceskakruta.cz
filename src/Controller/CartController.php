@@ -64,7 +64,7 @@ final class CartController extends AbstractController
         if ($orderForm->isSubmitted() && $orderForm->isValid()) {
             $this->cartStorage->storeOrderData($orderData);
 
-            if ($this->cartStorage->itemsCount() > 0) {
+            if ($this->cartStorage->itemsCount() > 0 && $this->cartService->isMinimalPriceMet()) {
                 return $this->redirectToRoute('order_recapitulation');
             }
 
