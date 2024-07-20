@@ -56,6 +56,6 @@ jobs:
                     host: ${{ secrets.FTP_SERVER }}
                     user: ${{ secrets.FTP_USERNAME }}
                     password: ${{ secrets.FTP_PASSWORD }}
-                    remoteDirectories: "cache/prod"
+                    remoteDirectories: "var/cache/prod"
                     workingDir: "./web/"
                     ignoreSSL: 1
