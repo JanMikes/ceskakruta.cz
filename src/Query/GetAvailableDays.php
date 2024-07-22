@@ -42,6 +42,7 @@ readonly final class GetAvailableDays
 
     public function isDateAvailable(DateTimeImmutable $date, int $placeId): bool
     {
+        $date = $date->setTime(0, 0, 0);
         $place = $this->getPlaces->oneById($placeId);
         $lockedWeek = $this->cartStorage->getLockedWeek();
 
@@ -51,7 +52,7 @@ readonly final class GetAvailableDays
             }
         }
 
-        $today = new DateTimeImmutable();
+        $today = (new DateTimeImmutable())->setTime(0, 0, 0);
         $weekDay = (int) $date->format('w'); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
         $weekDay = $weekDay === 0 ? 7 : $weekDay; // Převedeme neděli na 7
 
