@@ -221,7 +221,7 @@ readonly final class CartService
             return false;
         }
 
-        if ($this->isMinimalPriceMet()) {
+        if ($this->isMinimalPriceMet() === false) {
             return false;
         }
 
