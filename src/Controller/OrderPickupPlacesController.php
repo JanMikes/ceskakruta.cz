@@ -31,7 +31,7 @@ final class OrderPickupPlacesController extends AbstractController
 
             $this->addFlash('success', 'Zvoleno místo odběru');
 
-            return $this->redirectToRoute('order_pickup_places');
+            return $this->redirectToRoute('order_available_dates');
         }
 
         $pickupPlaces = array_filter(

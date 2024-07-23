@@ -6,45 +6,49 @@
 
     <div class="row">
         <!-- Content-->
-        <section class="col-lg-8 pt-2 pt-lg-4 pb-4 mb-3">
-            <div class="pt-2 px-4 pe-lg-0 ps-xl-5">
+        <section class="col-md-7 col-lg-8 pt-3 pt-lg-4 pe-lg-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div class="py-1"><a class="btn btn-outline-primary btn-sm" href="{{ path('cart') }}"><i class="ci-arrow-left me-1 ms-n1"></i>Zpět upravit objednávku</a></div>
+            </div>
 
-                {% for item in cart.items %}
-                    <div class="d-block d-sm-flex align-items-center py-4 border-bottom">
+            {% for item in cart.items %}
+                <div class="d-flex cart-items-row p-3 my-2 shadow">
+                    <div class="cart-item-image">
                         {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
-                            <img style="max-width: 100px;max-height: 100px;" class="rounded-3 me-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
+                            <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
                         {% else %}
-                            <img style="max-width: 100px;max-height: 100px;" class="rounded-3 me-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                            <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                         {% endif %}
+                    </div>
 
-                        <div class="text-center text-sm-start">
-                            <h3 class="h6 product-title mb-2"><a href="#">{{ item.product.title }}</a></h3>
-                            <div class="d-inline-block">
-                                {% if item.product.turkeyType %}
-                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
-                                    Orientační cena: <strong>{{ item.product.price|price|raw }} Kč/ks</strong>
-                                {% else %}
-                                    <strong>{{ item.product.price  }} <small>Kč/kg</small></strong>
-                                    {% if item.slice %}
-                                        <br>+ Nakrájet
-                                    {% endif %}
-                                    {% if item.pack %}
-                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
-                                    {% endif %}
+                    <div class="cart-item-info ps-3">
+                        <h3 class="h6 product-title mb-1">{{ item.product.title }}: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}</h3>
+                        <div class="d-inline-block">
+                            {% if item.product.turkeyType %}
+                                <span class="text-muted fs-xs">
+                                Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
+                                Orientační cena: {{ item.product.price|price|raw }} Kč/ks
+                            </span><br>
+                                Celkem: {{ item.price|price|raw }} Kč
+                            {% else %}
+                                <span class="text-muted fs-xs">Cena: {{ item.product.price|price|raw }} Kč/kg</span><br>
+                                Celkem: {{ item.price|price|raw }} Kč
+                                {% if item.slice %}
+                                    <br>+ Nakrájet
                                 {% endif %}
-                                <br>
-                                Množství: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
-                            </div>
+                                {% if item.pack %}
+                                    <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
-                {% endfor %}
+                </div>
+            {% endfor %}
 
-            </div>
         </section>
         <!-- Sidebar-->
-        <aside class="col-lg-4 ps-xl-5">
-            <hr class="d-lg-none">
-            <div class="p-4 h-100 ms-auto border-start">
+        <aside class="col-md-5 col-lg-4 shadow">
+            <div class="p-4 h-100 ms-auto">
                 <div class="px-lg-2">
                     <div class="text-center py-3 border-bottom">
                         {% if cart.pickupPlace %}
