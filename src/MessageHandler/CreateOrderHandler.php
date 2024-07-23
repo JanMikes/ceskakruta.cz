@@ -35,7 +35,6 @@ readonly final class CreateOrderHandler
         assert($address !== null);
 
         $email = (new TemplatedEmail())
-            ->from('objednavky@ceskakruta.cz')
             ->to($address)
             ->addBcc('info@ceskakruta.cz')
             ->subject('Rekapitulace objednávky č. ' . $orderId)
@@ -45,6 +44,8 @@ readonly final class CreateOrderHandler
                 'places' => $this->getPlaces->all(),
                 'order_id' => $orderId,
             ]);
+
+        $email->getHeaders()->addTextHeader('X-Transport', 'orders');
 
         $this->mailer->send($email);
 

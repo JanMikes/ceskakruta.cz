@@ -7,10 +7,13 @@ use Symfony\Config\FrameworkConfig;
 
 return static function (FrameworkConfig $framework): void {
     $mailerConfig = $framework->mailer();
-    $mailerConfig
-        ->dsn(env('MAILER_DSN'));
 
-    $mailerConfig
+    $mailerConfig->transport('main', env('MAILER_DSN'))
         ->envelope()
         ->sender('info@ceskakruta.cz');
+
+    $mailerConfig->transport('orders', env('MAILER_ORDERS_DSN'))
+        ->envelope()
+        ->sender('objednavky@ceskakruta.cz');
+
 };
