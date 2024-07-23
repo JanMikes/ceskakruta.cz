@@ -79,7 +79,9 @@ final class ProductsController extends AbstractController
                 if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
                     $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
-                    return $this->render('cart_item_added.stream.html.twig');
+                    return $this->render('cart_item_added.stream.html.twig', [
+                       'product' => $products[(int) $data->productId],
+                    ]);
                 }
 
                 $this->addFlash('success', 'Přidáno do košíku');
