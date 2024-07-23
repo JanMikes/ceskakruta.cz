@@ -35,6 +35,7 @@ readonly final class CreateOrderHandler
         assert($address !== null);
 
         $email = (new TemplatedEmail())
+            ->from('objednavky@ceskakruta.cz')
             ->to($address)
             ->addBcc('info@ceskakruta.cz')
             ->subject('Rekapitulace objednávky č. ' . $orderId)
