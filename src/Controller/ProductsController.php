@@ -11,6 +11,7 @@ use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Query\GetRecipes;
 use CeskaKruta\Web\Services\Calendar;
 use CeskaKruta\Web\Services\Cart\CartService;
+use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
@@ -26,8 +27,8 @@ final class ProductsController extends AbstractController
         readonly private GetProducts $getProducts,
         readonly private MessageBusInterface $bus,
         readonly private GetColdProductsCalendar $getColdProductsCalendar,
-        readonly private Calendar $calendar,
         readonly private GetRecipes $getRecipes,
+        readonly private CartStorage $cartStorage,
     ) {}
 
     #[Route(path: '/nase-nabidka/kruty-a-krocani', name: 'products_cold', methods: ['GET', 'POST'])]
@@ -76,6 +77,10 @@ final class ProductsController extends AbstractController
                     ),
                 );
 
+                if ($data->year !== null && $data->week !== null) {
+                    $this->cartStorage->storeLockedWeek($data->year, $data->week);
+                }
+
                 if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
                     $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
@@ -90,8 +95,6 @@ final class ProductsController extends AbstractController
             }
         }
 
-        $currentWeek = $this->calendar->getCurrentWeek();
-
         $recipesCount = [];
         foreach ($products as $product) {
             $recipesCount[$product->id] = $this->getRecipes->getCountForProduct($product->id);
@@ -102,8 +105,6 @@ final class ProductsController extends AbstractController
             'recipes_count' => $recipesCount,
             'products_halves' => $this->getProducts->getHalves(),
             'add_to_cart_forms' =>  $formViews,
-            'current_year' => $currentWeek->year,
-            'current_week' => $currentWeek->number,
             'calendar' => $this->getColdProductsCalendar->all(),
         ]);
     }

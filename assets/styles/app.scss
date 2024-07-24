@@ -244,10 +244,6 @@ main {
     }
 }
 
-.home-contact {
-    padding: 60px 0;
-}
-
 .separator {
     display: block;
     background: url('../img/separator.png') center center no-repeat;
@@ -352,13 +348,15 @@ main {
     background: url('../img/meat-icon-6.svg') center center no-repeat;
 }
 
+.places-col, .products-col {
+    @include media-breakpoint-up(md) {
+        border-left: 1px solid #ECECEC;
+    }
+}
+
 .sales-places {
     h2 {
         color: $primary;
-    }
-
-    .places-col {
-        border-left: 1px solid #ECECEC;
     }
 
     .row-place-item {
@@ -523,8 +521,6 @@ main {
 }
 
 .products-list {
-    padding: 60px 0;
-
     .card-cold-meat {
         overflow: hidden;
 
@@ -538,13 +534,7 @@ main {
     }
 }
 
-.products-calendar {
-    padding: 60px 0;
-}
-
 .order-pickup-places {
-    padding: 60px 0;
-
     .name-delimiter {
         display: none !important;
     }
@@ -558,10 +548,6 @@ main {
     }
 }
 
-.choose-date {
-    padding: 60px 0;
-}
-
 .form-label.required {
     &::after {
         content: ' * Povinné';
@@ -572,9 +558,8 @@ main {
     }
 }
 
-.my-account {
+.home-contact {
     padding: 60px 0;
-    min-height: 78vh
 }
 
 .navbar-my-account {
@@ -587,7 +572,7 @@ main {
 }
 
 .content-section {
-    padding: 30px 0 40px;
+    padding: 20px 0 35px;
     min-height: calc(100vh - 335px); // 100vh - (Header + footer)
 
     h1 {

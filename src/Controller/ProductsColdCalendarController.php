@@ -83,7 +83,9 @@ final class ProductsColdCalendarController extends AbstractController
 
                 $this->addFlash('success', 'Přidáno do košíku');
 
-                $this->cartStorage->storeLockedWeek($data->year, $data->week);
+                if ($data->year !== null && $data->week !== null) {
+                    $this->cartStorage->storeLockedWeek($data->year, $data->week);
+                }
 
                 return $this->redirectToRoute('products_cold_calendar');
             }

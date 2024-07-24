@@ -3,11 +3,7 @@
 {% block title %}Chlazené krůty a krocani{% endblock %}
 
 {% block content %}
-    <section class="products-calendar">
-        <h1>Chlazené krůty a krocani</h1>
-
-        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
-
+    <section class="products-calendar content-section">
         <div class="row">
             <div class="col-md-3 sales-places-nav pe-md-0">
                 <ul class="list-unstyled">
@@ -32,11 +28,20 @@
                 </ul>
             </div>
 
-            <div class="places-col col-md-9 ps-md-4 ps-lg-5">
+            <div class="products-col col-md-9 ps-md-4 ps-lg-5">
+                <h1 class="d-none d-md-block">Váhový kalendář</h1>
+
+                <div class="alert alert-secondary d-flex" role="alert">
+                    <div class="alert-icon">
+                        <i class="ci-idea"></i>
+                    </div>
+                    <div><small>Výběrem se vám omezí datum objednávky na termíny s vámi zvolenou váhou.</small></div>
+                </div>
+
                 <h2 class="h4 mt-4">Aktuální váhy pro tento týden</h2>
 
                 <div class="calendar-row mb-5">
-                    <span class="ribbon">
+                    <span class="ribbon {{ cart.week.number == current_week ? 'active' }}">
                         <strong>{{ current_week }}. týden</strong><br>{{ firstDayOfWeek(current_year, current_week).format('d.m.') }} - {{ lastDayOfWeek(current_year, current_week).format('d.m.') }}
                     </span>
 
@@ -56,39 +61,34 @@
                     </div>
                 </div>
 
-                    <h2 class="h4 mt-4">Váhový kalendář pro další týdny</h2>
+                <h2 class="h4 mt-4">Váhový kalendář pro další týdny</h2>
 
-                    <div class="alert alert-warning d-flex" role="alert">
-                        <div class="alert-icon">
-                            <i class="ci-security-announcement"></i>
-                        </div>
-                        <div>Výběrem konkrétní váhy se vám omezí datum objednávky na vámi zvolený týden</div>
-                    </div>
+                {% for year, weeks in calendar %}
+                    {% for week, types in weeks %}
+                        {% if calendar[year][week] is defined and (current_week != week or current_year != year) %}
+                            <div class="calendar-row mb-5">
+                                <span class="ribbon {{ cart.week.number == week ? 'active' }}">
+                                    <strong>{{ week }}. týden</strong><br>{{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
+                                </span>
 
-                    {% for year, weeks in calendar %}
-                        {% for week, types in weeks %}
-                            {% if calendar[year][week] is defined and (current_week != week or current_year != year) %}
-                                <div class="calendar-row mb-5">
-                                    <span class="ribbon {{ cart.week.number == week ? 'active' }}">
-                                        <strong>{{ week }}. týden</strong><br>{{ firstDayOfWeek(year, week).format('d.m.') }} - {{ lastDayOfWeek(year, week).format('d.m.') }}
-                                    </span>
-
-                                    <div class="table-responsive shadow">
-                                        <table class="table">
-                                            <tbody>
-                                            {% for product in products %}
-                                                {% if calendar[year][week][product.turkeyType] is defined %}
-                                                    {{ include('_cold_calendar_product_item.html.twig') }}
-                                                {% endif %}
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="table-responsive shadow">
+                                    <table class="table">
+                                        <tbody>
+                                        {% for product in products %}
+                                            {% if calendar[year][week][product.turkeyType] is defined %}
+                                                {{ include('_cold_calendar_product_item.html.twig') }}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            {% endif %}
-                        {% endfor %}
+                            </div>
+                        {% endif %}
                     {% endfor %}
-                </div>
+                {% endfor %}
+
+                {{ include('_context_order_next_steps.html.twig') }}
+            </div>
         </div>
     </section>
 

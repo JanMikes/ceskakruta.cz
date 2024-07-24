@@ -3,110 +3,109 @@
 {% block title %}Rekapitulace{% endblock %}
 
 {% block content %}
+    <section class="content-section">
+        <div class="row">
+            <!-- Content-->
+            <section class="col-md-7 col-lg-8 pe-md-4">
+                <h1>Rekapitulace objednávky</h1>
 
-    <div class="row">
-        <!-- Content-->
-        <section class="col-md-7 col-lg-8 pt-3 pt-lg-4 pe-lg-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                <div class="py-1"><a class="btn btn-outline-primary btn-sm" href="{{ path('cart') }}"><i class="ci-arrow-left me-1 ms-n1"></i>Zpět upravit objednávku</a></div>
-            </div>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                    <div class="py-1"><a class="btn btn-outline-primary btn-sm" href="{{ path('cart') }}"><i class="ci-arrow-left me-1 ms-n1"></i>Zpět upravit objednávku</a></div>
+                </div>
 
-            {% for item in cart.items %}
-                <div class="d-flex cart-items-row p-3 my-2 shadow">
-                    <div class="cart-item-image">
-                        {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
-                            <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
-                        {% else %}
-                            <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
-                        {% endif %}
-                    </div>
-
-                    <div class="cart-item-info ps-3">
-                        <h3 class="h6 product-title mb-1">{{ item.product.title }}: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}</h3>
-                        <div class="d-inline-block">
-                            {% if item.product.turkeyType %}
-                                <span class="text-muted fs-xs">
-                                Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
-                                Orientační cena: {{ item.product.price|price|raw }} Kč/ks
-                            </span><br>
-                                Celkem: {{ item.price|price|raw }} Kč
+                {% for item in cart.items %}
+                    <div class="d-flex cart-items-row p-3 my-2 shadow">
+                        <div class="cart-item-image">
+                            {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
+                                <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
                             {% else %}
-                                <span class="text-muted fs-xs">Cena: {{ item.product.price|price|raw }} Kč/kg</span><br>
-                                Celkem: {{ item.price|price|raw }} Kč
-                                {% if item.slice %}
-                                    <br>+ Nakrájet
-                                {% endif %}
-                                {% if item.pack %}
-                                    <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
-                                {% endif %}
+                                <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                             {% endif %}
                         </div>
+
+                        <div class="cart-item-info ps-3">
+                            <h3 class="h6 product-title mb-1">{{ item.product.title }}: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}</h3>
+                            <div class="d-inline-block">
+                                {% if item.product.turkeyType %}
+                                    <span class="text-muted fs-xs">
+                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
+                                    Orientační cena: {{ item.product.price|price|raw }} Kč/ks
+                                </span><br>
+                                    Celkem: {{ item.price|price|raw }} Kč
+                                {% else %}
+                                    <span class="text-muted fs-xs">Cena: {{ item.product.price|price|raw }} Kč/kg</span><br>
+                                    Celkem: {{ item.price|price|raw }} Kč
+                                    {% if item.slice %}
+                                        <br>+ Nakrájet
+                                    {% endif %}
+                                    {% if item.pack %}
+                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </section>
+            <!-- Sidebar-->
+            <aside class="col-md-5 col-lg-4 shadow">
+                <div class="px-lg-3">
+                    <div class="text-center pt-4 py-3 mb-3">
+                        <div class="border-bottom pb-3">
+                            {% if cart.pickupPlace %}
+                                <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
+                                <h3 class="h5 fw-normal mb-0">
+                                    {{ places[cart.pickupPlace].name }}
+                                </h3>
+                            {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                                <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
+                                <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
+                                <h3 class="h5 fw-normal mb-0">
+                                    {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
+                                </h3>
+                            {% endif %}
+
+                            <h3 class="h5 fw-normal mt-3 mb-0">
+                                {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+                            </h3>
+                        </div>
+
+                        <div class="text-center mb-3 py-3 border-bottom">
+                            {% if cart.deliveryPlace and cart.deliveryAddress %}
+                                <span class="fs-sm d-block">
+                                    Doprava: {{ cart.deliveryPrice }} Kč<br>
+                                    Balné: {{ cart.packingPrice }} Kč
+                                </span>
+                            {% endif %}
+
+                            <h2 class="h6 mb-2 pb-1">Orientační cena celkem</h2>
+                            <h3 class="fw-normal mb-0">{{ cart.totalPrice.amount|price|raw }} <small>Kč</small></h3>
+                        </div>
+
+                        <div class="mb-2 pb-3">
+                            <p>
+                                <strong>Jméno a příjmení</strong><br>
+                                {{ cart.orderData.name }}
+                            </p>
+                            <p>
+                                <strong>E-mail</strong><br>
+                                {{ cart.orderData.email }}
+                            </p>
+                            <p>
+                                <strong>Telefon</strong><br>
+                                {{ cart.orderData.phone }}
+                            </p>
+                            <p>
+                                <strong>Poznámka</strong><br>
+                                {{ cart.orderData.note }}
+                            </p>
+                        </div>
+
+                        <a data-turbo-prefetch="false" href="{{ path('finish_order') }}" class="btn btn-primary btn-shadow d-block w-100 mt-3 btn-lg">Závazně objednat</a>
                     </div>
                 </div>
-            {% endfor %}
-
-        </section>
-        <!-- Sidebar-->
-        <aside class="col-md-5 col-lg-4 shadow">
-            <div class="p-4 h-100 ms-auto">
-                <div class="px-lg-2">
-                    <div class="text-center py-3 border-bottom">
-                        {% if cart.pickupPlace %}
-                            <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
-                            <h3 class="h5 fw-normal mb-0">
-                                {{ places[cart.pickupPlace].name }}
-                            </h3>
-                            <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
-                        {% elseif cart.deliveryPlace and cart.deliveryAddress %}
-                            <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
-                            <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
-                            <h3 class="h5 fw-normal mb-0">
-                                {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
-                            </h3>
-                            <a class="small" href="{{ path('order_delivery') }}">Změnit</a>
-                        {% endif %}
-
-                        <h3 class="h5 fw-normal mt-3 mb-0">
-                            {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
-                        </h3>
-                        <a class="small" href="{{ path('order_available_dates') }}">Změnit</a>
-                    </div>
-
-                    <div class="text-center mb-4 py-3 border-bottom">
-                        {% if cart.deliveryPlace and cart.deliveryAddress %}
-                            <span class="fs-sm d-block mb-2">
-                                Doprava: {{ cart.deliveryPrice }} Kč<br>
-                                Balné: {{ cart.packingPrice }} Kč
-                            </span>
-                        {% endif %}
-
-                        <h2 class="h6 mb-2 pb-1">Orientační cena celkem</h2>
-                        <h3 class="fw-normal">{{ cart.totalPrice.amount|price|raw }} <small>Kč</small></h3>
-                    </div>
-
-                    <div class="mb-4 pb-3">
-                        <p>
-                            <strong>Jméno a příjmení</strong><br>
-                            {{ cart.orderData.name }}
-                        </p>
-                        <p>
-                            <strong>E-mail</strong><br>
-                            {{ cart.orderData.email }}
-                        </p>
-                        <p>
-                            <strong>Telefon</strong><br>
-                            {{ cart.orderData.phone }}
-                        </p>
-                        <p>
-                            <strong>Poznámka</strong><br>
-                            {{ cart.orderData.note }}
-                        </p>
-                    </div>
-
-                    <a data-turbo-prefetch="false" href="{{ path('finish_order') }}" class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg">Závazně objednat</a>
-                </div>
-            </div>
-        </aside>
-    </div>
-
+            </aside>
+        </div>
+    </section>
 {% endblock %}

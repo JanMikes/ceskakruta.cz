@@ -1,0 +1,10 @@
+<p class="text-center mt-3">
+    {% if not cart.place %}
+        <a class="btn btn-primary m-1" href="{{ path('order_pickup_places') }}">Vybrat osobní odběr</a>
+        <a class="btn btn-primary m-1" href="{{ path('order_delivery') }}">Zadat adresu rozvozu</a>
+    {% elseif not cart.date %}
+        <a class="btn btn-primary m-1" href="{{ path('order_available_dates') }}">Zvolit datum objednávky</a>
+    {% else %}
+        <a class="btn btn-primary m-1" href="{{ path('cart') }}">Dokončit objednávku</a>
+    {% endif %}
+</p>

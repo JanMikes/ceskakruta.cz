@@ -3,182 +3,231 @@
 {% block title %}Má objednávka{% endblock %}
 
 {% block content %}
+    <section class="content-section">
+        <div class="row">
+            <!-- Content-->
+            <section class="col-md-7 col-lg-8 pe-md-4">
+                <h1>Nákupní košík</h1>
 
-    <div class="row">
-        <!-- Content-->
-        <section class="col-md-7 col-lg-8 pt-3 pt-lg-4 pe-lg-4">
-            {% if cart.itemsCount > 0 %}
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <div class="py-1"><a class="btn btn-outline-secondary btn-sm" href="{{ path('products') }}"><i class="ci-arrow-left me-1 ms-n1"></i>Zpět na výběr zboží</a></div>
-                    <div class="py-1">
-                        <a data-turbo-prefetch="false" href="{{ path('empty_cart') }}" class="btn btn-outline-danger btn-sm"><i class="ci-close fs-xs me-1 ms-n1"></i>Vyprázdnit košík</a>
+                {% if not cart.minimalPriceMet %}
+                    <div class="alert alert-warning">
+                        Minimální hodnota objednávky pro rozvoz je {{ cart.minimalPrice|price|raw }}&nbsp;Kč. Abyste mohli pokračovat k dokončení objednávky, prosím přidejte si ještě něco do košíku.
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
 
-            {% if not cart.minimalPriceMet %}
-                <div class="alert alert-warning">
-                    Minimální hodnota objednávky pro rozvoz je {{ cart.minimalPrice|price|raw }}&nbsp;Kč. Abyste mohli pokračovat k dokončení objednávky, prosím přidejte si ještě něco do košíku.
-                </div>
-            {% endif %}
-
-            {% for item in cart.items %}
-                <div class="d-flex cart-items-row p-3 my-2 shadow">
-                    <div class="cart-item-image">
-                        {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
-                            <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
-                        {% else %}
-                            <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
-                        {% endif %}
-                    </div>
-
-                    <div class="cart-item-info ps-3">
-                        <h3 class="h6 mb-1">{{ item.product.title }}</h3>
-                        <div class="d-inline-block fs-sm">
-                            {% if item.product.turkeyType %}
-                                <span class="text-muted fs-xs">
-                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
-                                    Orientační cena: {{ item.product.price|price|raw }} Kč/ks
-                                </span><br>
-                                Celkem: {{ item.price|price|raw }} Kč
+                {% for item in cart.items %}
+                    <div class="d-flex cart-items-row p-3 my-2 shadow">
+                        <div class="cart-item-image">
+                            {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
+                                <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
                             {% else %}
-                                <span class="text-muted fs-xs">Cena: {{ item.product.price|price|raw }} Kč/kg</span><br>
-                                Celkem: {{ item.price|price|raw }} Kč
-                                {% if item.slice %}
-                                    <br>+ Nakrájet
-                                {% endif %}
-                                {% if item.pack %}
-                                    <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
-                                {% endif %}
+                                <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                             {% endif %}
                         </div>
 
-
-                        <div class="form-inline pt-2">
-                            <div class="text-end mb-2">
-                                <a data-turbo-prefetch="false" href="{{ path('remove_from_cart', {cartItem: loop.index0}) }}">
-                                    <span class="btn btn-sm btn-icon btn-outline-danger py-1 px-2 fs-xs mt-1">
-                                        <i class="ci-trash me-1"></i> Odebrat
-                                    </span>
-                                </a>
+                        <div class="cart-item-info ps-3">
+                            <h3 class="h6 mb-1">{{ item.product.title }}</h3>
+                            <div class="d-inline-block fs-sm">
+                                {% if item.product.turkeyType %}
+                                    <span class="text-muted fs-xs">
+                                        Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
+                                        Orientační cena: {{ item.product.price|price|raw }} Kč/ks
+                                    </span><br>
+                                    Celkem: {{ item.price|price|raw }} Kč
+                                {% else %}
+                                    <span class="text-muted fs-xs">Cena: {{ item.product.price|price|raw }} Kč/kg</span><br>
+                                    Celkem: {{ item.price|price|raw }} Kč
+                                    {% if item.slice %}
+                                        <br>+ Nakrájet
+                                    {% endif %}
+                                    {% if item.pack %}
+                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                    {% endif %}
+                                {% endif %}
                             </div>
 
-                            {{ form_start(change_quantity_forms[loop.index0]) }}
-                                <input name="{{ field_name(change_quantity_forms[loop.index0].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
-                                <button class="btn btn-primary btn-sm ms-2 " type="submit">Přepočítat</button>
-                            {{ form_end(change_quantity_forms[loop.index0]) }}
+
+                            <div class="form-inline pt-2">
+                                <div class="text-end mb-2">
+                                    <a data-turbo-prefetch="false" href="{{ path('remove_from_cart', {cartItem: loop.index0}) }}">
+                                        <span class="btn btn-sm btn-icon btn-outline-danger py-1 px-2 fs-xs mt-1">
+                                            <i class="ci-trash me-1"></i> Odebrat
+                                        </span>
+                                    </a>
+                                </div>
+
+                                {{ form_start(change_quantity_forms[loop.index0]) }}
+                                    <input name="{{ field_name(change_quantity_forms[loop.index0].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
+                                    <button class="btn btn-primary btn-sm ms-2 " type="submit">Přepočítat</button>
+                                {{ form_end(change_quantity_forms[loop.index0]) }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
 
-            {% if cart.itemsCount == 0 %}
-                <div class="alert alert-primary d-flex" role="alert">
-                    <div class="alert-icon">
-                        <i class="ci-security-announcement"></i>
+                {% if cart.itemsCount == 0 %}
+                    <div class="alert alert-primary d-flex" role="alert">
+                        <div class="alert-icon">
+                            <i class="ci-security-announcement"></i>
+                        </div>
+                        <div>Váš košík je prázdný. Vyberte si něco <a class="alert-link" href="{{ path('products') }}">z naší nabídky</a>.</div>
                     </div>
-                    <div>Váš košík je prázdný. Vyberte si něco <a class="alert-link" href="{{ path('products') }}">z naší nabídky</a>.</div>
-                </div>
-            {% else %}
-                <div class="py-4">
+                {% else %}
+                    <div class="py-4">
 
-                    <h2 class="h6 mb-2">
-                        {% if cart.deliveryPlace and cart.deliveryAddress %}
-                            <span class="fs-sm d-block mb-1">
-                                Doprava: {{ cart.deliveryPrice }} Kč<br>
-                                Balné: {{ cart.packingPrice }} Kč
-                            </span>
+                        <h2 class="h6 mb-2">
+                            {% if cart.deliveryPlace and cart.deliveryAddress %}
+                                <span class="fs-sm d-block mb-1">
+                                    Doprava: {{ cart.deliveryPrice }} Kč<br>
+                                    Balné: {{ cart.packingPrice }} Kč
+                                </span>
+                            {% endif %}
+                            Orientační cena celkem: {{ cart.totalPrice.amount|price|raw }} Kč
+                        </h2>
+                    </div>
+                {% endif %}
+            </section>
+
+            <aside class="col-md-5 col-lg-4 shadow">
+                <div class="px-lg-3">
+                    <div class="text-center pt-4 py-3 mb-3">
+                        {#
+                        <h5>Způsob doručení</h5>
+
+                        <ul class="nav nav-tabs media-tabs nav-justified">
+                            <li class="nav-item">
+                                <a href="{{ cart.pickupPlace ? path('order_pickup_places') : path('order_delivery') }}">
+                                    <div class="nav-link {% if cart.place %}completed{% endif %}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="media-tab-media"><i class="ci-delivery"></i></div>
+                                            <div class="ps-3">
+                                                <h6 class="media-tab-title text-nowrap mb-0">
+                                                    {% if cart.pickupPlace %}
+                                                        Osobní odběr
+                                                    {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                                                        Rozvoz <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
+                                                    {% else %}
+                                                        Doručení
+                                                    {% endif %}
+                                                </h6>
+                                                {% if cart.pickupPlace %}
+                                                    <div class="media-tab-subtitle text-muted fs-xs mb-0">
+                                                        {{ places[cart.pickupPlace].name }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if cart.deliveryPlace and cart.deliveryAddress %}
+                                                    <div class="media-tab-subtitle text-muted fs-xs mb-0">
+                                                        {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a data-turbo-prefetch="false" href="{{ path('order_available_dates') }}">
+                                    <div class="nav-link {% if cart.date %}completed{% endif %}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="media-tab-media"><i class="ci-time"></i></div>
+                                            <div class="ps-3">
+                                                <h6 class="media-tab-title text-nowrap mb-0">Termín</h6>
+
+                                                {% if cart.date %}
+                                                    <div class="media-tab-subtitle text-muted fs-xs mb-0">
+                                                        {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                        #}
+
+                        {% if cart.pickupPlace %}
+                            <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
+                            <h3 class="h5 fw-normal mb-0">
+                                {{ places[cart.pickupPlace].name }}
+                            </h3>
+                            <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
+                        {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                            <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
+                            <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'Rozvoz CoolBalík' }}</small><br>
+                            <h3 class="h5 fw-normal mb-0">
+                                {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
+                            </h3>
+                            <a class="small" href="{{ path('order_delivery') }}">Změnit</a>
+                        {% else %}
+                            <h3 class="h5 fw-normal mb-0">
+                                <span class="d-block mb-2">Vyberte:</span>
+                                <a href="{{ path('order_pickup_places') }}">Osobní odběr</a>
+                                <small class="text-muted">nebo</small>
+                                <a href="{{ path('order_delivery') }}">Rozvoz</a>
+                            </h3>
                         {% endif %}
-                        Orientační cena celkem: {{ cart.totalPrice.amount|price|raw }} Kč
-                    </h2>
-                </div>
-            {% endif %}
-        </section>
 
-        <aside class="col-md-5 col-lg-4 shadow">
-            <div class="px-lg-3">
-                <div class="text-center pt-4 py-3 mb-3">
-                    {% if cart.pickupPlace %}
-                        <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
-                        <h3 class="h5 fw-normal mb-0">
-                            {{ places[cart.pickupPlace].name }}
-                        </h3>
-                        <a class="small" href="{{ path('order_pickup_places') }}">Změnit</a>
-                    {% elseif cart.deliveryPlace and cart.deliveryAddress %}
-                        <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
-                        <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'Rozvoz CoolBalík' }}</small><br>
-                        <h3 class="h5 fw-normal mb-0">
-                            {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }}
-                        </h3>
-                        <a class="small" href="{{ path('order_delivery') }}">Změnit</a>
-                    {% else %}
-                        <h3 class="h5 fw-normal mb-0">
-                            <span class="d-block mb-2">Vyberte:</span>
-                            <a href="{{ path('order_pickup_places') }}">Osobní odběr</a>
-                            <small class="text-muted">nebo</small>
-                            <a href="{{ path('order_delivery') }}">Rozvoz</a>
-                        </h3>
-                    {% endif %}
+                        {% if cart.date %}
+                            <h3 class="h5 fw-normal mt-3 mb-0">
+                                {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
+                            </h3>
+                            <a class="small" href="{{ path('order_available_dates') }}">Změnit</a>
+                        {% elseif cart.place %}
+                            <h3 class="h5 fw-normal mt-3 mb-0">
+                                Chybí datum objednávky
+                            </h3>
 
-                    {% if cart.date %}
-                        <h3 class="h5 fw-normal mt-3 mb-0">
-                            {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
-                        </h3>
-                        <a class="small" href="{{ path('order_available_dates') }}">Změnit</a>
-                    {% elseif cart.place %}
-                        <h3 class="h5 fw-normal mt-3 mb-0">
-                            Chybí datum objednávky
-                        </h3>
+                            <a class="small" href="{{ path('order_available_dates') }}">Vybrat</a>
+                        {% endif %}
 
-                        <a class="small" href="{{ path('order_available_dates') }}">Vybrat</a>
-                    {% endif %}
+                        {% if cart.lockedWeek is null and cart.containsTurkey %}
+                            <p class="mt-1"><small class="text-muted">Při změně data se změní i váha chlazených krůt/krocanů - dle toho, jak dorůstají.</small></p>
+                        {% endif %}
+                    </div>
 
-                    {% if cart.lockedWeek is null and cart.containsTurkey %}
-                        <p class="mt-1"><small class="text-muted">Při změně data se změní i váha chlazených krůt/krocanů - dle toho, jak dorůstají.</small></p>
-                    {% endif %}
-                </div>
+                    <div class="mb-4 pb-3">
+                        {{ form_start(orderForm) }}
 
-                <div class="mb-4 pb-3">
-                    {{ form_start(orderForm) }}
+                            <div class="form-floating mb-2">
+                                {{ form_widget(orderForm.name, {'attr': {'class': 'form-control', 'placeholder': 'Jméno a příjmení'}}) }}
+                                {{ form_label(orderForm.name, 'Jméno a příjmení', {'label_attr': {'for': 'fl-text'}}) }}
+                            </div>
 
-                        <div class="form-floating mb-2">
-                            {{ form_widget(orderForm.name, {'attr': {'class': 'form-control', 'placeholder': 'Jméno a příjmení'}}) }}
-                            {{ form_label(orderForm.name, 'Jméno a příjmení', {'label_attr': {'for': 'fl-text'}}) }}
-                        </div>
+                            <div class="form-floating mb-2">
+                                {{ form_widget(orderForm.email, {'attr': {'class': 'form-control', 'placeholder': 'E-mail'}}) }}
+                                {{ form_label(orderForm.email, 'E-mail', {'label_attr': {'for': 'fl-text'}}) }}
+                            </div>
 
-                        <div class="form-floating mb-2">
-                            {{ form_widget(orderForm.email, {'attr': {'class': 'form-control', 'placeholder': 'E-mail'}}) }}
-                            {{ form_label(orderForm.email, 'E-mail', {'label_attr': {'for': 'fl-text'}}) }}
-                        </div>
+                            <div class="form-floating mb-2">
+                                {{ form_widget(orderForm.phone, {'attr': {'class': 'form-control', 'placeholder': 'Telefon'}}) }}
+                                {{ form_label(orderForm.phone, 'Telefon', {'label_attr': {'for': 'fl-text'}}) }}
+                            </div>
 
-                        <div class="form-floating mb-2">
-                            {{ form_widget(orderForm.phone, {'attr': {'class': 'form-control', 'placeholder': 'Telefon'}}) }}
-                            {{ form_label(orderForm.phone, 'Telefon', {'label_attr': {'for': 'fl-text'}}) }}
-                        </div>
+                            <div class="form-floating mb-3">
+                                {{ form_widget(orderForm.note, {'attr': {'class': 'form-control', 'placeholder': 'Poznámka', 'style': 'height: 80px;'}}) }}
+                                {{ form_label(orderForm.note, 'Poznámka', {'label_attr': {'for': 'fl-text'}}) }}
+                            </div>
 
-                        <div class="form-floating mb-3">
-                            {{ form_widget(orderForm.note, {'attr': {'class': 'form-control', 'placeholder': 'Poznámka', 'style': 'height: 80px;'}}) }}
-                            {{ form_label(orderForm.note, 'Poznámka', {'label_attr': {'for': 'fl-text'}}) }}
-                        </div>
+                            {{ form_row(orderForm.payByCard) }}
+                            {{ form_row(orderForm.subscribeToNewsletter) }}
 
-                        {{ form_row(orderForm.payByCard) }}
-                        {{ form_row(orderForm.subscribeToNewsletter) }}
+                            {% if cart.itemsCount > 0 and cart.date and cart.place %}
+                                {% if cart.minimalPriceMet %}
+                                    <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
+                                {% else %}
+                                    <small class="text-primary">Pro dokončení objednávky není splněna minimální potřebná hodnota objednávky.</small>
 
-                        {% if cart.itemsCount > 0 and cart.date and cart.place %}
-                            {% if cart.minimalPriceMet %}
-                                <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
+                                    <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
+                                {% endif %}
                             {% else %}
-                                <small class="text-primary">Pro dokončení objednávky není splněna minimální potřebná hodnota objednávky.</small>
-
                                 <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
                             {% endif %}
-                        {% else %}
-                            <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
-                        {% endif %}
-                    {{ form_end(orderForm) }}
+                        {{ form_end(orderForm) }}
+                    </div>
                 </div>
-            </div>
-        </aside>
-    </div>
-
+            </aside>
+        </div>
+    </section>
 {% endblock %}

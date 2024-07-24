@@ -3,12 +3,7 @@
 {% block title %}Naše nabídka{% endblock %}
 
 {% block content %}
-    <section class="products-list">
-
-        <h1>Maso a uzeniny</h1>
-
-        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
-
+    <section class="products-list content-section">
         <div class="row">
             <div class="col-md-3 sales-places-nav pe-md-0">
                 <ul class="list-unstyled">
@@ -33,7 +28,9 @@
                 </ul>
             </div>
 
-            <div class="places-col col-md-9 ps-md-4 ps-lg-5">
+            <div class="products-col col-md-9 ps-md-4 ps-lg-5">
+                <h1 class="d-none d-md-block">Maso a uzeniny</h1>
+
                 <div class="row">
                     {% for product in products %}
                         {% if not product.turkeyType %}
@@ -53,10 +50,7 @@
                     </div>
                 </div>
 
-                <p class="text-center mt-3">
-                    {# TODO: podle kontextu link na misto/datum/kosik #}
-                    <a class="btn btn-primary" href="{{ path('cart') }}">Pokračovat do košíku</a>
-                </p>
+                {{ include('_context_order_next_steps.html.twig') }}
             </div>
         </div>
     </section>

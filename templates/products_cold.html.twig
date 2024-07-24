@@ -3,11 +3,7 @@
 {% block title %}Chlazené krůty a krocani{% endblock %}
 
 {% block content %}
-    <section class="products-list">
-        <h1>Chlazené krůty a krocani</h1>
-
-        {{ render(controller('CeskaKruta\\Web\\Controller\\OrderProgressPanelController')) }}
-
+    <section class="products-list content-section">
         <div class="row">
             <div class="col-md-3 sales-places-nav pe-md-0">
                 <ul class="list-unstyled">
@@ -32,12 +28,14 @@
                 </ul>
             </div>
 
-            <div class="places-col col-md-9 ps-md-4 ps-lg-5">
-                <div class="alert alert-accent d-flex" role="alert">
+            <div class="products-col col-md-9 ps-md-4 ps-lg-5">
+                <h1 class="d-none d-md-block">Chlazené krůty a krocani</h1>
+
+                <div class="alert alert-secondary d-flex" role="alert">
                     <div class="alert-icon">
-                        <i class="ci-security-announcement"></i>
+                        <i class="ci-idea"></i>
                     </div>
-                    <div class="small">Krůty a krocany prodávám vždy ve váze tak, jak nám dorůstají. Uvedené váhy jsou pro aktuální nabídku/vámi vybraný termín. Pokud vám nevyhovují váhy, vyberte si podle potřeby z <a href="{{ path('products_cold_calendar') }}">váhového kalendáře</a>.</div>
+                    <div><small>Krůty a krocany prodávám vždy ve váze tak, jak nám dorůstají. Pokud vám váhy nevyhovují, můžete si vybrat dle potřeby z <a href="{{ path('products_cold_calendar') }}">váhového kalendáře</a>.</small></div>
                 </div>
 
                 <div class="row">
@@ -60,11 +58,9 @@
                             </div>
                         </a>
                     </div>
-
-                    <p class="text-center mt-3">
-                        <a class="btn btn-primary" href="{{ path('cart') }}">Pokračovat do košíku</a>
-                    </p>
                 </div>
+
+                {{ include('_context_order_next_steps.html.twig') }}
             </div>
         </div>
     </section>
