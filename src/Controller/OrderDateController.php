@@ -54,8 +54,11 @@ final class OrderDateController extends AbstractController
             }
         }
 
+        $availableDays = $this->getAvailableDays->forPlace($place->id);
+
         return $this->render('order_available_dates.html.twig', [
-            'available_days' => $this->getAvailableDays->forPlace($place->id),
+            'available_days' => $availableDays,
+            'first_available_day' => $availableDays[array_key_first($availableDays)] ?? null,
         ]);
     }
 }

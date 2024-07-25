@@ -10,6 +10,10 @@
             <p>
                 Vybráno: <strong>{{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}</strong>
             </p>
+        {% elseif first_available_day %}
+            <p>
+                <span class="d-inline-block me-1">Nejbližší možný termín:</span> <a class="btn btn-outline-primary btn-sm" href="{{ path('choose_date', {date: first_available_day.format('Y-m-d')}) }}">{{ first_available_day|dayOfWeek }} {{ first_available_day.format('d.m.') }}</a>
+            </p>
         {% endif %}
 
         {% if cart.lockedWeek %}
