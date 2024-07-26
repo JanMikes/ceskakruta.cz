@@ -3,29 +3,29 @@
 {% block title %}Registrace{% endblock %}
 
 {% block content %}
-
-    <div class="col-md-6 pt-4 mt-3 mt-md-0">
-        <h2 class="h4 mb-3">Nemáte účet? Zaregistrujte se</h2>
-        <p class="fs-sm text-muted mb-4">Registrace vám zabere méně než minutu, pomůže vám mít přehled o všech vašich objednávkách.</p>
-        {{ form_start(registration_form) }}
-        <div class="row gx-4 gy-3">
-            <div class="col-sm-6">
-                {{ form_row(registration_form.name) }}
+    <section class="content-section">
+        <div class="col-md-6 pt-4 mt-3 mt-md-0">
+            <h2 class="h4 mb-3">Nemáte účet? Zaregistrujte se</h2>
+            <p class="fs-sm text-muted mb-4">Registrace vám zabere méně než minutu, pomůže vám mít přehled o všech vašich objednávkách.</p>
+            {{ form_start(registration_form) }}
+            <div class="row gx-4 gy-3">
+                <div class="col-sm-6">
+                    {{ form_row(registration_form.name) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ form_row(registration_form.phone) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ form_row(registration_form.email) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ form_row(registration_form.password) }}
+                </div>
+                <div class="col-12 text-end">
+                    <button class="btn btn-primary" type="submit"><i class="ci-user me-2 ms-n1"></i>Zaregistrovat se</button>
+                </div>
             </div>
-            <div class="col-sm-6">
-                {{ form_row(registration_form.phone) }}
-            </div>
-            <div class="col-sm-6">
-                {{ form_row(registration_form.email) }}
-            </div>
-            <div class="col-sm-6">
-                {{ form_row(registration_form.password) }}
-            </div>
-            <div class="col-12 text-end">
-                <button class="btn btn-primary" type="submit"><i class="ci-user me-2 ms-n1"></i>Zaregistrovat se</button>
-            </div>
+            {{ form_end(registration_form) }}
         </div>
-        {{ form_end(registration_form) }}
-    </div>
-
+    </section>
 {% endblock %}
