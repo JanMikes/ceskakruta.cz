@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chyba naší aplikace{% endblock %}
+
+{% block content %}
+    <section class="content-section justify-content-center">
+        <div class=" text-center">
+            <h3 class="h4 fw-normal mb-4">Někde u nás se stala chyba&hellip;</h3>
+
+            <p class="mx-auto mb-4" style="max-width: 500px;">Jejda, něco se nám na webu pokazilo! O tomto problému jsme dostali automatickou notifikaci a už pracujeme na tom, abychom problém co nejdříve opravili. Omlouváme se za nepříjemnosti a děkujeme za trpělivost!</p>
+
+            <img class="d-block mx-auto rounded-4" style="max-width: 350px;" src="{{ asset('img/error-500.png') }}" alt="unknown error">
+        </div>
+    </section>
+{% endblock %}

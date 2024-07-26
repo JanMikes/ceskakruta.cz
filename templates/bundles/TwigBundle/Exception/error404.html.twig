@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stránka nenalezena{% endblock %}
+
+{% block content %}
+    <section class="content-section justify-content-center">
+            <div class=" text-center">
+                <h3 class="h4 fw-normal mb-4">Stránka nenalezena :-(</h3>
+                <p class="mx-auto mb-4" style="max-width: 400px;">Ups, vypadá to, že jste narazili na stránku, která se někam zatoulala! Pokud jste přesvědčeni, že se jedná o naši chybu, prosím, kontaktujte nás.</p>
+                <img class="d-block mx-auto rounded-4" style="max-width: 350px;" src="{{ asset('img/error-404.png') }}" alt="Stránka nenalezena">
+            </div>
+    </section>
+{% endblock %}
