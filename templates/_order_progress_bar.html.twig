@@ -1,17 +1,32 @@
 <div class="steps steps-dark my-3 mb-4">
     <a class="step-item active {{ app.request.get('_route') == 'cart' ? 'current' }}" href="{{ path('cart') }}">
         <div class="step-progress"><span class="step-count">1</span></div>
-        <div class="step-label"><i class="ci-cart"></i>Košík</div>
+        <div class="step-label">
+            <i class="ci-cart"></i>Košík
+            <br><small>{{ cart.totalPrice.amount|price|raw }}&nbsp;Kč</small>
+        </div>
     </a>
 
     <a class="step-item {{ app.request.get('_route') in ['order_delivery', 'order_available_dates', 'order_contact_info', 'order_recapitulation'] ? 'active' }} {{ app.request.get('_route') == 'order_delivery' ? 'current' }}" href="{{ path('order_delivery') }}">
         <div class="step-progress"><span class="step-count">2</span></div>
-        <div class="step-label"><i class="ci-delivery"></i>Doručení</div>
+        <div class="step-label">
+            <i class="ci-delivery"></i>Doručení
+            {% if cart.deliveryPlace %}
+                <br><small>Rozvoz</small>
+            {% elseif cart.pickupPlace %}
+                <br><small>Osobní odběr</small>
+            {% endif %}
+        </div>
     </a>
 
     <a class="step-item {{ app.request.get('_route') in ['order_available_dates', 'order_contact_info', 'order_recapitulation'] ? 'active' }} {{ app.request.get('_route') == 'order_available_dates' ? 'current' }}" href="{{ path('order_available_dates') }}">
         <div class="step-progress"><span class="step-count">3</span></div>
-        <div class="step-label"><i class="ci-calendar"></i>Datum</div>
+        <div class="step-label">
+            <i class="ci-calendar"></i>Datum
+            {% if cart.date %}
+                <br><small>{{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.') }}</small>
+            {% endif %}
+        </div>
     </a>
 
     <a class="step-item {{ app.request.get('_route') in ['order_contact_info', 'order_recapitulation'] ? 'active' }} {{ app.request.get('_route') == 'order_contact_info' ? 'current' }}" href="{{ path('order_contact_info') }}">
