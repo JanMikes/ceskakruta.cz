@@ -29,7 +29,7 @@ final class OrderDateController extends AbstractController
         $place = $this->cartService->getPlace();
 
         if ($place === null) {
-            $this->addFlash('warning', 'Pro možnost výběru termínu, prosím zvolte první způsob doručení.');
+            $this->addFlash('warning', 'Pro možnost výběru termínu, prosím nejdříve zvolte způsob doručení.');
 
             return $this->redirectToRoute('order_delivery');
         }
