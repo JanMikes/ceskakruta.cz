@@ -22,8 +22,8 @@ final class OrderDateController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/datum-objednavky', name: 'order_available_dates', methods: ['GET'])]
-    #[Route(path: '/vybrat-datum-objednavky/{date}', name: 'choose_date', methods: ['GET'])]
+    #[Route(path: '/objednavka/datum-objednavky', name: 'order_available_dates', methods: ['GET'])]
+    #[Route(path: '/objednavka/vybrat-datum/{date}', name: 'choose_date', methods: ['GET'])]
     public function __invoke(null|string $date, Request $request): Response
     {
         $place = $this->cartService->getPlace();

@@ -33,10 +33,15 @@ readonly final class CartService
         return $this->totalPrice()->amount >= $this->getMinimalPrice();
     }
 
+    public function getDeliveryMinimalPrice(): int
+    {
+        return 1000;
+    }
+
     public function getMinimalPrice(): int
     {
         if ($this->getPlace()?->isDelivery) {
-            return 1000;
+            return $this->getDeliveryMinimalPrice();
         }
 
         return 0;

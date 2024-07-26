@@ -1,38 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Rozvoz domů{% endblock %}
+{% block title %}Způsob doručení{% endblock %}
 
 {% block content %}
 <section class="order-pickup-places content-section">
-    <h1>Místo doručení</h1>
+    {{ include('_order_progress_bar.html.twig') }}
 
-    <div class="row">
-        <div class="col-md-3 sales-places-nav pe-0">
-            <ul class="list-unstyled">
-                <li>
-                    <a href="{{ path('order_pickup_places') }}">
-                        Osobní odběr
-                        <i class="ci-arrow-down"></i>
-                    </a>
-                </li>
-                <li>
-                    <a class="active" href="{{ path('order_delivery') }}">
-                        Rozvoz
-                        <i class="ci-arrow-right"></i>
-                    </a>
-                </li>
-            </ul>
+    <div class="accordion mb-2 shadow" id="delivery-method" role="tablist">
+        <div class="accordion-item">
+            <h3 class="accordion-header">
+                <a class="accordion-button {{ not cart.deliveryPlace ? 'collapsed' }}" href="#delivery" data-bs-toggle="collapse">
+                    <i class="ci-delivery me-2 align-middle"></i>Rozvoz
+                    {% if cart.deliveryPlace %}
+                        <span class="ps-3 text-primary">(Zvoleno)</span>
+                    {% endif %}
+                </a>
+            </h3>
+            <div class="accordion-collapse collapse {{ cart.deliveryPlace ? 'show' }}" id="delivery" data-bs-parent="#delivery-method" role="tabpanel">
+                <div class="accordion-body">
+                    <div class="alert alert-warning fs-sm">
+                        Minimální částka objednávky pro rozvoz je {{ cart.deliveryMinimalPrice }} kč, v případě rozvozu přes Coolbalík musíme všechny produkty zabalit do vakuového balení.
+                    </div>
+
+                    {{ form_start(delivery_form) }}
+                    <div style="max-width: 400px;">
+                        {{ form_row(delivery_form.street) }}
+                        {{ form_row(delivery_form.city) }}
+                        {{ form_row(delivery_form.postalCode) }}
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Potvrdit</button>
+                    {{ form_end(delivery_form) }}
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-9 ps-md-5">
-            {{ form_start(delivery_form) }}
-                {{ form_row(delivery_form.street) }}
-                {{ form_row(delivery_form.city) }}
-                {{ form_row(delivery_form.postalCode) }}
+        <div class="accordion-item">
+            <h3 class="accordion-header">
+                <a class="accordion-button {{ not cart.pickupPlace or cart.deliveryPlace ? 'collapsed' }}" href="#pickup" data-bs-toggle="collapse">
+                    <i class="ci-home me-2"></i>Osobní odběr
+                    {% if cart.pickupPlace %}
+                        <span class="ps-3 text-primary">(Zvoleno)</span>
+                    {% endif %}
+                </a>
+            </h3>
+            <div class="accordion-collapse collapse {{ cart.pickupPlace or not cart.deliveryPlace ? 'show' }}" id="pickup" data-bs-parent="#delivery-method" role="tabpanel">
+                <div class="accordion-body">
+                    <div class="row">
+                        {% for place in places %}
+                            <div class="col-sm-6 col-md-4 mb-4">
+                                <div class="card shadow {{ cart.pickupPlace == place.id ? 'border-primary' }}">
+                                    <div class="card-body text-center">
+                                        <p class="m-0">
+                                            {{ place.name|placeName|raw }}
+                                        </p>
+                                        <small class="text-muted">{{ place.address1 }}</small><br>
+                                        <small class="text-muted">{{ place.address2 }}</small><br>
 
-                <button class="btn btn-primary" type="submit">Potvrdit</button>
-            {{ form_end(delivery_form) }}
+                                        {% if cart.pickupPlace == place.id %}
+                                            <a data-turbo-prefetch="false" class="mt-2 btn btn-sm btn-primary" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Vybráno</a>
+                                        {% else %}
+                                            <a data-turbo-prefetch="false" class="mt-2 btn btn-sm btn-outline-primary" href="{{ path('choose_order_pickup_place', {placeId: place.id}) }}">Zvolit</a>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="d-sm-flex justify-content-between text-center mt-3">
+        <a class="btn btn-outline-secondary m-1" href="{{ path('cart') }}"><i class="ci-arrow-left me1"></i> Zpět do košíku</a>
+        {% if cart.place %}
+            <a class="btn btn-primary m-1" href="{{ path('order_available_dates') }}"><i class="ci-calendar me-1"></i> Zvolit datum</a>
+        {% endif %}
+    </div>
+
 </section>
 {% endblock %}

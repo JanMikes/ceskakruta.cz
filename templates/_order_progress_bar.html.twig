@@ -1,0 +1,21 @@
+<div class="steps steps-dark my-3 mb-4">
+    <a class="step-item active {{ app.request.get('_route') == 'cart' ? 'current' }}" href="{{ path('cart') }}">
+        <div class="step-progress"><span class="step-count">1</span></div>
+        <div class="step-label"><i class="ci-cart"></i>Košík</div>
+    </a>
+
+    <a class="step-item {{ app.request.get('_route') in ['order_delivery', 'order_available_dates', 'order_contact_info', 'order_recapitulation'] ? 'active' }} {{ app.request.get('_route') == 'order_delivery' ? 'current' }}" href="{{ path('order_delivery') }}">
+        <div class="step-progress"><span class="step-count">2</span></div>
+        <div class="step-label"><i class="ci-delivery"></i>Doručení</div>
+    </a>
+
+    <a class="step-item {{ app.request.get('_route') in ['order_available_dates', 'order_contact_info', 'order_recapitulation'] ? 'active' }} {{ app.request.get('_route') == 'order_available_dates' ? 'current' }}" href="{{ path('order_available_dates') }}">
+        <div class="step-progress"><span class="step-count">3</span></div>
+        <div class="step-label"><i class="ci-calendar"></i>Datum</div>
+    </a>
+
+    <a class="step-item {{ app.request.get('_route') in ['order_contact_info', 'order_recapitulation'] ? 'active' }} {{ app.request.get('_route') == 'order_contact_info' ? 'current' }}" href="{{ path('order_contact_info') }}">
+        <div class="step-progress"><span class="step-count">4</span></div>
+        <div class="step-label"><i class="ci-user-circle"></i>Kontaktní údaje</div>
+    </a>
+</div>

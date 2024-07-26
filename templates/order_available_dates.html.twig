@@ -4,7 +4,7 @@
 
 {% block content %}
     <section class="choose-date content-section">
-        <h1>Výběr data</h1>
+        {{ include('_order_progress_bar.html.twig') }}
 
         {% if cart.date %}
             <p>
@@ -123,11 +123,12 @@
             {% endfor %}
         </div>
 
-        <p class="text-center mt-3">
+        <div class="d-sm-flex justify-content-between text-center mt-3">
+            <a class="btn btn-outline-secondary m-1" href="{{ path('order_delivery') }}"><i class="ci-arrow-left me1"></i> Zpět na způsob doručení</a>
             {% if cart.date %}
-                <a class="btn btn-primary" href="{{ path('cart') }}">Dokončit nákup</a>
+                <a class="btn btn-primary m-1" href="{{ path('order_contact_info') }}"><i class="ci-user-circle me-1"></i> Zadat kontaktní údaje</a>
             {% endif %}
-        </p>
+        </div>
 
     </section>
 {% endblock %}
