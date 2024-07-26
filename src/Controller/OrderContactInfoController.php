@@ -5,6 +5,7 @@ namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\FormType\OrderFormType;
+use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,8 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 final class OrderContactInfoController extends AbstractController
 {
     public function __construct(
-        private readonly CartStorage $cartStorage,
+        readonly private CartStorage $cartStorage,
+        readonly private CartService $cartService,
     ) {
     }
 
@@ -41,7 +43,11 @@ final class OrderContactInfoController extends AbstractController
         if ($orderForm->isSubmitted() && $orderForm->isValid()) {
             $this->cartStorage->storeOrderData($orderData);
 
-            return $this->redirectToRoute('order_recapitulation');
+            if ($this->cartService->isOrderReadyToBePlaced()) {
+                return $this->redirectToRoute('order_recapitulation');
+            } else {
+                return $this->redirectToRoute('order_contact_info');
+            }
         }
 
         return $this->render('order_contact_info.html.twig', [
