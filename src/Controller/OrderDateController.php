@@ -29,15 +29,9 @@ final class OrderDateController extends AbstractController
         $place = $this->cartService->getPlace();
 
         if ($place === null) {
-            $this->addFlash('warning', 'Pro možnost výběru termínu, prosím zvolte první způsob doručení - osobní odběr nebo rozvoz.');
+            $this->addFlash('warning', 'Pro možnost výběru termínu, prosím zvolte první způsob doručení.');
 
-            $referer = $request->headers->get('referer');
-
-            if (!is_string($referer)) {
-                return $this->redirectToRoute('order_pickup_places');
-            }
-
-            return $this->redirect($referer);
+            return $this->redirectToRoute('order_delivery');
         }
 
         if ($date !== null) {
@@ -48,9 +42,7 @@ final class OrderDateController extends AbstractController
                     new ChooseOrderDate($place->id, $chosenDate),
                 );
 
-                $this->addFlash('success', 'Zvolen datum');
-
-                return $this->redirectToRoute('cart');
+                return $this->redirectToRoute('order_contact_info');
             }
         }
 
