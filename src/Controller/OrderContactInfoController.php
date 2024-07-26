@@ -3,18 +3,11 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
-use CeskaKruta\Web\FormData\ChangeCartItemQuantityFormData;
 use CeskaKruta\Web\FormData\OrderFormData;
-use CeskaKruta\Web\FormType\ChangeCartItemQuantityFormType;
 use CeskaKruta\Web\FormType\OrderFormType;
-use CeskaKruta\Web\Query\GetColdProductsCalendar;
-use CeskaKruta\Web\Query\GetPlaces;
-use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,9 +17,6 @@ final class OrderContactInfoController extends AbstractController
 {
     public function __construct(
         private readonly CartStorage $cartStorage,
-        private readonly GetColdProductsCalendar $getColdProductsCalendar,
-        private readonly GetPlaces $getPlaces,
-        private readonly CartService $cartService,
     ) {
     }
 
