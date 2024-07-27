@@ -34,7 +34,7 @@ final class EditUserInfoController extends AbstractController
                 EditUserInfo::fromFormData($loggedUser->email, $formData),
             );
 
-            $this->addFlash('Údaje upraveny', 'success');
+            $this->addFlash('success', 'Údaje upraveny');
 
             return $this->redirectToRoute('user_my_account');
         }
