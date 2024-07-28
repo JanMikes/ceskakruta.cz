@@ -8,14 +8,20 @@ jobs:
   phpstan:
       runs-on: ubuntu-latest
       steps:
-        -   uses: actions/checkout@v2
+        -   uses: actions/checkout@v4
         -   uses: shivammathur/setup-php@v2
             with:
               php-version: 8.2
               coverage: none # default is xdebug
               extensions: mbstring, uuid # needed by phpunit
+        -   uses: actions/cache@v4
+            with:
+                path: vendor
+                key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                restore-keys: |
+                    ${{ runner.os }}-composer-
 
-        -   run: composer install --dev --no-progress
+        -   run: composer install --no-scripts --no-progress
 
         -   run: bin/console cache:warmup --env=dev
         -   run: composer run-script phpstan
