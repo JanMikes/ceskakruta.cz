@@ -483,11 +483,45 @@ main {
     .table-responsive {
         border: 1px solid #ECECEC;
 
-        .table {
+        .table-calendar {
             margin-bottom: 0;
+
+            td {
+                padding: 6px 8px;
+
+                &.td-price {
+                    width: 120px;
+                }
+
+                &.calendar-image, img {
+                    width: 80px;
+                }
+
+                &.td-form {
+                    width: 52px;
+                }
+            }
 
             tr:last-child td {
                 border-bottom: 0;
+            }
+
+            @include media-breakpoint-up(md) {
+                padding: 8px 10px;
+
+                td {
+                    &.calendar-image, img {
+                        width: 110px;
+                    }
+
+                    &.td-price {
+                        width: 170px;
+                    }
+
+                    &.td-form {
+                        width: 240px;
+                    }
+                }
             }
         }
     }

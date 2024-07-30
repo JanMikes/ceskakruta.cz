@@ -31,6 +31,7 @@ final class TwigExtension extends AbstractExtension
             new TwigFilter('dayOfWeek', $this->dayOfWeek(...)),
             new TwigFilter('price', $this->formatPrice(...)),
             new TwigFilter('placeName', $this->formatPlaceName(...)),
+            new TwigFilter('productName', $this->formatProductName(...)),
         ];
     }
 
@@ -126,5 +127,23 @@ final class TwigExtension extends AbstractExtension
         $placeInfo = trim($placeParts[1]);
 
         return sprintf('<span class="place-name">%s</span><span class="d-none d-sm-inline name-delimiter"> - </span><br class="break-line d-sm-none"><span class="place-type">%s</span>', $place, $placeInfo);
+    }
+
+    public function formatProductName(string $product): string
+    {
+        if (!str_contains($product, '-')) {
+            return $product;
+        }
+
+        $productParts = explode('-', $product);
+
+        if (count($productParts) !== 2) {
+            return $product;
+        }
+
+        $line1 = trim($productParts[0]);
+        $line2 = trim($productParts[1]);
+
+        return sprintf('%s<br>%s', $line1, $line2);
     }
 }

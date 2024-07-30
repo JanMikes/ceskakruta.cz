@@ -46,7 +46,7 @@
                     </span>
 
                     <div class="table-responsive shadow">
-                        <table class="table">
+                        <table class="table table-calendar">
                             <tbody>
                             {% for product in products %}
                                 {% if calendar[current_year][current_week][product.turkeyType] is defined %}
@@ -72,7 +72,7 @@
                                 </span>
 
                                 <div class="table-responsive shadow">
-                                    <table class="table">
+                                    <table class="table table-calendar">
                                         <tbody>
                                         {% for product in products %}
                                             {% if calendar[year][week][product.turkeyType] is defined %}
