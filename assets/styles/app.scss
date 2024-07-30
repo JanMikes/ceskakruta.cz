@@ -486,6 +486,11 @@ main {
         .table-calendar {
             margin-bottom: 0;
 
+            button {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
             td {
                 padding: 6px 8px;
                 font-size: 0.8em;
@@ -528,7 +533,7 @@ main {
                     }
 
                     &.td-form {
-                        width: 240px;
+                        width: 260px;
                     }
                 }
             }
