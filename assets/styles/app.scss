@@ -548,7 +548,6 @@ main {
     padding: 15px;
     position: relative;
     overflow: hidden;
-    text-align: right;
 
     &.active {
         background: #fe4042;
@@ -561,7 +560,7 @@ main {
         background: #fff;
         width: 180px;
         height: 180px;
-        left: -180px;
+        right: -180px;
         top: 50%;
         margin-top: -90px;
         transform: rotate(45deg);
