@@ -20,7 +20,8 @@
                                 {% if products_halves[product.id].turkeyType %}
                                     Hhmotnost: <strong>{{ products_halves[product.id].weightFrom }} až {{ products_halves[product.id].weightTo }} kg</strong><br>
                                     <small class="text-muted">({{ cart.week.number }}. týden {{ firstDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }} - {{ lastDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }})</small><br>
-                                    Orientační cena:&nbsp;<strong>{{ products_halves[product.id].price|price|raw }}&nbsp;Kč/ks</strong>
+                                    <small>Cena: {{  products_halves[product.id].pricePerUnit|price|raw }} Kč/kg</small><br>
+                                    Přibližně&nbsp;<strong>{{  products_halves[product.id].price|price|raw }}&nbsp;Kč/ks</strong>
                                 {% else %}
                                     Cena:&nbsp;<strong>{{ products_halves[product.id].price|price|raw }}&nbsp;Kč/kg</strong>
                                 {% endif %}
@@ -41,13 +42,14 @@
                     </a>
                 </div>
                 <div class="card-body py-2">
-                    <h3 class="product-title fs-base">{{ product.title }}</h3>
+                    <h3 class="product-title fs-base mb-1">{{ product.title }}</h3>
                     <div class="d-flex justify-content-between">
                         <div class="product-price">
                             {% if product.turkeyType %}
                                 Hhmotnost: <strong>{{ product.weightFrom }} až {{ product.weightTo }} kg</strong><br>
                                 <small class="text-muted">({{ cart.week.number }}. týden {{ firstDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }} - {{ lastDayOfWeek(cart.week.year, cart.week.number).format('d.m.') }})</small><br>
-                                Orientační cena:&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/ks</strong>
+                                <small>Cena: {{ product.pricePerUnit|price|raw }} Kč/kg</small><br>
+                                Přibližně&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/ks</strong>
                             {% else %}
                                 Cena:&nbsp;<strong>{{ product.price|price|raw }}&nbsp;Kč/kg</strong>
                             {% endif %}
