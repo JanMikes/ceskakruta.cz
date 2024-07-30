@@ -488,13 +488,16 @@ main {
 
             td {
                 padding: 6px 8px;
+                font-size: 0.8em;
 
                 &.td-price {
-                    width: 120px;
+                    width: 110px;
                 }
 
                 &.calendar-image, img {
-                    width: 80px;
+                    width: 84px;
+                    padding-left: 2px;
+                    padding-right: 2px;
                 }
 
                 &.td-form {
@@ -506,16 +509,22 @@ main {
                 border-bottom: 0;
             }
 
-            @include media-breakpoint-up(md) {
-                padding: 8px 10px;
-
+            @include media-breakpoint-up(sm) {
                 td {
+                    font-size: 1em;
+                }
+            }
+
+            @include media-breakpoint-up(md) {
+                td {
+                    padding: 8px 10px;
+
                     &.calendar-image, img {
                         width: 110px;
                     }
 
                     &.td-price {
-                        width: 170px;
+                        width: 200px;
                     }
 
                     &.td-form {
