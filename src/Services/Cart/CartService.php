@@ -5,26 +5,29 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
-use CeskaKruta\Web\Query\GetAvailableDays;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
+use CeskaKruta\Web\Query\GetPlaceClosedDays;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
+use CeskaKruta\Web\Services\CeskaKrutaDelivery;
+use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\Place;
 use CeskaKruta\Web\Value\Price;
 use CeskaKruta\Web\Value\ProductInCart;
 use CeskaKruta\Web\Value\Week;
 use DateTimeImmutable;
-use Doctrine\DBAL\Connection;
 
 readonly final class CartService
 {
     public function __construct(
         private CartStorage $storage,
         private GetProducts $getProducts,
-        private GetAvailableDays $getAvailableDays,
         private GetColdProductsCalendar $getColdProductsCalendar,
         private GetPlaces $getPlaces,
+        private CeskaKrutaDelivery $ceskaKrutaDelivery,
+        private CoolBalikDelivery $coolBalikDelivery,
+        private GetPlaceClosedDays $getPlaceClosedDays,
     ) {
     }
 
@@ -71,7 +74,7 @@ readonly final class CartService
             return null;
         }
 
-        if ($this->getAvailableDays->isDateAvailable($date, $place->id) === false) {
+        if ($this->isDateAvailable($date, $place->id) === false) {
             $this->storage->storeDate(null);
             return null;
         }
@@ -185,15 +188,6 @@ readonly final class CartService
         return false;
     }
 
-    public function removeAllTurkeys(): void
-    {
-        foreach ($this->getItems() as $key => $item) {
-            if ($item->product->isTurkey === true) {
-                $this->storage->removeItem($key);
-            }
-        }
-    }
-
     public function getDeliveryPlace(): null|int
     {
         return $this->storage->getDeliveryPlace();
@@ -231,5 +225,123 @@ readonly final class CartService
         }
 
         return true;
+    }
+
+    /**
+     * Returns true if anything was removed from the cart
+     */
+    public function removeUnavailableTurkeysAtWeek(int $week, int $year): bool
+    {
+        $lockedWeek = $this->getLockedWeek();
+
+        if ($lockedWeek === null) {
+            return false;
+        }
+
+        $calendar = $this->getColdProductsCalendar->all();
+        $removedAnything = false;
+
+        // Can not use foreach directly, because keys gets always recalculated, so needs to be wrapped in a while loop
+        while($this->containsTurkey() === true) {
+            foreach ($this->getItems() as $key => $item) {
+                // Check weight, if not matched, remove it
+                if ($item->product->isTurkey === true) {
+                    $originalWeightFrom = $calendar[$lockedWeek->year][$lockedWeek->number][$item->product->turkeyType]->weightFrom ?? null;
+                    $originalWeightTo = $calendar[$lockedWeek->year][$lockedWeek->number][$item->product->turkeyType]->weightTo ?? null;
+                    $newWeightFrom = $calendar[$year][$week][$item->product->turkeyType]->weightFrom ?? null;
+                    $newWeightTo = $calendar[$year][$week][$item->product->turkeyType]->weightTo ?? null;
+
+                    if ($originalWeightFrom !== $newWeightFrom || $originalWeightTo !== $newWeightTo) {
+                        $this->storage->removeItem($key);
+                        $removedAnything = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $removedAnything;
+    }
+
+    public function isDateAvailable(DateTimeImmutable $date, int $placeId): bool
+    {
+        $date = $date->setTime(0, 0, 0);
+        $place = $this->getPlaces->oneById($placeId);
+
+        $lockedWeek = $this->getLockedWeek();
+
+        // Date is not available if cart contains cold turkey products and the weights does not match for locked and target week
+        if ($lockedWeek !== null && $this->containsTurkey() === true) {
+            $calendar = $this->getColdProductsCalendar->all();
+            $year = (int) $date->format('Y');
+            $week = (int) $date->format('W');
+
+            foreach ($this->getItems() as $item) {
+                // Check weight, if not matched, remove it
+                if ($item->product->isTurkey === true) {
+                    $originalWeightFrom = $calendar[$lockedWeek->year][$lockedWeek->number][$item->product->turkeyType]->weightFrom ?? null;
+                    $originalWeightTo = $calendar[$lockedWeek->year][$lockedWeek->number][$item->product->turkeyType]->weightTo ?? null;
+                    $newWeightFrom = $calendar[$year][$week][$item->product->turkeyType]->weightFrom ?? null;
+                    $newWeightTo = $calendar[$year][$week][$item->product->turkeyType]->weightTo ?? null;
+
+                    if ($originalWeightFrom !== $newWeightFrom || $originalWeightTo !== $newWeightTo) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        $today = (new DateTimeImmutable())->setTime(0, 0, 0);
+        $weekDay = (int) $date->format('w'); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
+        $weekDay = $weekDay === 0 ? 7 : $weekDay; // Převedeme neděli na 7
+
+        $allowDaysBefore = [
+            1 => $place->day1AllowedDaysBefore,
+            2 => $place->day2AllowedDaysBefore,
+            3 => $place->day3AllowedDaysBefore,
+            4 => $place->day4AllowedDaysBefore,
+            5 => $place->day5AllowedDaysBefore,
+            6 => $place->day6AllowedDaysBefore,
+            7 => $place->day7AllowedDaysBefore,
+        ];
+
+        $postalCode = $this->getDeliveryAddress()?->postalCode;
+
+        if ($postalCode !== null && $placeId === $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID) {
+            $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
+
+            // Set to null days that we do not deliver to the address
+            foreach ($allowDaysBefore as $allowedDay => $daysBefore) {
+                if (!in_array($allowedDay, $allowedDays, true)) {
+                    $allowDaysBefore[$allowedDay] = null;
+                }
+            }
+        }
+
+        if ($postalCode !== null && $placeId === $this->coolBalikDelivery::DELIVERY_PLACE_ID) {
+            $allowedDays = $this->coolBalikDelivery->getAllowedDaysForPostalCode($postalCode);
+
+            // Set to null days that we do not deliver to the address
+            foreach ($allowDaysBefore as $allowedDay => $daysBefore) {
+                if (!in_array($allowedDay, $allowedDays, true)) {
+                    $allowDaysBefore[$allowedDay] = null;
+                }
+            }
+        }
+
+        $daysBefore = $allowDaysBefore[$weekDay] ?? null;
+
+        if ($daysBefore === null) {
+            return false;
+        }
+
+        $skipDates = $this->getPlaceClosedDays->forPlace($placeId);
+
+        if (in_array($date->format('Y-m-d'), $skipDates, true)) {
+            return false;
+        }
+
+        // Zkontrolujeme, zda je datum dostatečně daleko od dnešního dne
+        return $date->diff($today)->days >= $daysBefore;
     }
 }

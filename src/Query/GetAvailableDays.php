@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Query;
 
-use CeskaKruta\Web\Services\Cart\CartStorage;
-use CeskaKruta\Web\Services\CeskaKrutaDelivery;
-use CeskaKruta\Web\Services\CoolBalikDelivery;
+use CeskaKruta\Web\Services\Cart\CartService;
 use DateTimeImmutable;
 
 readonly final class GetAvailableDays
 {
     public function __construct(
-        private GetPlaces $getPlaces,
-        private CartStorage $cartStorage,
-        private GetPlaceClosedDays $getPlaceClosedDays,
-        private CeskaKrutaDelivery $ceskaKrutaDelivery,
-        private CoolBalikDelivery $coolBalikDelivery,
+        private CartService $cartService,
     ) {
     }
 
@@ -28,9 +22,9 @@ readonly final class GetAvailableDays
         $availableDays = [];
         $date = new DateTimeImmutable(); // začneme dnešním dnem
 
-        for ($i=0; $i<=365; $i++) {
+        for ($i=0; $i<=184; $i++) {
 
-            if ($this->isDateAvailable($date, $placeId)) {
+            if ($this->cartService->isDateAvailable($date, $placeId)) {
                 $availableDays[$date->format('Y-m-d')] = $date;
             }
 
@@ -38,72 +32,5 @@ readonly final class GetAvailableDays
         }
 
         return $availableDays;
-    }
-
-    public function isDateAvailable(DateTimeImmutable $date, int $placeId): bool
-    {
-        $date = $date->setTime(0, 0, 0);
-        $place = $this->getPlaces->oneById($placeId);
-        $lockedWeek = $this->cartStorage->getLockedWeek();
-
-        if ($lockedWeek !== null) {
-            if ($lockedWeek->year !== (int) $date->format('Y') || $lockedWeek->number !== (int) $date->format('W')) {
-                return false;
-            }
-        }
-
-        $today = (new DateTimeImmutable())->setTime(0, 0, 0);
-        $weekDay = (int) $date->format('w'); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
-        $weekDay = $weekDay === 0 ? 7 : $weekDay; // Převedeme neděli na 7
-
-        // Zabalíme všechny proměnné pro dny do pole
-        $allowDaysBefore = [
-            1 => $place->day1AllowedDaysBefore,
-            2 => $place->day2AllowedDaysBefore,
-            3 => $place->day3AllowedDaysBefore,
-            4 => $place->day4AllowedDaysBefore,
-            5 => $place->day5AllowedDaysBefore,
-            6 => $place->day6AllowedDaysBefore,
-            7 => $place->day7AllowedDaysBefore,
-        ];
-
-        $postalCode = $this->cartStorage->getDeliveryAddress()?->postalCode;
-
-        if ($postalCode !== null && $placeId === $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID) {
-            $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
-
-            // Set to null days that we do not deliver to the address
-            foreach ($allowDaysBefore as $allowedDay => $daysBefore) {
-                if (!in_array($allowedDay, $allowedDays, true)) {
-                    $allowDaysBefore[$allowedDay] = null;
-                }
-            }
-        }
-
-        if ($postalCode !== null && $placeId === $this->coolBalikDelivery::DELIVERY_PLACE_ID) {
-            $allowedDays = $this->coolBalikDelivery->getAllowedDaysForPostalCode($postalCode);
-
-            // Set to null days that we do not deliver to the address
-            foreach ($allowDaysBefore as $allowedDay => $daysBefore) {
-                if (!in_array($allowedDay, $allowedDays, true)) {
-                    $allowDaysBefore[$allowedDay] = null;
-                }
-            }
-        }
-
-        $daysBefore = $allowDaysBefore[$weekDay] ?? null;
-
-        if ($daysBefore === null) {
-            return false;
-        }
-
-        $skipDates = $this->getPlaceClosedDays->forPlace($placeId);
-
-        if (in_array($date->format('Y-m-d'), $skipDates, true)) {
-            return false;
-        }
-
-        // Zkontrolujeme, zda je datum dostatečně daleko od dnešního dne
-        return $date->diff($today)->days >= $daysBefore;
     }
 }

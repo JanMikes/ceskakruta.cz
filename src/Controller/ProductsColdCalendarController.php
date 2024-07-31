@@ -65,11 +65,9 @@ final class ProductsColdCalendarController extends AbstractController
                 assert($data instanceof AddToCartFormData);
 
                 if ($data->week !== null && $data->year !== null) {
-                    if ($this->cartService->containsTurkey()) {
-                        $this->addFlash('warning', 'Změnili jste datum objednávky - z košíku jsme odstranili zboží, které v tomto termínu není dostupné');
+                    if ($this->cartService->removeUnavailableTurkeysAtWeek($data->week, $data->year) === true) {
+                        $this->addFlash('warning', 'Změnili jste datum objednávky - z košíku jsme odstranili zboží, které v tomto termínu není dostupné nebo nemá požadovanou váhu');
                     }
-
-                    $this->cartService->removeAllTurkeys();
                 }
 
                 $this->bus->dispatch(

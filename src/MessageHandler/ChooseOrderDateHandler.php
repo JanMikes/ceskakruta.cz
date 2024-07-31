@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\MessageHandler;
 
 use CeskaKruta\Web\Message\ChooseOrderDate;
-use CeskaKruta\Web\Query\GetAvailableDays;
+use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -13,8 +13,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 readonly final class ChooseOrderDateHandler
 {
     public function __construct(
+        private CartService $cartService,
         private CartStorage $cartStorage,
-        private GetAvailableDays $getAvailableDays,
     ) {
     }
 
@@ -22,7 +22,7 @@ readonly final class ChooseOrderDateHandler
     {
         $date = $message->date;
 
-        if ($this->getAvailableDays->isDateAvailable($date, $message->placeId) === false) {
+        if ($this->cartService->isDateAvailable($date, $message->placeId) === false) {
             // TODO: own exception
             throw new \Exception('unavailable day .. todo');
         }
