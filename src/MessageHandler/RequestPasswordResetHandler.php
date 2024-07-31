@@ -32,6 +32,7 @@ readonly final class RequestPasswordResetHandler
         $token = $this->passwordResetTokenService->create($user->id);
 
         $email = (new TemplatedEmail())
+            ->from('info@ceskakruta.cz')
             ->to($message->email)
             ->subject('Obnovení hesla na ČeskáKrůta.cz')
             ->htmlTemplate('emails/forgotten_password.html.twig')

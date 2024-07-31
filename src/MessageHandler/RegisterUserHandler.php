@@ -44,6 +44,7 @@ readonly final class RegisterUserHandler
             $this->tokenStorage->setToken($token);
 
             $email = (new TemplatedEmail())
+                ->from('info@ceskakruta.cz')
                 ->to($message->email)
                 ->subject('Potvrzení registrace účtu na ceskakruta.cz')
                 ->htmlTemplate('emails/registration.html.twig')
