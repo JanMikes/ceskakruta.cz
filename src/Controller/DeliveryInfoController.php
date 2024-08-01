@@ -18,7 +18,7 @@ final class DeliveryInfoController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/jak-funguje-rozvoz', name: 'delivery_info', methods: ['GET'])]
+    #[Route(path: '/jak-funguje-rozvoz', name: 'delivery_info')]
     public function __invoke(): Response
     {
         $data = DeliveryFormData::fromAddress($this->cartStorage->getDeliveryAddress());

@@ -20,9 +20,13 @@ final class SubscribeToNewsletterController extends AbstractController
         readonly private MessageBusInterface $bus,
     ) {}
 
-    #[Route(path: '/odber-aktualit', name: 'subscribe_newsletter', methods: ['POST'])]
+    #[Route(path: '/odber-aktualit', name: 'subscribe_newsletter')]
     public function __invoke(Request $request): Response
     {
+        if ($request->isMethod(Request::METHOD_POST) === false) {
+            return $this->redirectToRoute('homepage');
+        }
+
         $data = new SubscribeNewsletterFormData();
         $form = $this->createForm(SubscribeNewsletterFormType::class, $data);
         $form->handleRequest($request);

@@ -16,7 +16,7 @@ final class RecipeDetailController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/recept/{recipeId}', name: 'recipe_detail', methods: ['GET'])]
+    #[Route(path: '/recept/{recipeId}', name: 'recipe_detail')]
     public function __invoke(int|string $recipeId): Response
     {
         try {

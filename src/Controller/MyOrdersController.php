@@ -20,7 +20,7 @@ final class MyOrdersController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/uzivatel/objednavky', name: 'user_my_orders', methods: ['GET'])]
+    #[Route(path: '/uzivatel/objednavky', name: 'user_my_orders')]
     public function __invoke(#[CurrentUser] User $loggedUser): Response
     {
         return $this->render('user_my_orders.html.twig', [

@@ -16,7 +16,7 @@ final class RecipesController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/recepty', name: 'recipes', methods: ['GET'])]
+    #[Route(path: '/recepty', name: 'recipes')]
     public function __invoke(): Response
     {
         return $this->render('recipes.html.twig', [

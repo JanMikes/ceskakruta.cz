@@ -17,7 +17,7 @@ final class MyAccountController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/uzivatel/muj-ucet', name: 'user_my_account', methods: ['GET'])]
+    #[Route(path: '/uzivatel/muj-ucet', name: 'user_my_account')]
     public function __invoke(#[CurrentUser] User $loggedUser): Response
     {
         return $this->render('user_my_account.html.twig');

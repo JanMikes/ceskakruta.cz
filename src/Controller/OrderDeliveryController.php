@@ -29,8 +29,8 @@ final class OrderDeliveryController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/objednavka/zpusob-doruceni', name: 'order_delivery', methods: ['GET', 'POST'])]
-    #[Route(path: '/objednavka/vybrat-misto-odberu/{placeId}', name: 'choose_order_pickup_place', methods: ['GET'])]
+    #[Route(path: '/objednavka/zpusob-doruceni', name: 'order_delivery')]
+    #[Route(path: '/objednavka/vybrat-misto-odberu/{placeId}', name: 'choose_order_pickup_place')]
     public function __invoke(Request $request, null|int $placeId = null): Response
     {
         if ($placeId !== null) {

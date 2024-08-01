@@ -16,7 +16,7 @@ final class LoginController extends AbstractController
         readonly private AuthenticationUtils $authenticationUtils,
     ) {}
 
-    #[Route(path: '/prihlaseni', name: 'login', methods: ['GET', 'POST'])]
+    #[Route(path: '/prihlaseni', name: 'login')]
     public function __invoke(#[CurrentUser] null|User $user): Response
     {
         if ($user !== null) {

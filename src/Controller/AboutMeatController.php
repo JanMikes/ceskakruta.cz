@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class AboutMeatController extends AbstractController
 {
-    #[Route(path: '/o-krutim-mase', name: 'about_meat', methods: ['GET'])]
+    #[Route(path: '/o-krutim-mase', name: 'about_meat')]
     public function __invoke(): Response
     {
         return $this->render('about_meat.html.twig');

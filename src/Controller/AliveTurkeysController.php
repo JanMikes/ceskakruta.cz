@@ -16,7 +16,7 @@ final class AliveTurkeysController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/krutata-k-chovu', name: 'alive_turkeys', methods: ['GET'])]
+    #[Route(path: '/krutata-k-chovu', name: 'alive_turkeys')]
     public function __invoke(): Response
     {
         $now = new \DateTimeImmutable();

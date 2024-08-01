@@ -31,8 +31,8 @@ final class ProductsController extends AbstractController
         readonly private CartStorage $cartStorage,
     ) {}
 
-    #[Route(path: '/nase-nabidka/kruty-a-krocani', name: 'products_cold', methods: ['GET', 'POST'])]
-    #[Route(path: '/nase-nabidka', name: 'products', methods: ['GET', 'POST'])]
+    #[Route(path: '/nase-nabidka/kruty-a-krocani', name: 'products_cold')]
+    #[Route(path: '/nase-nabidka', name: 'products')]
     public function __invoke(Request $request): Response
     {
         /** @var string $routeName */

@@ -22,7 +22,7 @@ final class MyOrderDetailController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/uzivatel/objednavky/{orderId}', name: 'user_my_order_detail', methods: ['GET'])]
+    #[Route(path: '/uzivatel/objednavky/{orderId}', name: 'user_my_order_detail')]
     public function __invoke(#[CurrentUser] User $loggedUser, int $orderId): Response
     {
         $order = $this->getOrders->oneForUserById($loggedUser->id, $orderId);

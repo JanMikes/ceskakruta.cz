@@ -19,7 +19,7 @@ final class ProductDetailController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/product/{productId}', name: 'product_detail', methods: ['GET', 'POST'])]
+    #[Route(path: '/product/{productId}', name: 'product_detail')]
     public function __invoke(Request $request, string $productId): Response
     {
         $addToCartForm = $this->createForm(AddToCartFormType::class, options: [

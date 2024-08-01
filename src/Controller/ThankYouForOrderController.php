@@ -21,7 +21,7 @@ final class ThankYouForOrderController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/dekujeme-za-objednavku', name: 'thank_you_for_order', methods: ['GET'])]
+    #[Route(path: '/dekujeme-za-objednavku', name: 'thank_you_for_order')]
     public function __invoke(): Response
     {
         $lastOrderId = $this->cartStorage->getLastOrderId();

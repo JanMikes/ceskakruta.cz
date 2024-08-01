@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\FormData\ChangeCartItemQuantityFormData;
-use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\FormType\ChangeCartItemQuantityFormType;
-use CeskaKruta\Web\FormType\OrderFormType;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartService;
@@ -30,43 +28,22 @@ final class CartController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/nakupni-kosik', name: 'cart', methods: ['GET', 'POST'])]
-    #[Route(path: '/odebrat-z-kosiku/{cartItem}', name: 'remove_from_cart', methods: ['GET'])]
-    #[Route(path: '/prepocitat-kosik', name: 'change_cart_item_quantity', methods: ['POST'])]
+    #[Route(path: '/nakupni-kosik', name: 'cart')]
+    #[Route(path: '/odebrat-z-kosiku/{cartItem}', name: 'remove_from_cart')]
+    #[Route(path: '/prepocitat-kosik', name: 'change_cart_item_quantity')]
     public function __invoke(Request $request, null|int $cartItem, #[CurrentUser] null|User $user): Response
     {
         /** @var string $routeName */
         $routeName = $request->attributes->get('_route');
 
+        if ($routeName === 'remove_from_cart' && $request->isMethod(Request::METHOD_POST) === false) {
+            return $this->redirectToRoute('cart');
+        }
+
         if ($routeName === 'remove_from_cart' && $cartItem !== null) {
             $this->cartService->removeItem($cartItem);
 
             $this->addFlash('success', 'Odstraněno z košíku');
-
-            return $this->redirectToRoute('cart');
-        }
-
-        $orderData = $this->cartStorage->getOrderData();
-
-        if ($orderData === null) {
-            $orderData = new OrderFormData();
-
-            if ($user !== null) {
-                $orderData->email = $user->email;
-                $orderData->name = $user->name ?? '';
-                $orderData->phone = $user->phone ?? '';
-            }
-        }
-
-        $orderForm = $this->createForm(OrderFormType::class, $orderData);
-        $orderForm->handleRequest($request);
-
-        if ($orderForm->isSubmitted() && $orderForm->isValid()) {
-            $this->cartStorage->storeOrderData($orderData);
-
-            if ($this->cartStorage->itemsCount() > 0 && $this->cartService->isMinimalPriceMet()) {
-                return $this->redirectToRoute('order_recapitulation');
-            }
 
             return $this->redirectToRoute('cart');
         }
@@ -111,7 +88,6 @@ final class CartController extends AbstractController
         $calendar = $this->getColdProductsCalendar->all();
 
         return $this->render('cart.html.twig', [
-            'orderForm' => $orderForm,
             'calendar' => $calendar,
             'places' => $this->getPlaces->all(),
             'change_quantity_forms' => $changeQuantityFormViews

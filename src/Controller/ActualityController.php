@@ -16,7 +16,7 @@ final class ActualityController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/aktuality', name: 'actuality', methods: ['GET'])]
+    #[Route(path: '/aktuality', name: 'actuality')]
     public function __invoke(): Response
     {
         return $this->render('actuality.html.twig', [

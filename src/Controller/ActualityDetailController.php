@@ -17,7 +17,7 @@ final class ActualityDetailController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/aktualita/{actualityId}', name: 'actuality_detail', methods: ['GET'])]
+    #[Route(path: '/aktualita/{actualityId}', name: 'actuality_detail')]
     public function __invoke(int|string $actualityId): Response
     {
         try {

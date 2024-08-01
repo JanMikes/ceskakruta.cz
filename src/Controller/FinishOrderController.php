@@ -20,7 +20,7 @@ final class FinishOrderController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/objednat', name: 'finish_order', methods: ['GET'])]
+    #[Route(path: '/objednat', name: 'finish_order')]
     public function __invoke(#[CurrentUser] null|User $user): Response
     {
         if ($this->cartService->isOrderReadyToBePlaced() === false) {

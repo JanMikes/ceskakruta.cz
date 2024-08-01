@@ -25,7 +25,7 @@ final class ChangeUserPasswordController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/uzivatel/zmena-hesla', name: 'change_user_password', methods: ['GET', 'POST'])]
+    #[Route(path: '/uzivatel/zmena-hesla', name: 'change_user_password')]
     public function __invoke(#[CurrentUser] User $loggedUser, Request $request): Response
     {
         $formData = new ChangePasswordFormData();

@@ -24,7 +24,7 @@ final class HomepageController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/', name: 'homepage', methods: ['GET', 'POST'])]
+    #[Route(path: '/', name: 'homepage')]
     public function __invoke(Request $request): Response
     {
         $deliveryFormData = DeliveryFormData::fromAddress($this->cartStorage->getDeliveryAddress());

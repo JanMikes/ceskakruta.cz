@@ -30,7 +30,7 @@ final class ProductsColdCalendarController extends AbstractController
         readonly private Calendar $calendar,
     ) {}
 
-    #[Route(path: '/nase-nabidka/kruty-a-krocani/vahovy-kalendar', name: 'products_cold_calendar', methods: ['GET', 'POST'])]
+    #[Route(path: '/nase-nabidka/kruty-a-krocani/vahovy-kalendar', name: 'products_cold_calendar')]
     public function __invoke(Request $request): Response
     {
         $products = $this->getProducts->all();

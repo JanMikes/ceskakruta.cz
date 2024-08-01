@@ -22,7 +22,7 @@ final class OrderContactInfoController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/objednavka/kontaktni-udaje', name: 'order_contact_info', methods: ['GET', 'POST'])]
+    #[Route(path: '/objednavka/kontaktni-udaje', name: 'order_contact_info')]
     public function __invoke(Request $request, null|int $cartItem, #[CurrentUser] null|User $user): Response
     {
         $orderData = $this->cartStorage->getOrderData();

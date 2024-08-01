@@ -16,7 +16,7 @@ final class RecipesForProductController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/recepty/{productId}', name: 'recipes_for_product', methods: ['GET'])]
+    #[Route(path: '/recepty/{productId}', name: 'recipes_for_product')]
     public function __invoke(int|string $productId): Response
     {
         try {

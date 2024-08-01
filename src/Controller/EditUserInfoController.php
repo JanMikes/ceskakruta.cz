@@ -22,7 +22,7 @@ final class EditUserInfoController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/uzivatel/upravit-muj-ucet', name: 'edit_user_info', methods: ['GET', 'POST'])]
+    #[Route(path: '/uzivatel/upravit-muj-ucet', name: 'edit_user_info')]
     public function __invoke(#[CurrentUser] User $loggedUser, Request $request): Response
     {
         $formData = UserInfoFormData::fromUser($loggedUser);

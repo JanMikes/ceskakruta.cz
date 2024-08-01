@@ -15,7 +15,7 @@ final class EmptyCartController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/vyprazdnit-kosik', name: 'empty_cart', methods: ['GET'])]
+    #[Route(path: '/vyprazdnit-kosik', name: 'empty_cart')]
     public function __invoke(): Response
     {
         $this->cartStorage->clearItems();

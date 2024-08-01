@@ -23,7 +23,7 @@ final class RegistrationController extends AbstractController
         readonly private MessageBusInterface $bus,
     ) {}
 
-    #[Route(path: '/registrace', name: 'registration', methods: ['GET', 'POST'])]
+    #[Route(path: '/registrace', name: 'registration')]
     public function __invoke(#[CurrentUser] null|User $user, Request $request): Response
     {
         if ($user !== null) {

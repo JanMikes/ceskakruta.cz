@@ -22,7 +22,7 @@ final class ForgottenPasswordController extends AbstractController
         readonly private MessageBusInterface $bus,
     ) {}
 
-    #[Route(path: '/zapomenute-heslo', name: 'forgotten_password', methods: ['GET', 'POST'])]
+    #[Route(path: '/zapomenute-heslo', name: 'forgotten_password')]
     public function __invoke(#[CurrentUser] null|User $user, Request $request): Response
     {
         if ($user !== null) {

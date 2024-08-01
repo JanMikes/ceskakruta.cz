@@ -21,7 +21,7 @@ final class OrderRecapitulationController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/objednavka/rekapitulace', name: 'order_recapitulation', methods: ['GET'])]
+    #[Route(path: '/objednavka/rekapitulace', name: 'order_recapitulation')]
     public function __invoke(): Response
     {
         if ($this->cartService->isOrderReadyToBePlaced() === false) {

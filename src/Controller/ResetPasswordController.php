@@ -28,7 +28,7 @@ final class ResetPasswordController extends AbstractController
         readonly private PasswordResetTokenService $passwordResetTokenService,
     ) {}
 
-    #[Route(path: '/obnoveni-hesla/{token}', name: 'reset_password', methods: ['GET', 'POST'])]
+    #[Route(path: '/obnoveni-hesla/{token}', name: 'reset_password')]
     public function __invoke(#[CurrentUser] null|User $user, Request $request, string $token): Response
     {
         if ($user !== null) {

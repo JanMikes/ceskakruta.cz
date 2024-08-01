@@ -17,7 +17,7 @@ final class SalesPlacesController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/prodejni-mista', name: 'sales_places', methods: ['GET'])]
+    #[Route(path: '/prodejni-mista', name: 'sales_places')]
     public function __invoke(): Response
     {
         $places = array_filter(
