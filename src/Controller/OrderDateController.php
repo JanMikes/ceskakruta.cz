@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
+use CeskaKruta\Web\Exceptions\CouponExpired;
+use CeskaKruta\Web\Exceptions\CouponNotFound;
+use CeskaKruta\Web\Exceptions\CouponOrderDateExceeded;
+use CeskaKruta\Web\Exceptions\CouponUsageLimitReached;
+use CeskaKruta\Web\Exceptions\UnavailableDate;
 use CeskaKruta\Web\Message\ChooseOrderDate;
 use CeskaKruta\Web\Query\GetAvailableDays;
 use CeskaKruta\Web\Services\Cart\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -38,9 +44,25 @@ final class OrderDateController extends AbstractController
             $chosenDate = \DateTimeImmutable::createFromFormat('Y-m-d', $date) ?: null;
 
             if ($chosenDate !== null) {
-                $this->bus->dispatch(
-                    new ChooseOrderDate($place->id, $chosenDate),
-                );
+                try {
+                    $this->bus->dispatch(
+                        new ChooseOrderDate($place->id, $chosenDate),
+                    );
+                } catch (HandlerFailedException $handlerFailedException) {
+                    $previousException = $handlerFailedException->getPrevious();
+
+                    if ($previousException instanceof CouponOrderDateExceeded) {
+                        $this->addFlash('warning', sprintf('Je nám líto, ale váš slevový kód lze použít pouze na objednávky do %s. Vyberte si prosím jiný datum, abyste mohli kód použít.', $previousException->coupon->deliveryUntilDate?->format('d.m.Y')));
+
+                        return $this->redirectToRoute('order_available_dates');
+                    } elseif ($previousException instanceof UnavailableDate) {
+                        $this->addFlash('warning', 'Něco se pokazilo, vámi vybraný den již není k dispozici. Vyberte prosím jiný.');
+
+                        return $this->redirectToRoute('order_available_dates');
+                    } else {
+                        throw $handlerFailedException;
+                    }
+                }
 
                 return $this->redirectToRoute('order_contact_info');
             }

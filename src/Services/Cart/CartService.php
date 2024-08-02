@@ -6,12 +6,14 @@ namespace CeskaKruta\Web\Services\Cart;
 
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
+use CeskaKruta\Web\Query\GetCoupon;
 use CeskaKruta\Web\Query\GetPlaceClosedDays;
 use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Value\Address;
+use CeskaKruta\Web\Value\Coupon;
 use CeskaKruta\Web\Value\Place;
 use CeskaKruta\Web\Value\Price;
 use CeskaKruta\Web\Value\ProductInCart;
@@ -28,6 +30,7 @@ readonly final class CartService
         private CeskaKrutaDelivery $ceskaKrutaDelivery,
         private CoolBalikDelivery $coolBalikDelivery,
         private GetPlaceClosedDays $getPlaceClosedDays,
+        private GetCoupon $getCoupon,
     ) {
     }
 
@@ -99,6 +102,17 @@ readonly final class CartService
         return null;
     }
 
+    public function getCoupon(): null|Coupon
+    {
+        $coupon = $this->storage->getCoupon();
+
+        if ($coupon !== null) {
+            return $this->getCoupon->oneByCode($coupon);
+        }
+
+        return null;
+    }
+
     /**
      * @return list<ProductInCart>
      */
@@ -129,13 +143,41 @@ readonly final class CartService
         return $items;
     }
 
-    public function totalPrice(): Price
+    public function totalPriceWithoutDiscount(): Price
     {
         $totalPrice = new Price(0);
 
         foreach ($this->getItems() as $item) {
             $product = $item->product;
             $unitPrice = $product->price();
+
+            $totalPrice = $totalPrice->add((int) ($item->quantity * $unitPrice));
+
+            if ($item->pack === true) {
+                $totalPrice = $totalPrice->add($product->packPrice ?? 0);
+            }
+        }
+
+        if ($totalPrice->amount > 0 && $this->getDeliveryAddress() !== null && $this->getDeliveryPlace() !== null) {
+            $totalPrice = $totalPrice->add($this->getDeliveryPrice());
+            $totalPrice = $totalPrice->add($this->getPackingPrice());
+        }
+
+        return $totalPrice;
+    }
+
+    public function totalPrice(): Price
+    {
+        $coupon = $this->getCoupon();
+        $totalPrice = new Price(0);
+
+        foreach ($this->getItems() as $item) {
+            $product = $item->product;
+            $unitPrice = $product->price();
+
+            if ($coupon !== null && $coupon->percentValue !== null) {
+                $unitPrice = $unitPrice * (100 - $coupon->percentValue)/100;
+            }
 
             $totalPrice = $totalPrice->add((int) ($item->quantity * $unitPrice));
 

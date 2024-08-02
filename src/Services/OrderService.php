@@ -22,6 +22,8 @@ readonly final class OrderService
 
         $this->connection->beginTransaction();
         try {
+            $coupon = $this->cartService->getCoupon();
+
             $date = $this->cartService->getDate();
             assert($date !== null);
 
@@ -49,12 +51,22 @@ readonly final class OrderService
                 'note'                  => $orderData->note,
                 'price_total'           => $this->cartService->totalPrice()->amount,
                 'source'                => 'Web 2.0',
+                'coupon_id'             => $coupon?->id,
+                'coupon_code'           => $coupon?->code,
+                'coupon_percent_value'  => $coupon?->percentValue,
+                'price_total_before_discount'  => $coupon !== null ? $this->cartService->totalPriceWithoutDiscount()->amount : null,
                 'ins_dt'                => $now->format('Y-m-d H:i:s'),
             ]);
 
             $orderId = (int) $this->connection->lastInsertId();
 
             foreach ($this->cartService->getItems() as $item) {
+                $unitPrice = $item->product->price();
+
+                if ($coupon !== null && $coupon->percentValue !== null) {
+                    $unitPrice = $unitPrice * (100 - $coupon->percentValue)/100;
+                }
+
                 $this->connection->insert('order_item', [
                     'order_id'         => $orderId,
                     'product_id'       => $item->product->id,
@@ -62,9 +74,9 @@ readonly final class OrderService
                     'is_sliced'        => $item->slice,
                     'is_packed'        => $item->pack,
                     'amount'           => $item->quantity,
-                    'price_per_unit'   => $item->product->price(),
+                    'price_per_unit'   => $unitPrice,
                     'price_packing'    => $item->product->packPrice ?? 0,
-                    'price_total'      => $item->product->price() * $item->quantity,
+                    'price_total'      => $unitPrice * $item->quantity,
                     'weight_from'      => $item->product->weightFrom,
                     'weight_to'        => $item->product->weightTo,
                     'ins_dt'           => $now->format('Y-m-d H:i:s'),

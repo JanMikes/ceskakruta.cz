@@ -21,6 +21,7 @@ final class CartStorage
     private const DATE_SESSION_NAME = 'date';
     private const CUSTOMER_SESSION_NAME = 'customer';
     private const ORDER_ID_SESSION_NAME = 'order_id';
+    private const COUPON_SESSION_NAME = 'coupon';
 
     public function __construct(
         private readonly RequestStack $requestStack,
@@ -236,6 +237,21 @@ final class CartStorage
         }
 
         return null;
+    }
+
+    public function storeCoupon(null|string $coupon): void
+    {
+        $this->requestStack->getSession()
+            ->set(self::COUPON_SESSION_NAME, $coupon);
+    }
+
+    public function getCoupon(): null|string
+    {
+        /** @var null|string $coupon */
+        $coupon = $this->requestStack->getSession()
+            ->get(self::COUPON_SESSION_NAME);
+
+        return $coupon;
     }
 
     public function storeOrderData(null|OrderFormData $orderData): void
