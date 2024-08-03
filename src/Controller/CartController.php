@@ -47,7 +47,7 @@ final class CartController extends AbstractController
         /** @var string $routeName */
         $routeName = $request->attributes->get('_route');
 
-        if ($routeName === 'remove_from_cart' && $request->isMethod(Request::METHOD_POST) === false) {
+        if ($routeName === 'change_cart_item_quantity' && $request->isMethod(Request::METHOD_POST) === false) {
             return $this->redirectToRoute('cart');
         }
 
@@ -134,7 +134,6 @@ final class CartController extends AbstractController
             'calendar' => $calendar,
             'places' => $this->getPlaces->all(),
             'change_quantity_forms' => $changeQuantityFormViews,
-            'coupon' => $coupon,
             'coupon_form' => $couponForm,
         ]);
     }

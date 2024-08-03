@@ -55,7 +55,6 @@ final class OrderRecapitulationController extends AbstractController
         return $this->render('order_recapitulation.html.twig', [
             'places' => $this->getPlaces->all(),
             'calendar' => $calendar,
-            'coupon' => $coupon,
         ]);
     }
 }

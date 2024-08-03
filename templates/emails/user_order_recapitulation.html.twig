@@ -51,7 +51,18 @@
                         </p>
                     {% endif %}
 
-                    <h2 class="h6 mb-3 pb-1">Orientační cena: {{ cart.totalPrice.amount|price|raw }} Kč</h2>
+                    {% if cart.coupon %}
+                        <p>
+                            <span class="d-block">Kód: <strong>{{ cart.coupon.code }}</strong></span><br>
+                        {% if cart.coupon.percentValue %}
+                            <span class="d-block">Sleva: <strong>-{{ cart.coupon.percentValue }}%</strong></span><br>
+                        {% endif %}
+                            Před slevou: <del>{{ cart.totalPriceWithoutDiscount.amount|price|raw }} Kč </del>
+                        </p>
+
+                    {% endif %}
+
+                    <h2 class="h6 mb-3 pb-1">Orientační cena celkem: {{ cart.totalPrice.amount|price|raw }} Kč</h2>
                 </div>
 
                 <hr>

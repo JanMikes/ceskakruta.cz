@@ -82,8 +82,10 @@
                             <h2 class="h6 mb-2 pb-1">Orientační cena celkem</h2>
 
                             {% if cart.coupon %}
-                                {% if coupon.percentValue %}
-                                    <span class="d-block">Sleva: <strong>-{{ coupon.percentValue }}%</strong></span>
+                                <span class="d-block">Kód: <strong>{{ cart.coupon.code }}</strong></span>
+
+                                {% if cart.coupon.percentValue %}
+                                    <span class="d-block">Sleva: <strong>-{{ cart.coupon.percentValue }}%</strong></span>
                                 {% endif %}
 
                                 Před slevou: <del>{{ cart.totalPriceWithoutDiscount.amount|price|raw }} Kč </del><br>

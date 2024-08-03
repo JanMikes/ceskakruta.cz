@@ -21,16 +21,16 @@
                     {% if coupon %}
                         <p>
                             <small>
-                                {% if coupon.percentValue %}
-                                    <span class="d-block">Sleva: <strong>-{{ coupon.percentValue }}%</strong></span>
+                                {% if cart.coupon.percentValue %}
+                                    <span class="d-block">Sleva: <strong>-{{ cart.coupon.percentValue }}%</strong></span>
                                 {% endif %}
 
                                 {% if coupon.untilDate %}
-                                    <span class="d-block">Platnost do: <strong>{{ coupon.untilDate|date('d.m.Y') }}</strong></span>
+                                    <span class="d-block">Platnost do: <strong>{{ cart.coupon.untilDate|date('d.m.Y') }}</strong></span>
                                 {% endif %}
 
                                 {% if coupon.deliveryUntilDate %}
-                                    <span class="d-block">Na objednávky do: <strong>{{ coupon.deliveryUntilDate|date('d.m.Y') }}</strong></span>
+                                    <span class="d-block">Na objednávky do: <strong>{{ cart.coupon.deliveryUntilDate|date('d.m.Y') }}</strong></span>
                                 {% endif %}
                             </small>
                         </p>

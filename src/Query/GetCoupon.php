@@ -18,6 +18,12 @@ final class GetCoupon
 
     public function oneByCode(string $code): null|Coupon
     {
+        $code = str_replace(
+            ['ě', 'š', 'č', 'ř', 'ž', 'ý', 'á', 'í', 'é', 'ů', 'ú'],
+            ['e', 's', 'c', 'r', 'z', 'y', 'a', 'i', 'e', 'u', 'u'],
+            strtolower($code)
+        );
+
         if ($this->coupon === null) {
             $row = $this->connection
                 ->executeQuery('SELECT * FROM coupon WHERE active_flag = 1 AND del_flag = 0 AND LOWER(code) = LOWER(:code)', [
