@@ -91,6 +91,7 @@ final class CartStorage
         $session->remove(self::ITEMS_SESSION_NAME);
         $session->remove(self::DATE_SESSION_NAME);
         $session->remove(self::LOCKED_WEEK_SESSION_NAME);
+        $session->remove(self::COUPON_SESSION_NAME);
     }
 
     public function removeItem(int $keyToRemove): void

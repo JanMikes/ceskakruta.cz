@@ -18,18 +18,18 @@
                 <div class="discount-code shadow p-4 text-center mb-3">
                     <h3 class="h4 d-none d-sm-block">Slevový kód</h3>
 
-                    {% if coupon %}
+                    {% if cart.coupon %}
                         <p>
                             <small>
                                 {% if cart.coupon.percentValue %}
                                     <span class="d-block">Sleva: <strong>-{{ cart.coupon.percentValue }}%</strong></span>
                                 {% endif %}
 
-                                {% if coupon.untilDate %}
+                                {% if cart.coupon.untilDate %}
                                     <span class="d-block">Platnost do: <strong>{{ cart.coupon.untilDate|date('d.m.Y') }}</strong></span>
                                 {% endif %}
 
-                                {% if coupon.deliveryUntilDate %}
+                                {% if cart.coupon.deliveryUntilDate %}
                                     <span class="d-block">Na objednávky do: <strong>{{ cart.coupon.deliveryUntilDate|date('d.m.Y') }}</strong></span>
                                 {% endif %}
                             </small>
