@@ -31,14 +31,20 @@ readonly final class Product
         $this->weightTo = ($isHalf === true && $weightTo !== null) ? $weightTo / 2 : $weightTo;
     }
 
-    public function price(): int|float
+    public function price(null|Coupon $coupon = null): int
     {
+        $pricePerUnit = $this->pricePerUnit;
+
+        if ($coupon?->percentValue !== null) {
+            $pricePerUnit = (int) round($pricePerUnit * (100 - $coupon->percentValue)/100);
+        }
+
         if ($this->isTurkey) {
             $averageWeight = ($this->weightFrom + $this->weightTo) / 2;
 
-            return $this->pricePerUnit * $averageWeight;
+            return (int) round($pricePerUnit * $averageWeight);
         }
 
-        return $this->pricePerUnit;
+        return $pricePerUnit;
     }
 }

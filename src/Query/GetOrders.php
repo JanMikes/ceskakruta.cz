@@ -19,6 +19,7 @@ final class GetOrders
 
     public function __construct(
         readonly private Connection $connection,
+        readonly private GetCoupon $getCoupon,
     ) {
     }
 
@@ -52,6 +53,7 @@ final class GetOrders
                  *     delivery_postal_code: null|string,
                  *     note: null|string,
                  *     price_total: int|float,
+                 *     coupon_id: int|null,
                  * } $row
                  */
 
@@ -77,6 +79,7 @@ final class GetOrders
                     deliveryPostalCode: $row['delivery_postal_code'],
                     note: $row['note'],
                     priceTotal: $row['price_total'],
+                    coupon: $row['coupon_id'] ? $this->getCoupon->oneById($row['coupon_id']) : null,
                 );
             }
 
@@ -103,6 +106,7 @@ final class GetOrders
          *     delivery_postal_code: null|string,
          *     note: null|string,
          *     price_total: int|float,
+         *     coupon_id: int|null,
          * } $row
          */
         $row = $this->connection
@@ -135,6 +139,7 @@ final class GetOrders
             deliveryPostalCode: $row['delivery_postal_code'],
             note: $row['note'],
             priceTotal: $row['price_total'],
+            coupon: $row['coupon_id'] ? $this->getCoupon->oneById($row['coupon_id']) : null,
         );
     }
 

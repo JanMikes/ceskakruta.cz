@@ -14,8 +14,8 @@ readonly final class ProductInCart
     ) {
     }
 
-    public function price(): int|float
+    public function price(null|Coupon $coupon = null): int
     {
-        return $this->quantity * $this->product->price();
+        return (int) round($this->quantity * $this->product->price($coupon));
     }
 }

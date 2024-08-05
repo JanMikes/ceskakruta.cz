@@ -28,13 +28,17 @@
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
                                     <span class="text-muted fs-xs">
-                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
-                                    Orientační cena: {{ item.product.price|price|raw }} Kč/ks
-                                </span><br>
-                                    Celkem: {{ item.price|price|raw }} Kč
+                                        Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
+                                        Orientační cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks
+                                    </span>
+                                    <br>
+                                    Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
                                 {% else %}
-                                    <span class="text-muted fs-xs">Cena: {{ item.product.price|price|raw }} Kč/kg</span><br>
-                                    Celkem: {{ item.price|price|raw }} Kč
+                                    <span class="text-muted fs-xs">
+                                        Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
+                                    </span>
+                                    <br>
+                                    Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
                                     {% if item.slice %}
                                         <br>+ Nakrájet
                                     {% endif %}

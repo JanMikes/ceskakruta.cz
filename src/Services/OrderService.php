@@ -61,11 +61,7 @@ readonly final class OrderService
             $orderId = (int) $this->connection->lastInsertId();
 
             foreach ($this->cartService->getItems() as $item) {
-                $unitPrice = $item->product->price();
-
-                if ($coupon !== null && $coupon->percentValue !== null) {
-                    $unitPrice = $unitPrice * (100 - $coupon->percentValue)/100;
-                }
+                $unitPrice = $item->product->price($coupon);
 
                 $this->connection->insert('order_item', [
                     'order_id'         => $orderId,

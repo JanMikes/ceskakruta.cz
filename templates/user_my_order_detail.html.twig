@@ -26,6 +26,12 @@
 
             <div>
                 {{ order.payByCard }}<br>
+                {% if order.coupon and order.coupon.percentValue %}
+                    <small>
+                        Sleva -{{ order.coupon.percentValue }}%<br>
+                        Kód: {{ order.coupon.code }}
+                    </small><br>
+                {% endif %}
                 Cena: {{ order.priceTotal }} Kč<br>
                 {{ order.note }}
             </div>

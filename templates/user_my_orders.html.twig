@@ -18,6 +18,9 @@
                     <strong>Objednáno na:</strong> {{ order.date.format('d.m.Y') }}<br>
                 </div>
                 <div>
+                    {% if order.coupon and order.coupon.percentValue %}
+                        <small>Sleva -{{ order.coupon.percentValue }}%</small><br>
+                    {% endif %}
                     <strong>Cena:</strong> {{ order.priceTotal }} Kč
                 </div>
                 <div>

@@ -95,9 +95,10 @@
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
                                     Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
-                                    Orientační cena: <strong>{{ item.product.price|price|raw }} Kč/ks</strong>
+                                    Orientační cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks<br>
+                                    Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong>
                                 {% else %}
-                                    <strong>{{ item.product.price  }} <small>Kč/kg</small></strong>
+                                    Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
                                     {% if item.slice %}
                                         <br>+ Nakrájet
                                     {% endif %}
@@ -107,6 +108,8 @@
                                 {% endif %}
                                 <br>
                                 Množství: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
+                                <br>
+                                Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong>
                             </div>
                         </div>
                     </div>

@@ -173,13 +173,7 @@ readonly final class CartService
 
         foreach ($this->getItems() as $item) {
             $product = $item->product;
-            $unitPrice = $product->price();
-
-            if ($coupon !== null && $coupon->percentValue !== null) {
-                $unitPrice = $unitPrice * (100 - $coupon->percentValue)/100;
-            }
-
-            $totalPrice = $totalPrice->add((int) ($item->quantity * $unitPrice));
+            $totalPrice = $totalPrice->add($item->price($coupon));
 
             if ($item->pack === true) {
                 $totalPrice = $totalPrice->add($product->packPrice ?? 0);

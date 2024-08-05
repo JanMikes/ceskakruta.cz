@@ -22,6 +22,7 @@ readonly final class Order
         public null|string $deliveryPostalCode,
         public null|string $note,
         public float $priceTotal,
+        public null|Coupon $coupon,
     ) {
     }
 }
