@@ -7,7 +7,6 @@ use CeskaKruta\Web\Exceptions\CouponExpired;
 use CeskaKruta\Web\Exceptions\CouponNotFound;
 use CeskaKruta\Web\Exceptions\CouponOrderDateExceeded;
 use CeskaKruta\Web\Exceptions\CouponUsageLimitReached;
-use CeskaKruta\Web\Exceptions\EmailAlreadySubscribedToNewsletter;
 use CeskaKruta\Web\FormData\ChangeCartItemQuantityFormData;
 use CeskaKruta\Web\FormData\CouponFormData;
 use CeskaKruta\Web\FormType\ChangeCartItemQuantityFormType;

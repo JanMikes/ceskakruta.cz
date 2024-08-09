@@ -112,9 +112,9 @@ final class CartStorage
         }
     }
 
-    public function changeQuantity(int $keyToChange, int|float $newQuantity): void
+    public function changeQuantity(int $keyToChange, null|int|float $newQuantity): void
     {
-        if ($newQuantity < 0) {
+        if (($newQuantity ?? 0) <= 0) {
             $this->removeItem($keyToChange);
             return;
         }

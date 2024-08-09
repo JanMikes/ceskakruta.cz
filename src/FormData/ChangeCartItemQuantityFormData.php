@@ -9,6 +9,5 @@ final class ChangeCartItemQuantityFormData
 {
     #[NotBlank]
     public int $cartKey = 0;
-    #[NotBlank]
-    public float|int $quantity = 0;
+    public null|float|int $quantity = 0;
 }
