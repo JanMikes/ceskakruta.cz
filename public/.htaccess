@@ -1,30 +1,22 @@
-# ------------------------------------------------------------------------------
-# | Rewrite engine                                                             |
-# ------------------------------------------------------------------------------
-
-# Turning on the rewrite engine and enabling the `FollowSymLinks` option is
-# necessary for the following directives to work.
-
-# If your web host doesn't allow the `FollowSymlinks` option, you may need to
-# comment it out and use `Options +SymLinksIfOwnerMatch` but, be aware of the
-# performance impact: http://httpd.apache.org/docs/current/misc/perf-tuning.html#symlinks
-
-# Also, some cloud hosting services require `RewriteBase` to be set:
-# http://www.rackspace.com/knowledge_center/frequently-asked-question/why-is-mod-rewrite-not-working-on-my-site
-
 <IfModule mod_rewrite.c>
   Options +FollowSymlinks
   # Options +SymLinksIfOwnerMatch
   RewriteEngine On
   # RewriteBase /
 
-  # Redirect /public to /
-  RewriteRule ^public/?$ / [R=301,L]
+  # Redirect www to non-www
+  RewriteCond %{HTTP_HOST} ^www\.ceskakruta\.cz [NC]
+  RewriteRule ^(.*)$ https://ceskakruta.cz/$1 [R=301,L]
 
+  # Redirect HTTP to HTTPS
   RewriteCond %{SERVER_PORT} 80
-  RewriteRule ^(.*)$ https://www.ceskakruta.cz/$1 [R,L]
+  RewriteRule ^(.*)$ https://ceskakruta.cz/$1 [R,L]
 
-  # front controller
+  # Redirect /admin/* to old.ceskakruta.cz/admin/*
+  RewriteCond %{REQUEST_URI} ^/admin/(.*)$ [NC]
+  RewriteRule ^(.*)$ https://old.ceskakruta.cz/$1 [R=301,L]
+
+  # Front controller
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule !\.(pdf|js|ico|gif|jpg|png|css|rar|zip|tar\.gz)$ index.php [L]
