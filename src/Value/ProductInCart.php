@@ -11,6 +11,7 @@ readonly final class ProductInCart
         public Product $product,
         public null|bool $slice = null,
         public null|bool $pack = null,
+        public null|string $note = null,
     ) {
     }
 

@@ -139,6 +139,7 @@ readonly final class CartService
                 $product,
                 $item->slice,
                 $placeForcedPack ?: $item->pack,
+                $item->note,
             );
         }
 

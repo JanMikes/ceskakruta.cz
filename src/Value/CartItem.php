@@ -13,12 +13,13 @@ readonly final class CartItem
         public int|float $quantity,
         public null|bool $slice = null,
         public null|bool $pack = null,
+        public null|string $note = null,
     ) {
     }
 
 
     /**
-     * @return array{product_id: int, quantity: int|float, slice: null|bool, pack: null|bool}
+     * @return array{product_id: int, quantity: int|float, slice: null|bool, pack: null|bool, note: null|string}
      */
     public function toArray(): array
     {
@@ -27,12 +28,13 @@ readonly final class CartItem
             'quantity' => $this->quantity,
             'slice' => $this->slice,
             'pack' => $this->pack,
+            'note' => $this->note,
         ];
     }
 
 
     /**
-     * @param array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool} $data
+     * @param array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool, note?: null|string} $data
      */
     public static function fromArray(array $data): self
     {
@@ -41,6 +43,7 @@ readonly final class CartItem
             quantity: $data['quantity'] ?? 1,
             slice: $data['slice'] ?? null,
             pack: $data['pack'] ?? null,
+            note: $data['note'] ?? null,
         );
     }
 
@@ -51,13 +54,14 @@ readonly final class CartItem
             && $this->pack === $other->pack;
     }
 
-    public function withQuantity(int|float $newQuantity): self
+    public function change(int|float $newQuantity, null|string $note = null): self
     {
         return new self(
             $this->productId,
             $newQuantity,
             $this->slice,
             $this->pack,
+            $note,
         );
     }
 }

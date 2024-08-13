@@ -7,9 +7,9 @@ use CeskaKruta\Web\Exceptions\CouponExpired;
 use CeskaKruta\Web\Exceptions\CouponNotFound;
 use CeskaKruta\Web\Exceptions\CouponOrderDateExceeded;
 use CeskaKruta\Web\Exceptions\CouponUsageLimitReached;
-use CeskaKruta\Web\FormData\ChangeCartItemQuantityFormData;
+use CeskaKruta\Web\FormData\ChangeCartItemFormData;
 use CeskaKruta\Web\FormData\CouponFormData;
-use CeskaKruta\Web\FormType\ChangeCartItemQuantityFormType;
+use CeskaKruta\Web\FormType\ChangeCartItemFormType;
 use CeskaKruta\Web\FormType\CouponFormType;
 use CeskaKruta\Web\Message\UseCoupon;
 use CeskaKruta\Web\Query\GetColdProductsCalendar;
@@ -64,11 +64,12 @@ final class CartController extends AbstractController
         $changeQuantityFormViews = [];
 
         foreach ($this->cartStorage->getItems() as $key => $item) {
-            $changeQuantityData = new ChangeCartItemQuantityFormData();
-            $changeQuantityData->cartKey = $key;
-            $changeQuantityData->quantity = $item->quantity;
+            $changeItemData = new ChangeCartItemFormData();
+            $changeItemData->cartKey = $key;
+            $changeItemData->quantity = $item->quantity;
+            $changeItemData->note = $item->note;
 
-            $changeQuantityForm = $this->createForm(ChangeCartItemQuantityFormType::class, $changeQuantityData, [
+            $changeQuantityForm = $this->createForm(ChangeCartItemFormType::class, $changeItemData, [
                 'action' => $this->generateUrl('change_cart_item_quantity', ['cartItem' => $key]),
             ]);
 
@@ -84,10 +85,10 @@ final class CartController extends AbstractController
             $requestForm->handleRequest($request);
 
             if ($requestForm->isSubmitted() && $requestForm->isValid()) {
-                $changeQuantityData = $requestForm->getData();
-                assert($changeQuantityData instanceof ChangeCartItemQuantityFormData);
+                $changeItemData = $requestForm->getData();
+                assert($changeItemData instanceof ChangeCartItemFormData);
 
-                $this->cartStorage->changeQuantity($changeQuantityData->cartKey, $changeQuantityData->quantity);
+                $this->cartStorage->changeItem($changeItemData->cartKey, $changeItemData->quantity, $changeItemData->note);
 
                 $this->addFlash('success', 'Košík přepočítán');
 

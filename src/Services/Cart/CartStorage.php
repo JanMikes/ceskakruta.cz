@@ -47,7 +47,7 @@ final class CartStorage
 
             if ($existingCartItem->isSameProduct($item)) {
                 $newQuantity = $existingCartItem->quantity + $item->quantity;
-                $items[$key] = $existingCartItem->withQuantity($newQuantity)->toArray();
+                $items[$key] = $existingCartItem->change($newQuantity)->toArray();
                 $addNew = false;
             }
         }
@@ -112,7 +112,7 @@ final class CartStorage
         }
     }
 
-    public function changeQuantity(int $keyToChange, null|int|float $newQuantity): void
+    public function changeItem(int $keyToChange, null|int|float $newQuantity, null|string $note): void
     {
         if (($newQuantity ?? 0) <= 0) {
             $this->removeItem($keyToChange);
@@ -121,13 +121,13 @@ final class CartStorage
 
         $session = $this->requestStack->getSession();
 
-        /** @var array<array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool}> $items */
+        /** @var array<array{product_id: int, quantity?: int|float, slice?: null|bool, pack?: null|bool, note?: null|string}> $items */
         $items = $session->get(self::ITEMS_SESSION_NAME, []);
 
         foreach ($items as $key => $item) {
             if ($keyToChange === $key) {
                 $cartItem = CartItem::fromArray($item);
-                $items[$key] = $cartItem->withQuantity($newQuantity)->toArray();
+                $items[$key] = $cartItem->change($newQuantity, $note)->toArray();
 
                 $session->set(self::ITEMS_SESSION_NAME, $items);
                 return;
