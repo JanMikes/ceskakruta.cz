@@ -1,8 +1,7 @@
-version: "3.7"
-
 volumes:
     mariadb-data:
     redis-data:
+    mailpit-data:
 
 services:
     web:
@@ -53,11 +52,14 @@ services:
         depends_on:
             - mariadb
 
-    maildev:
-        image: maildev/maildev
-        environment:
-            MAILDEV_WEB_PORT: 1080
-            MAILDEV_SMTP_PORT: 1025
+    mailer:
+        image: axllent/mailpit
         ports:
-            - "8088:1080"
-            - "8025:1025"
+            - "1025:1025"
+            - "8025:8025"
+        environment:
+            MP_SMTP_AUTH_ACCEPT_ANY: 1
+            MP_SMTP_AUTH_ALLOW_INSECURE: 1
+            MP_DATABASE: "/data/mailpit.db"
+        volumes:
+            - mailpit-data:/data

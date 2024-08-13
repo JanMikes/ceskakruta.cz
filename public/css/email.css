@@ -1,5 +1,5 @@
 body {
-    color: #333;
+    color: #111;
     font-family: Arial, Tahoma, Sans-serif, serif;
     background: #ebebeb;
     font-size: 14px;
@@ -12,12 +12,12 @@ h1 {
 
 h2 {
     font-weight: normal;
-    font-size: 20px;
+    font-size: 22px;
 }
 
 h3 {
     font-weight: normal;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 p {
@@ -36,20 +36,36 @@ hr {
     height: 1px;
 }
 
-table {
-    border: 1px solid #333;
+.table-borderless {
+    border: 0;
+    width: 100%;
+    margin: 10px 0 20px;
 }
 
-th {
+.table {
+    border: 1px solid #333;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.th {
     font-weight: bold;
     font-size: 14px;
     text-align: left;
     padding: 4px;
+    background: #e6e6e6;
 }
 
-td {
+.th-backgroundless {
+    font-weight: bold;
     font-size: 14px;
     text-align: left;
+    padding: 4px;
+    width: 160px;
+}
+
+.td {
+    font-size: 13px;
     padding: 4px;
 }
 
@@ -95,4 +111,18 @@ h1.newsletter {
     padding: 15px;
     background: #fff;
     text-align: center;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-end {
+    text-align: right;
 }

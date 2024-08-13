@@ -226,6 +226,17 @@ readonly final class CartService
         return false;
     }
 
+    public function containsNonTurkey(): bool
+    {
+        foreach ($this->getItems() as $item) {
+            if ($item->product->isTurkey === false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getDeliveryPlace(): null|int
     {
         return $this->storage->getDeliveryPlace();

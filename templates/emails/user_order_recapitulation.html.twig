@@ -23,97 +23,117 @@
 
                 <p>Prosíme o pečlivou kontrolu níže uvedených údajů.</p>
 
+                {% if cart.pickupPlace %}
+                    <h3>Osobní odběr: <strong>{{ places[cart.pickupPlace].name }}</strong></h3>
+                {% elseif cart.deliveryPlace and cart.deliveryAddress %}
+                    <h3>
+                        Rozvoz <small>({{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}) na adresu:</small>
+                        <br><strong>{{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }} {{ cart.deliveryAddress.postalCode }}</strong>
+                    </h3>
+                {% endif %}
 
-                <div class="text-center py-3 border-bottom">
-                    {% if cart.pickupPlace %}
-                        <h2 class="h6 mb-2 pb-1">Osobní odběr</h2>
-                        <h3 class="h5 fw-normal mb-0">
-                            {{ places[cart.pickupPlace].name }}
-                        </h3>
-                    {% elseif cart.deliveryPlace and cart.deliveryAddress %}
-                        <h2 class="h6 mb-2 pb-1">Rozvoz</h2>
-                        <small class="text-muted">{{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}</small>
-                        <h3 class="h5 fw-normal mb-0">
-                            {{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }} {{ cart.deliveryAddress.postalCode }}
-                        </h3>
+                <h3>
+                    Datum: <strong>{{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}</strong>
+                </h3>
+
+                <table class="table-borderless">
+                    <tr>
+                        <th class="th-backgroundless">Jméno a příjmení:</th>
+                        <td class="td">{{ cart.orderData.name }}</td>
+                    </tr>
+
+                    <tr>
+                        <th class="th-backgroundless">E-mail:</th>
+                        <td class="td">{{ cart.orderData.email }}</td>
+                    </tr>
+
+                    <tr>
+                        <th class="th-backgroundless">Telefon:</th>
+                        <td class="td">{{ cart.orderData.phone }}</td>
+                    </tr>
+
+                    <tr>
+                        <th class="th-backgroundless">Poznámka:</th>
+                        <td class="td">{{ cart.orderData.note ?: '-' }}</td>
+                    </tr>
+                </table>
+
+                {% if cart.containsTurkey %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="th">Zboží</th>
+                                <th class="th text-center">Počet</th>
+                                <th class="th text-center">Váha 1 ks cca</th>
+                                <th class="th text-center">Orientační cena Kč/ks</th>
+                                <th class="th text-end">Orientační cena</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items %}
+                                {% if item.product.isTurkey %}
+                                    <tr>
+                                        <td class="td">{{ item.product.title }}</td>
+                                        <td class="td text-center">{{ item.quantity }} ks</td>
+                                        <td class="td text-center">{{ item.product.weightFrom }} až {{ item.product.weightTo }}kg</td>
+                                        <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks</td>
+                                        <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+
+                {% if cart.containsNonTurkey %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="th">Zboží</th>
+                            <th class="th text-center">Množství kg</th>
+                            <th class="th text-center">Vakuově zabalit</th>
+                            <th class="th text-center">Nakrájet</th>
+                            <th class="th text-center">Cena Kč/kg</th>
+                            <th class="th text-end">Orientační cena</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart.items %}
+                                {% if not item.product.isTurkey %}
+                                    <tr>
+                                        <td class="td">{{ item.product.title }}</td>
+                                        <td class="td text-center">{{ item.quantity }} Kg</td>
+                                        <td class="td text-center">{% if item.pack %}Ano (+{{ item.product.packPrice }} kč){% else %}-{% endif %}</td>
+                                        <td class="td text-center">{% if item.slice %}Ano{% else %}-{% endif %}</td>
+                                        <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg</td>
+                                        <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+
+                <div>
+                    {% if cart.coupon %}
+                        <p>
+                            Slevový kód: <strong>{{ cart.coupon.code }}</strong><br>
+                            {% if cart.coupon.percentValue %}
+                                Sleva: <strong>-{{ cart.coupon.percentValue }}%</strong><br>
+                            {% endif %}
+                            Před slevou: <del>{{ cart.totalPriceWithoutDiscount.amount|price|raw }} Kč </del>
+                        </p>
                     {% endif %}
 
-                    <h3 class="h5 fw-normal mt-3 mb-0">
-                        {{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}
-                    </h3>
-                </div>
-
-                <div class="text-center mb-4 py-3 border-bottom">
                     {% if cart.deliveryPlace and cart.deliveryAddress %}
-                        <p class="fs-sm d-block mb-1">
+                        <p>
                             Doprava: {{ cart.deliveryPrice }} Kč<br>
                             Balné: {{ cart.packingPrice }} Kč
                         </p>
                     {% endif %}
 
-                    {% if cart.coupon %}
-                        <p>
-                            <span class="d-block">Kód: <strong>{{ cart.coupon.code }}</strong></span><br>
-                        {% if cart.coupon.percentValue %}
-                            <span class="d-block">Sleva: <strong>-{{ cart.coupon.percentValue }}%</strong></span><br>
-                        {% endif %}
-                            Před slevou: <del>{{ cart.totalPriceWithoutDiscount.amount|price|raw }} Kč </del>
-                        </p>
-
-                    {% endif %}
-
-                    <h2 class="h6 mb-3 pb-1">Orientační cena celkem: {{ cart.totalPrice.amount|price|raw }} Kč</h2>
+                    <h3>Orientační cena celkem: {{ cart.totalPrice.amount|price|raw }} Kč</h3>
                 </div>
-
-                <hr>
-
-                <div class="mb-4 pb-3">
-                    <p>
-                        <strong>Jméno a příjmení</strong><br>
-                        {{ cart.orderData.name }}
-                    </p>
-                    <p>
-                        <strong>E-mail</strong><br>
-                        {{ cart.orderData.email }}
-                    </p>
-                    <p>
-                        <strong>Telefon</strong><br>
-                        {{ cart.orderData.phone }}
-                    </p>
-                    <p>
-                        <strong>Poznámka</strong><br>
-                        {{ cart.orderData.note ?: '-' }}
-                    </p>
-                </div>
-
-                <hr>
-
-                {% for item in cart.items %}
-                    <div class="d-block d-sm-flex align-items-center py-4 border-bottom">
-                        <div class="text-center text-sm-start">
-                            <h3 class="h6 product-title mb-2">{{ item.product.title }}</h3>
-                            <div class="d-inline-block">
-                                {% if item.product.turkeyType %}
-                                    Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }}kg<br>
-                                    Orientační cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks<br>
-                                    Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong>
-                                {% else %}
-                                    Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
-                                    {% if item.slice %}
-                                        <br>+ Nakrájet
-                                    {% endif %}
-                                    {% if item.pack %}
-                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
-                                    {% endif %}
-                                {% endif %}
-                                <br>
-                                Množství: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
-                                <br>
-                                Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
             </div>
 
         </div>
