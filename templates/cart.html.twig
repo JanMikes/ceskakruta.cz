@@ -96,7 +96,7 @@
                                     {% endif %}
 
                                     <div data-note-toggle-target="hide">
-                                        <small><a href="#" data-action="click->note-toggle#toggle">{% if item.note %}Upravit poznámku{% else %}Přidat poznámku{% endif %}</a></small>
+                                        <small>{% if item.note %}Poznámka: {{ item.note }} {% endif %}<a href="#" data-action="click->note-toggle#toggle">{% if item.note %}Upravit{% else %}Přidat poznámku{% endif %}</a></small>
                                     </div>
                                 </div>
 
