@@ -122,6 +122,8 @@ readonly final class CartService
         $calendar = $this->getColdProductsCalendar->all();
         $items = [];
         $week = $this->getWeek();
+        $place = $this->getPlace();
+        $placeForcedPack = $place->forcePacking ?? false;
 
         foreach ($this->storage->getItems() as $key => $item) {
             $product = $products[$item->productId];
@@ -136,7 +138,7 @@ readonly final class CartService
                 $item->quantity,
                 $product,
                 $item->slice,
-                $item->pack,
+                $placeForcedPack ?: $item->pack,
             );
         }
 

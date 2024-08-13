@@ -20,7 +20,7 @@ readonly final class AddItemToCartHandler
 
     public function __invoke(AddItemToCart $message): void
     {
-        $product =$this->getProducts->oneById($message->productId);
+        $product = $this->getProducts->oneById($message->productId);
 
         $item = new CartItem(
             $message->productId,
