@@ -22,7 +22,7 @@ final class GetPlaceClosedDays
     {
         if ($this->closedDays === null) {
             $rows = $this->connection
-                ->executeQuery('SELECT * FROM place_closed_day WHERE date >= :today AND place_id = :placeId AND active_flag = 1 AND del_flag = 0', [
+                ->executeQuery('SELECT * FROM place_closed_day WHERE date >= :today AND (place_id = :placeId OR place_id IS NULL) AND active_flag = 1 AND del_flag = 0', [
                     'placeId' => $placeId,
                     'today' => (new \DateTimeImmutable())->format('Y-m-d'),
                 ])
