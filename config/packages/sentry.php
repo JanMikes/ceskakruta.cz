@@ -13,6 +13,7 @@ return static function (SentryConfig $sentryConfig) {
         ->enabled(true);
 
     $sentryConfig->registerErrorListener(false);
+    $sentryConfig->registerErrorHandler(false);
 
     $sentryConfig->messenger()
         ->enabled(true)
