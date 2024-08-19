@@ -22,7 +22,10 @@ final class AddToCartFormType extends AbstractType
         $builder->add('slice', HiddenType::class);
         $builder->add('pack', HiddenType::class);
         $builder->add('productId', HiddenType::class);
-        $builder->add('quantity', NumberType::class);
+        $builder->add('quantity', NumberType::class, [
+            'empty_data' => 0,
+            'attr' => ['min' => 0]
+        ]);
     }
 
 
