@@ -51,11 +51,11 @@ jobs:
                         .env.local
 
             -   name: Clear cache
-                uses: StephanThierry/ftp-delete-action@v2.1
+                uses: joutvhu/ftp-transfer@v1
                 with:
                     host: ${{ secrets.FTP_SERVER }}
-                    user: ${{ secrets.FTP_USERNAME }}
+                    username: ${{ secrets.FTP_USERNAME }}
                     password: ${{ secrets.FTP_PASSWORD }}
-                    remoteDirectories: "var/cache/prod"
-                    workingDir: "./web/"
-                    ignoreSSL: 1
+                    commands: |
+                        rename ./web/var/cache/prod ./web/var/cache/prod_old
+                        delete ./web/var/cache/prod_old
