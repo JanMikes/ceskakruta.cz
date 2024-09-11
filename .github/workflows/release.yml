@@ -58,4 +58,4 @@ jobs:
                     password: ${{ secrets.FTP_PASSWORD }}
                     commands: |
                         rename ./web/var/cache/prod ./web/var/cache/prod_old
-                        rmdir ./web/var/cache/prod_old
+                        delete ./web/var/cache/prod_old
