@@ -171,6 +171,11 @@
                                     {{ form_widget(newsletter_form.email, { 'attr': {'class': 'form-control rounded-start', 'placeholder': 'Váš e-mail'} }) }}
                                     <button class="btn btn-primary" type="submit" name="subscribe">Odebírat</button>
                                 </div>
+
+                                <div class="mt-2 text-light">
+                                    {{ form_row(newsletter_form.agreement) }}
+                                </div>
+
                                 {{ form_end(newsletter_form) }}
                             </div>
                         </div>
