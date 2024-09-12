@@ -5,9 +5,10 @@ namespace CeskaKruta\Web\FormData;
 
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-final class ChangeCartItemQuantityFormData
+final class ChangeCartItemFormData
 {
     #[NotBlank]
     public int $cartKey = 0;
     public null|float|int $quantity = 0;
+    public null|string $note = null;
 }

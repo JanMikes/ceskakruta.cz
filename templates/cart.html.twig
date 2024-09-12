@@ -59,57 +59,72 @@
                 {% endif %}
 
                 {% for item in cart.items %}
-                    <div class="d-flex cart-items-row p-3 my-2 shadow">
-                        <div class="cart-item-image">
-                            {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
-                                <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
-                            {% else %}
-                                <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
-                            {% endif %}
-                        </div>
+                    {{ form_start(change_quantity_forms[loop.index0]) }}
+                    <div class="p-3 my-2 shadow" data-controller="note-toggle">
 
-                        <div class="cart-item-info ps-3">
-                            <h3 class="h6 mb-1">{{ item.product.title }}</h3>
-                            <div class="d-inline-block fs-sm">
-                                {% if item.product.turkeyType %}
-                                    <span class="text-muted fs-xs">
-                                        Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
-                                        Orientační cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks
-                                    </span>
-                                    <br>
-                                    Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
+                        <div class="d-sm-flex cart-items-row">
+                            <div class="cart-item-image me-2 float-start float-sm-none">
+                                {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
+                                    <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
                                 {% else %}
-                                    <span class="text-muted fs-xs">
-                                        Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
-                                    </span>
-                                    <br>
-                                    Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
-                                    {% if item.slice %}
-                                        <br>+ Nakrájet
-                                    {% endif %}
-                                    {% if item.pack %}
-                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
-                                    {% endif %}
+                                    <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                                 {% endif %}
                             </div>
 
+                            <div class="cart-item-info ps-3">
+                                <h3 class="h6 mb-1">{{ item.product.title }}</h3>
+                                <div class="d-inline-block fs-sm">
+                                    {% if item.product.turkeyType %}
+                                        <span class="text-muted fs-xs">
+                                            Hmotnost: {{ item.product.weightFrom }} až {{ item.product.weightTo }} kg<br>
+                                            Orientační cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks
+                                        </span>
+                                        <br>
+                                        Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
+                                    {% else %}
+                                        <span class="text-muted fs-xs">
+                                            Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
+                                        </span>
+                                        <br>
+                                        Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
+                                        {% if item.slice %}
+                                            <br>+ Nakrájet
+                                        {% endif %}
+                                        {% if item.pack %}
+                                            <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                        {% endif %}
+                                    {% endif %}
 
-                            <div class="form-inline pt-2">
-                                <div class="text-end mb-2">
-                                    <a data-turbo-prefetch="false" href="{{ path('remove_from_cart', {cartItem: loop.index0}) }}">
-                                <span class="btn btn-sm btn-icon btn-outline-danger py-1 px-2 fs-xs mt-1">
-                                    <i class="ci-trash me-1"></i> Odebrat
-                                </span>
-                                    </a>
+                                    <div data-note-toggle-target="hide">
+                                        <small>{% if item.note %}Poznámka: {{ item.note }} {% endif %}<a href="#" data-action="click->note-toggle#toggle">{% if item.note %}Upravit{% else %}Přidat poznámku{% endif %}</a></small>
+                                    </div>
                                 </div>
 
-                                {{ form_start(change_quantity_forms[loop.index0]) }}
-                                <input name="{{ field_name(change_quantity_forms[loop.index0].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
-                                <button class="btn btn-primary btn-sm ms-2 " type="submit">Přepočítat</button>
-                                {{ form_end(change_quantity_forms[loop.index0]) }}
+                                <div class="form-inline pt-2">
+                                    <div class="text-end mb-2">
+                                        <a data-turbo-prefetch="false" href="{{ path('remove_from_cart', {cartItem: loop.index0}) }}">
+                                    <span class="btn btn-sm btn-icon btn-outline-danger py-1 px-2 fs-xs mt-1">
+                                        <i class="ci-trash me-1"></i> Odebrat
+                                    </span>
+                                        </a>
+                                    </div>
+
+                                    <input name="{{ field_name(change_quantity_forms[loop.index0].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
+                                    <button class="btn btn-primary btn-sm ms-2 " type="submit">Přepočítat</button>
+                                </div>
                             </div>
                         </div>
+
+                        <div data-note-toggle-target="show" class="hidden">
+                            <div class="form-floating mb-2 mt-2">
+                                {{ form_widget(change_quantity_forms[loop.index0].note, {'attr': {'class': 'form-control-sm', 'placeholder': 'Poznámka'}}) }}
+                                {{ form_label(change_quantity_forms[loop.index0].note, 'Poznámka', {'label_attr': {'for': 'fl-text'}}) }}
+                            </div>
+
+                            <button class="btn btn-primary btn-sm px-2" type="submit">Uložit</button>
+                        </div>
                     </div>
+                    {{ form_end(change_quantity_forms[loop.index0]) }}
                 {% endfor %}
 
                 {% if cart.itemsCount > 0 %}
