@@ -44,6 +44,12 @@ final class OrderFormType extends AbstractType
             'label' => 'Platba kartou při předávce',
         ]);
 
+        $builder->add('termsAgreement', CheckboxType::class, [
+            'required' => true,
+            'label' => 'Souhlasím se zpracováním osobních údajů pro účely objednávky',
+            'mapped' => false,
+        ]);
+
         $builder->add('subscribeToNewsletter', CheckboxType::class, [
             'required' => false,
             'label' => 'Chci zasílat informace a novinky z České Krůty',

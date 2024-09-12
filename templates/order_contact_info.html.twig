@@ -46,6 +46,7 @@
                     {{ form_label(orderForm.note, 'Poznámka', {'label_attr': {'for': 'fl-text'}}) }}
                 </div>
 
+                {{ form_row(orderForm.termsAgreement) }}
                 {{ form_row(orderForm.payByCard) }}
                 {{ form_row(orderForm.subscribeToNewsletter) }}
 

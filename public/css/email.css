@@ -40,12 +40,18 @@ hr {
     border: 0;
     width: 100%;
     margin: 10px 0 20px;
+    border-collapse: collapse;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
 }
 
 .table {
     border: 1px solid #333;
     width: 100%;
     margin: 10px 0;
+    border-collapse: collapse;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
 }
 
 .th {
@@ -67,6 +73,10 @@ hr {
 .td {
     font-size: 13px;
     padding: 4px;
+}
+
+.td-text-bigger {
+    font-size: 16px;
 }
 
 .odd {
@@ -126,4 +136,5 @@ h1.newsletter {
 .td-note {
     padding-top: 0;
     padding-bottom: 8px;
+    border-bottom: 1px solid #bbb;
 }
