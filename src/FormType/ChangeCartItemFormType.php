@@ -24,6 +24,8 @@ final class ChangeCartItemFormType extends AbstractType
             'required' => false,
             'label' => 'Poznámka',
         ]);
+        $builder->add('slice', HiddenType::class);
+        $builder->add('pack', HiddenType::class);
     }
 
 

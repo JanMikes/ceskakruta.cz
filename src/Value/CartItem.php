@@ -54,13 +54,13 @@ readonly final class CartItem
             && $this->pack === $other->pack;
     }
 
-    public function change(int|float $newQuantity, null|string $note = null): self
+    public function change(int|float $newQuantity, null|string $note, null|bool $slice, null|bool $pack): self
     {
         return new self(
             $this->productId,
             $newQuantity,
-            $this->slice,
-            $this->pack,
+            $slice,
+            $pack,
             $note,
         );
     }

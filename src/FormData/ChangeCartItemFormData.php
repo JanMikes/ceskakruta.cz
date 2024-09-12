@@ -11,4 +11,6 @@ final class ChangeCartItemFormData
     public int $cartKey = 0;
     public null|float|int $quantity = 0;
     public null|string $note = null;
+    public null|bool $slice = null;
+    public null|bool $pack = null;
 }

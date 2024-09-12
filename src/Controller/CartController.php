@@ -88,7 +88,13 @@ final class CartController extends AbstractController
                 $changeItemData = $requestForm->getData();
                 assert($changeItemData instanceof ChangeCartItemFormData);
 
-                $this->cartStorage->changeItem($changeItemData->cartKey, $changeItemData->quantity, $changeItemData->note);
+                $this->cartStorage->changeItem(
+                    keyToChange: $changeItemData->cartKey,
+                    newQuantity: $changeItemData->quantity,
+                    note: $changeItemData->note,
+                    slice: $changeItemData->slice,
+                    pack: $changeItemData->pack,
+                );
 
                 $this->addFlash('success', 'Košík přepočítán');
 

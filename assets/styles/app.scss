@@ -650,9 +650,8 @@ main {
     @include media-breakpoint-up(lg) {
         .form-inline {
             position: absolute;
-            right: 10px;
-            top: 50%;
-            margin-top: -47px;
+            right: 0;
+            top: 30px;
         }
     }
 }
