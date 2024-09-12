@@ -51,6 +51,9 @@
 
                     <div style="min-width: 50%;">
                         <strong>{{ product.title }}</strong>
+                        {% if order_item.note %}
+                            <br><small class="text-muted">Poznámka: {{ order_item.note }}</small>
+                        {% endif %}
                     </div>
 
                     <div style="width: 140px;">

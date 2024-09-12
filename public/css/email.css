@@ -93,7 +93,11 @@ h1.newsletter {
     color: #dd0d19;
     font-size: 24px;
     font-weight: normal;
-    text-align: center;
+}
+
+.admin-h1 {
+    font-size: 24px;
+    font-weight: normal;
 }
 
 .newsletterContainer {
@@ -103,7 +107,6 @@ h1.newsletter {
     border: 1px solid #dd0d19;
     padding: 15px;
     background: #fff;
-    text-align: center;
 }
 
 .border-bottom {
@@ -118,4 +121,9 @@ h1.newsletter {
 
 .text-end {
     text-align: right;
+}
+
+.td-note {
+    padding-top: 0;
+    padding-bottom: 8px;
 }

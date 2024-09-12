@@ -30,7 +30,7 @@ final class GetOrders
     {
         if ($this->orders === null) {
             $rows = $this->connection
-                ->executeQuery('SELECT * FROM `order` WHERE user_id = :userId AND active_flag = 1 AND del_flag = 0 ORDER BY date DESC', [
+                ->executeQuery('SELECT * FROM `order` WHERE user_id = :userId AND active_flag = 1 AND del_flag = 0 ORDER BY date DESC, id DESC', [
                     'userId' => $userId,
                 ])
                 ->fetchAllAssociative();
@@ -174,6 +174,7 @@ final class GetOrders
                  *     price_total: int|float,
                  *     weight_from: null|float,
                  *     weight_to: null|float,
+                 *     note: null|string,
                  * } $row
                  */
 
@@ -187,6 +188,7 @@ final class GetOrders
                     priceTotal: $row['price_total'],
                     weightFrom: $row['weight_from'],
                     weightTo: $row['weight_to'],
+                    note: $row['note'],
                 );
             }
         }

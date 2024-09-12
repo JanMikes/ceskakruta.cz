@@ -284,7 +284,7 @@ readonly final class CartService
     {
         $lockedWeek = $this->getLockedWeek();
 
-        if ($lockedWeek === null) {
+        if ($lockedWeek === null || $this->containsTurkey() === false) {
             return false;
         }
 
@@ -292,7 +292,7 @@ readonly final class CartService
         $removedAnything = false;
 
         // Can not use foreach directly, because keys gets always recalculated, so needs to be wrapped in a while loop
-        while($this->containsTurkey() === true) {
+        for($i = 0; $i <= count($this->getItems()); $i++) {
             foreach ($this->getItems() as $key => $item) {
                 // Check weight, if not matched, remove it
                 if ($item->product->isTurkey === true) {

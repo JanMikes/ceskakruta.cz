@@ -16,6 +16,7 @@ readonly final class OrderItem
         public int|float $priceTotal,
         public null|float $weightFrom,
         public null|float $weightTo,
+        public null|string $note,
     ) {
     }
 }

@@ -34,10 +34,26 @@ readonly final class CreateOrderHandler
         $address = $this->cartService->getOrderData()?->email;
         assert($address !== null);
 
+        // Email for the admin
+        $email = (new TemplatedEmail())
+            ->from('objednavky@ceskakruta.cz')
+            ->to('info@ceskakruta.cz')
+            ->subject('Rekapitulace objednávky č. ' . $orderId)
+            ->htmlTemplate('emails/admin_order_recapitulation.html.twig')
+            ->context([
+                'items' => $this->cartService->getItems(),
+                'places' => $this->getPlaces->all(),
+                'order_id' => $orderId,
+            ]);
+
+        $email->getHeaders()->addTextHeader('X-Transport', 'orders');
+
+        $this->mailer->send($email);
+
+        // Email for the user
         $email = (new TemplatedEmail())
             ->from('objednavky@ceskakruta.cz')
             ->to($address)
-            ->addBcc('info@ceskakruta.cz')
             ->subject('Rekapitulace objednávky č. ' . $orderId)
             ->htmlTemplate('emails/user_order_recapitulation.html.twig')
             ->context([

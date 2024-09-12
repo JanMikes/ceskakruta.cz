@@ -46,6 +46,9 @@
                                         <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
                                     {% endif %}
                                 {% endif %}
+                                {% if item.note %}
+                                    <br><span class="text-muted fs-xs">Poznámka: {{ item.note }}</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

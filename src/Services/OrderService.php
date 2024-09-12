@@ -75,6 +75,7 @@ readonly final class OrderService
                     'price_total'      => $unitPrice * $item->quantity,
                     'weight_from'      => $item->product->weightFrom,
                     'weight_to'        => $item->product->weightTo,
+                    'note'             => $item->note,
                     'ins_dt'           => $now->format('Y-m-d H:i:s'),
                 ]);
             }

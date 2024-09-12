@@ -3,9 +3,10 @@
     <body>
 
     <div class="newsletterContainer">
-        <img src="{{ email.image('@images/logo.png') }}" alt="Logo">
+        <div class="text-center">
+            <img src="{{ email.image('@images/logo.png') }}" alt="Logo">
 
-        <h1 class="newsletter">Potvrzení přijetí objednávky č. {{ order_id }}</h1>
+            <h1 class="newsletter">Potvrzení přijetí objednávky č. {{ order_id }}</h1>
 
             <p>
                 Děkujeme Vám za Vaši objednávku
@@ -19,6 +20,7 @@
                     Zboží bude na vybrané prodejně připraveno ve Vámi vybraném termínu hned od začátku prodejní doby.
                 {% endif %}
             </p>
+        </div>
 
             <p>Prosíme o pečlivou kontrolu níže uvedených údajů.</p>
 
@@ -63,21 +65,26 @@
                         <tr>
                             <th class="th">Zboží</th>
                             <th class="th text-center">Počet</th>
-                            <th class="th text-center">Váha 1 ks cca</th>
-                            <th class="th text-center">Orientační cena Kč/ks</th>
-                            <th class="th text-end">Orientační cena</th>
+                            <th class="th text-center">Váha/ks</th>
+                            <th class="th text-center">Kč/ks</th>
+                            <th class="th text-end">Celkem</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in cart.items %}
                             {% if item.product.isTurkey %}
                                 <tr>
-                                    <td class="td">{{ item.product.title }}</td>
+                                    <td class="td"><strong>{{ item.product.title }}</strong></td>
                                     <td class="td text-center">{{ item.quantity }} ks</td>
                                     <td class="td text-center">{{ item.product.weightFrom }} až {{ item.product.weightTo }}kg</td>
-                                    <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks</td>
-                                    <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
+                                    <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del><br>{% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks</td>
+                                    <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
                                 </tr>
+                                {% if item.note %}
+                                    <tr>
+                                        <td colspan="5" class="td td-note">Poznámka: {{ item.note }}</td>
+                                    </tr>
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     </tbody>
@@ -89,24 +96,29 @@
                     <thead>
                     <tr>
                         <th class="th">Zboží</th>
-                        <th class="th text-center">Množství kg</th>
-                        <th class="th text-center">Vakuově zabalit</th>
-                        <th class="th text-center">Nakrájet</th>
-                        <th class="th text-center">Cena Kč/kg</th>
-                        <th class="th text-end">Orientační cena</th>
+                        <th class="th text-center">Kg</th>
+                        <th class="th text-center">Kč/kg</th>
+                        <th class="th text-end">Celkem</th>
                     </tr>
                     </thead>
                     <tbody>
                         {% for item in cart.items %}
                             {% if not item.product.isTurkey %}
                                 <tr>
-                                    <td class="td">{{ item.product.title }}</td>
+                                    <td class="td">
+                                        <strong>{{ item.product.title }}</strong>
+                                        {% if item.pack %}<br>+ Vakuovat (+{{ item.product.packPrice }} kč){% endif %}
+                                        {% if item.slice %}<br>+ Nakrájet{% endif %}
+                                    </td>
                                     <td class="td text-center">{{ item.quantity }} Kg</td>
-                                    <td class="td text-center">{% if item.pack %}Ano (+{{ item.product.packPrice }} kč){% else %}-{% endif %}</td>
-                                    <td class="td text-center">{% if item.slice %}Ano{% else %}-{% endif %}</td>
-                                    <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg</td>
-                                    <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
+                                    <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del><br>{% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg</td>
+                                    <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
                                 </tr>
+                                {% if item.note %}
+                                    <tr>
+                                        <td colspan="4" class="td td-note">Poznámka: {{ item.note }}</td>
+                                    </tr>
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     </tbody>
