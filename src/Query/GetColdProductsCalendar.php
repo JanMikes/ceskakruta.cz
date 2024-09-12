@@ -28,7 +28,7 @@ final class GetColdProductsCalendar
             $currentWeek = $this->calendar->getCurrentWeek();
 
             $rows = $this->connection
-                ->executeQuery('SELECT * FROM calendar_cold WHERE active_flag = 1 AND del_flag = 0 AND week_number >= :week AND year >= :year ORDER BY year, week_number', [
+                ->executeQuery('SELECT * FROM calendar_cold WHERE active_flag = 1 AND del_flag = 0 AND ((week_number >= :week AND year = :year) OR year > :year) ORDER BY year, week_number', [
                     'year' => $currentWeek->year,
                     'week' => $currentWeek->number,
                 ])

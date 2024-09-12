@@ -27,7 +27,7 @@ final class GetAliveCalendar
             $week = $now->format('W');
 
             $rows = $this->connection
-                ->executeQuery('SELECT * FROM calendar_dead WHERE active_flag = 1 AND del_flag = 0 AND week_number >= :week AND year >= :year ORDER BY year, week_number', [
+                ->executeQuery('SELECT * FROM calendar_dead WHERE active_flag = 1 AND del_flag = 0 AND ((week_number >= :week AND year = :year) OR year > :year) ORDER BY year, week_number', [
                     'year' => $year,
                     'week' => $week,
                 ])
