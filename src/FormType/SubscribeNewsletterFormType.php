@@ -22,7 +22,7 @@ final class SubscribeNewsletterFormType extends AbstractType
 
         $builder->add('agreement', CheckboxType::class, [
             'required' => true,
-            'label' => 'Souhlasím se zpracováním osobních údajů a zasíláním novinek',
+            'label' => false,
             'mapped' => false,
         ]);
     }

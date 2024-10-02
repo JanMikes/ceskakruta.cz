@@ -26,29 +26,11 @@
         {{ encore_entry_link_tags('app') }}
         {{ encore_entry_script_tags('app') }}
 
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-P82V1HXZ5H"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){ dataLayer.push(arguments); }
-            gtag('js', new Date());
-
-            gtag('config', 'G-P82V1HXZ5H');
-        </script>
-
-        <script>
-            !function(f,b,e,v,n,t,s)
-            { if(f.fbq)return;n=f.fbq=function(){ n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments) };
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window,document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '1628425517696131');
-            fbq('track', 'PageView');
-        </script>
     </head>
-    <body data-controller="datepicker">
+    <body data-controller="datepicker cookie-panel"
+          data-cookie-panel-google-tag-id-value="G-P82V1HXZ5H"
+          data-cookie-panel-facebook-pixel-id-value="1628425517696131"
+    >
         <header class="shadow-sm fixed-top">
             <div class="topbar topbar-light bg-primary">
                 <div class="container">
@@ -149,6 +131,7 @@
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'sales_places' ? 'active' }}"><a class="widget-list-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') in ['actuality', 'actuality_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('actuality') }}">Aktuality</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') in ['recipes', 'recipe_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('recipes') }}">Recepty</a></li>
+                                        <li class="widget-list-item"><a href="#" class="widget-list-link" data-action="cookie-panel#reopen">Změnit cookies nastavení</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -173,7 +156,10 @@
                                 </div>
 
                                 <div class="mt-2 text-light">
-                                    {{ form_row(newsletter_form.agreement) }}
+                                    {{ form_row(newsletter_form.agreement, {
+                                        'label': 'Souhlasím se zpracováním <a href="' ~ path('gdpr') ~ '" target="_blank">osobních údajů</a> a zasíláním novinek',
+                                        'label_html': true
+                                    }) }}
                                 </div>
 
                                 {{ form_end(newsletter_form) }}
@@ -188,5 +174,11 @@
                 </div>
             </div>
         </footer>
+
+        <div data-cookie-panel-target="panel" class="cookie-panel hidden">
+            <p>Souhlasíte s použitím cookies pro účely zlepšování vaší uživatelské zkušenosti?</p>
+            <button data-action="cookie-panel#accept" class="btn btn-primary me-2">Souhlasím</button>
+            <button data-action="cookie-panel#reject" class="btn btn-sm btn-dark">Ne, děkuji</button>
+        </div>
     </body>
 </html>
