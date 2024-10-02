@@ -123,14 +123,15 @@
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'about_us' ? 'active' }}"><a class="widget-list-link" href="{{ path('about_us') }}">O nás</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'products' ? 'active' }}"><a class="widget-list-link" href="{{ path('products') }}">Naše nabídka</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'delivery_info' ? 'active' }}"><a class="widget-list-link" href="{{ path('delivery_info') }}">Rozvoz</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'contact' ? 'active' }}"><a class="widget-list-link" href="{{ path('contact') }}">Kontakty</a></li>
                                     </ul>
                                 </div>
                                 <div class="col-6">
                                     <ul class="widget-list">
-                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'contact' ? 'active' }}"><a class="widget-list-link" href="{{ path('contact') }}">Kontakty</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'sales_places' ? 'active' }}"><a class="widget-list-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') in ['actuality', 'actuality_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('actuality') }}">Aktuality</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') in ['recipes', 'recipe_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('recipes') }}">Recepty</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'gdpr' ? 'active' }}"><a class="widget-list-link" href="{{ path('gdpr') }}">Ochrana osobních údajů</a></li>
                                         <li class="widget-list-item"><a href="#" class="widget-list-link" data-action="cookie-panel#reopen">Změnit cookies nastavení</a></li>
                                     </ul>
                                 </div>
