@@ -46,7 +46,7 @@ final class OrderFormType extends AbstractType
 
         $builder->add('termsAgreement', CheckboxType::class, [
             'required' => true,
-            'label' => 'Souhlasím se zpracováním osobních údajů pro účely objednávky',
+            'label' => false,
             'mapped' => false,
         ]);
 
