@@ -17,52 +17,44 @@
             Datum: <strong>{{ cart.date|dayOfWeek }} - {{ cart.date.format('d.m.Y') }}</strong>
         </h3>
 
-        <table cellspacing="0" cellpadding="0" class="table-borderless">
-            <tr>
-                <th class="th-backgroundless">Jméno a příjmení:</th>
-                <td class="td">{{ cart.orderData.name }}</td>
-            </tr>
+        <p>
+            <strong>Jméno a příjmení:</strong>
+            {{ cart.orderData.name }}<br>
 
-            <tr>
-                <th class="th-backgroundless">E-mail:</th>
-                <td class="td">{{ cart.orderData.email }}</td>
-            </tr>
+            <strong>E-mail:</strong>
+            {{ cart.orderData.email }}<br>
 
-            <tr>
-                <th class="th-backgroundless">Telefon:</th>
-                <td class="td">{{ cart.orderData.phone }}</td>
-            </tr>
+            <strong>Telefon:</strong>
+            {{ cart.orderData.phone }}<br>
 
-            <tr>
-                <th class="th-backgroundless">Poznámka:</th>
-                <td class="td">{{ cart.orderData.note ?: '-' }}</td>
-            </tr>
-        </table>
+            <strong>Poznámka:</strong>
+            {{ cart.orderData.note ?: '-' }}
+        </p>
 
         {% if cart.containsTurkey %}
-            <table cellspacing="0" cellpadding="0" class="table">
+            <table cellspacing="0" cellpadding="0" class="table condensed">
                 <thead>
-                    <tr>
-                        <th class="th">Zboží</th>
-                        <th class="th text-center">Ks</th>
-                        <th class="th text-center">Váha 1 ks</th>
-                        <th class="th text-center">Kč/ks</th>
-                        <th class="th text-end">Celkam</th>
+                    <tr class="tr">
+                        <th class="th condensed">Zboží</th>
+                        <th class="th condensed text-center">Ks</th>
+                        <th class="th condensed text-center">Váha 1 ks</th>
+                        <th class="th condensed text-center">Kč/ks</th>
+                        <th class="th condensed text-end">Celkam</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in cart.items %}
                         {% if item.product.isTurkey %}
-                            <tr>
-                                <td class="td td-text-bigger"><strong>{{ item.product.title }}</strong></td>
-                                <td class="td text-center td-text-bigger">{{ item.quantity }} ks</td>
-                                <td class="td text-center">{{ item.product.weightFrom }} až {{ item.product.weightTo }}kg</td>
-                                <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks</td>
-                                <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
+                            <tr class="tr condensed">
+                                <td class="td condensed td-text-bigger"><strong>{{ item.product.title }}</strong></td>
+                                <td class="td condensed text-center td-text-bigger">{{ item.quantity }} ks</td>
+                                <td class="td condensed text-center">{{ item.product.weightFrom }} až {{ item.product.weightTo }}kg</td>
+                                <td class="td condensed text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/ks</td>
+                                <td class="td condensed text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
                             </tr>
                             {% if item.note %}
-                                <tr>
-                                    <td colspan="5" class="td td-note td-text-bigger"><strong>Poznámka: {{ item.note }}</strong></td>
+                                <tr class="tr condensed">
+                                    <td colspan="5" class="td condensed td-note td-text-bigger"><strong>{{ item.note }}</strong></td>
                                 </tr>
                             {% endif %}
                         {% endif %}
@@ -72,31 +64,31 @@
         {% endif %}
 
         {% if cart.containsNonTurkey %}
-            <table cellspacing="0" cellpadding="0" class="table">
+            <table cellspacing="0" cellpadding="0" class="table condensed">
                 <thead>
-                <tr>
-                    <th class="th">Zboží</th>
-                    <th class="th text-center">Kg</th>
-                    <th class="th text-center">Vakuovat</th>
-                    <th class="th text-center">Nakrájet</th>
-                    <th class="th text-center">Kč/kg</th>
-                    <th class="th text-end">Celkem</th>
+                <tr class="tr condensed">
+                    <th class="th condensed">Zboží</th>
+                    <th class="th condensed text-center">Kg</th>
+                    <th class="th condensed text-center">Vakuovat</th>
+                    <th class="th condensed text-center">Nakrájet</th>
+                    <th class="th condensed text-center">Kč/kg</th>
+                    <th class="th condensed text-end">Celkem</th>
                 </tr>
                 </thead>
                 <tbody>
                     {% for item in cart.items %}
                         {% if not item.product.isTurkey %}
-                            <tr>
-                                <td class="td td-text-bigger"><strong>{{ item.product.title }}</strong></td>
-                                <td class="td td-text-bigger text-center">{{ item.quantity }} Kg</td>
-                                <td class="td td-text-bigger text-center">{% if item.pack %}Ano (+{{ item.product.packPrice }} kč){% else %}-{% endif %}</td>
-                                <td class="td td-text-bigger text-center">{% if item.slice %}Ano{% else %}-{% endif %}</td>
-                                <td class="td text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg</td>
-                                <td class="td text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
+                            <tr class="tr condensed">
+                                <td class="td condensed td-text-bigger"><strong>{{ item.product.title }}</strong></td>
+                                <td class="td condensed td-text-bigger text-center">{{ item.quantity }} Kg</td>
+                                <td class="td condensed td-text-bigger text-center">{% if item.pack %}Ano (+{{ item.product.packPrice }} kč){% else %}-{% endif %}</td>
+                                <td class="td condensed td-text-bigger text-center">{% if item.slice %}Ano{% else %}-{% endif %}</td>
+                                <td class="td condensed text-center">{% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg</td>
+                                <td class="td condensed text-end">{% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}<strong>{{ item.price(cart.coupon)|price|raw }} Kč</strong></td>
                             </tr>
                             {% if item.note %}
-                                <tr>
-                                    <td colspan="6" class="td td-text-bigger td-note"><strong>Poznámka: {{ item.note }}</strong></td>
+                                <tr class="tr condensed">
+                                    <td colspan="6" class="td condensed td-text-bigger td-note"><strong>{{ item.note }}</strong></td>
                                 </tr>
                             {% endif %}
                         {% endif %}

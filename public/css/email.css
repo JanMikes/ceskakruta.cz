@@ -54,11 +54,17 @@ hr {
     mso-table-rspace: 0pt;
 }
 
+.condensed {
+    line-height: 1;
+    mso-line-height-rule: exactly;
+    margin: 0;
+}
+
 .th {
     font-weight: bold;
     font-size: 14px;
     text-align: left;
-    padding: 4px;
+    padding: 3px;
     background: #e6e6e6;
 }
 
@@ -66,13 +72,13 @@ hr {
     font-weight: bold;
     font-size: 14px;
     text-align: left;
-    padding: 4px;
+    padding: 3px;
     width: 160px;
 }
 
 .td {
     font-size: 13px;
-    padding: 4px;
+    padding: 3px;
 }
 
 .td-text-bigger {
@@ -81,6 +87,11 @@ hr {
 
 .odd {
     background: #f3f3f3;
+}
+
+.tr {
+    margin: 0;
+    padding: 0;
 }
 
 .spamWarning {
