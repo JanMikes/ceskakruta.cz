@@ -28,7 +28,7 @@
                 <tr>
                     <th style="max-width: 100px;">Doručovací adresa:</th>
                     <td>
-                        {{ app.user.deliveryStreet }}, {{ app.user.deliveryCity }} {{ app.user.deliveryZip }}
+                        {{ app.user.deliveryStreet }}{% if app.user.deliveryStreet %},{% endif %} {{ app.user.deliveryCity }} {{ app.user.deliveryZip }}
                     </td>
                 </tr>
                 <tr>

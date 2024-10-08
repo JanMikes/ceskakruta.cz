@@ -47,7 +47,8 @@ final class RegistrationController extends AbstractController
                     ),
                 );
 
-                // Redirect to some route, e.g., the homepage
+                $this->addFlash('success', 'Úspěšně jste se zaregistrovali a rovnou jsme vás přihlásili. Přejeme příjemné nakupování! <a href="' . $this->generateUrl("products") . '">Pokračovat k naší nabídce</a>.');
+
                 return $this->redirectToRoute('user_my_account');
             } catch (HandlerFailedException $failedException) {
                 $realException = $failedException->getPrevious();
