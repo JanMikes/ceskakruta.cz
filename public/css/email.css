@@ -149,3 +149,8 @@ h1.newsletter {
     padding-bottom: 8px;
     border-bottom: 1px solid #bbb;
 }
+
+.td-no-note {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #bbb;
+}
