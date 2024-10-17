@@ -13,7 +13,7 @@
   RewriteRule ^(.*)$ https://ceskakruta.cz/$1 [R,L]
 
   # Redirect /admin/* to old.ceskakruta.cz/admin/*
-  RewriteCond %{REQUEST_URI} ^/admin(/.*)$ [NC]
+  RewriteCond %{REQUEST_URI} ^/admin(/.*)?$ [NC]
   RewriteRule ^(.*)$ https://old.ceskakruta.cz/$1 [R=301,L]
 
   # Front controller
