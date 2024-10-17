@@ -27,7 +27,7 @@
             </div>
 
             {{ form_row(form.termsAgreement, {
-                'label': 'Souhlasím se zpracováním <a href="' ~ path('gdpr') ~ '" target="_blank">osobních údajů</a> pro účely objednávky',
+                'label': 'Souhlasím s <a href="' ~ path('trade_terms') ~ '" target="_blank">obchodními podmínkami</a> a se zpracováním <a href="' ~ path('gdpr') ~ '" target="_blank">osobních údajů</a> pro účely objednávky',
                 'label_html': true
             }) }}
             {{ form_errors(form.termsAgreement) }}

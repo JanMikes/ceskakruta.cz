@@ -131,6 +131,7 @@
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'sales_places' ? 'active' }}"><a class="widget-list-link" href="{{ path('sales_places') }}">Naše prodejny</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') in ['actuality', 'actuality_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('actuality') }}">Aktuality</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') in ['recipes', 'recipe_detail'] ? 'active' }}"><a class="widget-list-link" href="{{ path('recipes') }}">Recepty</a></li>
+                                        <li class="widget-list-item {{ app.request.attributes.get('_route') == 'trade_terms' ? 'active' }}"><a class="widget-list-link" href="{{ path('trade_terms') }}">Obchodní podmínky</a></li>
                                         <li class="widget-list-item {{ app.request.attributes.get('_route') == 'gdpr' ? 'active' }}"><a class="widget-list-link" href="{{ path('gdpr') }}">Ochrana osobních údajů</a></li>
                                         <li class="widget-list-item"><a href="#" class="widget-list-link" data-action="cookie-panel#reopen">Změnit cookies nastavení</a></li>
                                     </ul>
