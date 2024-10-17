@@ -355,6 +355,14 @@ readonly final class CartService
             7 => $place->day7AllowedDaysBefore,
         ];
 
+        if ($placeId === 1 && $date->format('Y-m-d') === '2024-12-22') {
+            $allowDaysBefore[7] = 3;
+        }
+
+        if ($placeId === 1 && $date->format('Y-m-d') === '2024-12-23') {
+            $allowDaysBefore[1] = 4;
+        }
+
         $postalCode = $this->getDeliveryAddress()?->postalCode;
 
         if ($postalCode !== null && $placeId === $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID) {
