@@ -5,33 +5,7 @@
         <p>Naše produkty Vám také zavezeme až k Vám domů. Rozvážíme do většiny míst ČR naším rozvozem nebo přes společnost Coolbalík. Cena rozvozu je 195 Kč + 35 Kč balné.</p>
         <p>Zadejte Vaši adresu a my najdeme optimální doručení dle našich možností:</p>
 
-        {{ form_start(delivery_form) }}
-            <div class="row row-delivery-inputs g-2">
-                <div class="col-6">
-                    <div class="form-floating mb-2">
-                        {{ form_widget(delivery_form.street, {'attr': {'class': 'form-control', 'placeholder': 'Ulice s č.p.'}}) }}
-                        {{ form_label(delivery_form.street, 'Ulice s č.p.', {'label_attr': {'for': 'fl-text'}}) }}
-                    </div>
-                </div>
-
-                <div class="col-6">
-                    <div class="form-floating mb-2">
-                        {{ form_widget(delivery_form.city, {'attr': {'class': 'form-control', 'placeholder': 'Město'}}) }}
-                        {{ form_label(delivery_form.city, 'Město', {'label_attr': {'for': 'fl-text'}}) }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="clearfix mt-1">
-                <div class="float-start form-floating mb-3 me-3" style="max-width: 120px;">
-                    {{ form_widget(delivery_form.postalCode, {'attr': {'class': 'form-control', 'placeholder': 'PSČ'}}) }}
-                    {{ form_label(delivery_form.postalCode, 'PSČ', {'label_attr': {'for': 'fl-text'}}) }}
-                </div>
-
-                <button class="btn btn-primary btn-lg" type="submit"><i class="ci-delivery me-1"></i> Uložit</button>
-            </div>
-
-        {{ form_end(delivery_form) }}
+        <twig:DeliveryForm />
 
         <p class=" mt-3">Minimální částka objednávky pro rozvoz je {{ cart.deliveryMinimalPrice }} kč, v případě rozvozu přes Coolbalík musíme všechny produkty zabalit do vakuového balení.</p>
         <p>V případě našeho rozvozu při objednávce nad 5000 Kč je rozvoz zdarma. V případě rozvozu Coolbalík Vám tuto službu vzhledem k vysoké ceně, která dále roste s váhou zásilky nedokážeme nabídnout.</p>

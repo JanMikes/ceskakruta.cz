@@ -19,16 +19,19 @@ final class DeliveryFormType extends AbstractType
         $builder->add('street', TextType::class, [
             'label' => 'Ulice',
             'required' => true,
+            'empty_data' => '',
         ]);
 
         $builder->add('city', TextType::class, [
             'label' => 'Město',
             'required' => true,
+            'empty_data' => '',
         ]);
 
         $builder->add('postalCode', TextType::class, [
             'label' => 'PSČ',
             'required' => true,
+            'empty_data' => '',
         ]);
     }
 

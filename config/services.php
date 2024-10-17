@@ -35,6 +35,9 @@ return static function(ContainerConfigurator $configurator): void
     $services->load('CeskaKruta\\Web\\Services\\', __DIR__ . '/../src/Services/**/{*.php}');
     $services->load('CeskaKruta\\Web\\Query\\', __DIR__ . '/../src/Query/**/{*.php}');
 
+    // Components
+    $services->load('CeskaKruta\\Web\\Components\\', __DIR__ . '/../src/Components/**/{*.php}');
+
     $services->set(CartStorage::class);
 
     $services->set(PasswordHasher::class)

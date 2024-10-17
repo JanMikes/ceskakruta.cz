@@ -1,0 +1,84 @@
+<div {{ attributes }}>
+    {{ form_start(form, {
+        attr: {
+            'data-action': 'live#action:prevent',
+            'data-live-action-param': 'handleSubmit',
+        }
+    }) }}
+
+    {% if isOrder %}
+        {% if error %}
+            <div class="alert small alert-danger mb-2">
+                <div>{{ error }}</div>
+            </div>
+        {% endif %}
+
+        <div style="max-width: 400px;">
+            {{ form_row(form.street) }}
+            {{ form_row(form.city) }}
+            {{ form_row(form.postalCode) }}
+        </div>
+
+        <button class="btn btn-primary" type="submit">Potvrdit</button>
+
+    {% else %}
+
+        <div class="row row-delivery-inputs g-2">
+            <div class="col-6">
+                <div class="form-floating mb-2">
+                    {% if error %}
+                        <div class="alert small alert-danger mb-2">
+                            <div>{{ error }}</div>
+                        </div>
+                    {% endif %}
+
+                    {{ form_widget(form.street, {
+                        'attr': {
+                            'class': 'form-control ' ~ (form.street.vars.errors|length > 0 ? 'is-invalid'),
+                            'placeholder': 'Ulice s č.p.',
+                        }
+                    }) }}
+                    {{ form_label(form.street, 'Ulice s č.p.', {'label_attr': {'for': 'fl-text'}}) }}
+                    {% for error in form.street.vars.errors %}
+                        <div class="invalid-feedback d-block">{{ error.message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="form-floating mb-2">
+                    {{ form_widget(form.city, {
+                        'attr': {
+                            'class': 'form-control ' ~ (form.city.vars.errors|length > 0 ? 'is-invalid'),
+                            'placeholder': 'Město'
+                        }
+                    }) }}
+                    {{ form_label(form.city, 'Město', {'label_attr': {'for': 'fl-text'}}) }}
+                    {% for error in form.city.vars.errors %}
+                        <div class="invalid-feedback d-block">{{ error.message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix mt-1">
+            <div class="float-start form-floating mb-3 me-3" style="max-width: 200px;">
+                {{ form_widget(form.postalCode, {
+                    'attr': {
+                        'class': 'form-control ' ~ (form.postalCode.vars.errors|length > 0 ? 'is-invalid' : ''),
+                        'placeholder': 'PSČ'
+                    }
+                }) }}
+                {{ form_label(form.postalCode, 'PSČ', {'label_attr': {'for': 'fl-text'}}) }}
+                {% for error in form.postalCode.vars.errors %}
+                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-primary btn-lg" type="submit"><i class="ci-delivery me-1"></i> Uložit</button>
+        </div>
+
+    {% endif %}
+
+    {{ form_end(form) }}
+</div>

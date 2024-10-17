@@ -49,7 +49,6 @@ final class CeskaKrutaDelivery
         $this->mapping[73945] = [1];
         $this->mapping[73945] = [1];
         $this->mapping[73942] = [3];
-        $this->mapping[73951] = [1, 3];
         $this->mapping[73801] = [1, 3];
         $this->mapping[73801] = [1, 3];
         $this->mapping[73942] = [1, 3];
@@ -60,7 +59,6 @@ final class CeskaKrutaDelivery
         $this->mapping[73911] = [3];
         $this->mapping[73911] = [3];
         $this->mapping[73911] = [3];
-        $this->mapping[73953] = [1, 3];
         $this->mapping[73951] = [3];
         $this->mapping[73991] = [1];
         $this->mapping[73953] = [3];
@@ -77,7 +75,7 @@ final class CeskaKrutaDelivery
         $this->mapping[73911] = [3];
         $this->mapping[73936] = [1];
         $this->mapping[73601] = [1, 3];
-        $this->mapping[73953] = [1,3];
+        $this->mapping[73953] = [3];
         $this->mapping[73981] = [1,3];
         $this->mapping[73947] = [1];
         $this->mapping[73947] = [1];
@@ -93,8 +91,9 @@ final class CeskaKrutaDelivery
         $this->mapping[73991] = [1,3];
         $this->mapping[73998] = [1,3];
         $this->mapping[73992] = [1,3];
-        $this->mapping[73951] = [1,3];
-        $this->mapping[73951] = [1,3];
+        $this->mapping[73951] = [3];
+        $this->mapping[73951] = [3];
+        $this->mapping[73952] = [3];
         $this->mapping[73995] = [1,3];
         $this->mapping[73912] = [2,5];
         $this->mapping[73914] = [2,5];
@@ -103,7 +102,7 @@ final class CeskaKrutaDelivery
         $this->mapping[73941] = [1,3];
         $this->mapping[73921] = [3];
         $this->mapping[73921] = [3];
-        $this->mapping[73951] = [1,3];
+        $this->mapping[73951] = [3];
         $this->mapping[73991] = [1,3];
         $this->mapping[73991] = [1,3];
         $this->mapping[73984] = [1,3];
@@ -124,7 +123,7 @@ final class CeskaKrutaDelivery
         $this->mapping[73801] = [1,3];
         $this->mapping[73959] = [1,3];
         $this->mapping[73925] = [1,3];
-        $this->mapping[73953] = [1,3];
+        $this->mapping[73953] = [3];
         $this->mapping[73961] = [1,3];
         $this->mapping[73955] = [1,3];
         $this->mapping[73961] = [1,3];
@@ -142,8 +141,8 @@ final class CeskaKrutaDelivery
         $this->mapping[73961] = [1,3];
         $this->mapping[73994] = [1,3];
         $this->mapping[73995] = [1,3];
-        $this->mapping[73951] = [1,3];
-        $this->mapping[73951] = [1,3];
+        $this->mapping[73951] = [3];
+        $this->mapping[73951] = [3];
         $this->mapping[73925] = [1,3];
         $this->mapping[73937] = [1,3];
         $this->mapping[73543] = [1];

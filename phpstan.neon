@@ -15,3 +15,7 @@ parameters:
     symfony:
         container_xml_path: var/cache/dev/CeskaKruta_Web_CeskaKrutaKernelDevDebugContainer.xml
     checkUninitializedProperties: true
+    ignoreErrors:
+        -
+            message: '#has no return type specified#'
+            path: src/Components/*

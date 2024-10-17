@@ -22,15 +22,7 @@
                         Minimální částka objednávky pro rozvoz je {{ cart.deliveryMinimalPrice }} kč, v případě rozvozu přes Coolbalík musíme všechny produkty zabalit do vakuového balení.
                     </div>
 
-                    {{ form_start(delivery_form) }}
-                    <div style="max-width: 400px;">
-                        {{ form_row(delivery_form.street) }}
-                        {{ form_row(delivery_form.city) }}
-                        {{ form_row(delivery_form.postalCode) }}
-                    </div>
-
-                    <button class="btn btn-primary" type="submit">Potvrdit</button>
-                    {{ form_end(delivery_form) }}
+                    <twig:DeliveryForm isOrder="true" />
                 </div>
             </div>
         </div>

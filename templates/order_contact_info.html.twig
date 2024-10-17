@@ -22,52 +22,7 @@
             </div>
         {% endif %}
 
-        <div class="card shadow mx-auto my-3" style="max-width: 600px;">
-            <div class="card-body">
-                {{ form_start(orderForm) }}
-
-                <div class="form-floating mb-2">
-                    {{ form_widget(orderForm.name, {'attr': {'class': 'form-control', 'placeholder': 'Jméno a příjmení'}}) }}
-                    {{ form_label(orderForm.name, 'Jméno a příjmení', {'label_attr': {'for': 'fl-text'}}) }}
-                </div>
-
-                <div class="form-floating mb-2">
-                    {{ form_widget(orderForm.email, {'attr': {'class': 'form-control', 'placeholder': 'E-mail'}}) }}
-                    {{ form_label(orderForm.email, 'E-mail', {'label_attr': {'for': 'fl-text'}}) }}
-                </div>
-
-                <div class="form-floating mb-2">
-                    {{ form_widget(orderForm.phone, {'attr': {'class': 'form-control', 'placeholder': 'Telefon'}}) }}
-                    {{ form_label(orderForm.phone, 'Telefon', {'label_attr': {'for': 'fl-text'}}) }}
-                </div>
-
-                <div class="form-floating mb-3">
-                    {{ form_widget(orderForm.note, {'attr': {'class': 'form-control', 'placeholder': 'Poznámka', 'style': 'height: 80px;'}}) }}
-                    {{ form_label(orderForm.note, 'Poznámka', {'label_attr': {'for': 'fl-text'}}) }}
-                </div>
-
-                {{ form_row(orderForm.termsAgreement, {
-                    'label': 'Souhlasím se zpracováním <a href="' ~ path('gdpr') ~ '" target="_blank">osobních údajů</a> pro účely objednávky',
-                    'label_html': true
-                }) }}
-
-                {{ form_row(orderForm.payByCard) }}
-                {{ form_row(orderForm.subscribeToNewsletter) }}
-
-                {% if cart.itemsCount > 0 and cart.date and cart.place %}
-                    {% if cart.minimalPriceMet %}
-                        <button class="btn btn-primary btn-shadow d-block w-100 mt-4 btn-lg" type="submit">Rekapitulace</button>
-                    {% else %}
-                        <small class="text-primary">Pro dokončení objednávky není splněna minimální potřebná hodnota objednávky.</small>
-
-                        <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
-                    {% endif %}
-                {% else %}
-                    <button class="btn btn-outline-primary btn-shadow d-block w-100 mt-4" type="submit">Uložit údaje</button>
-                {% endif %}
-                {{ form_end(orderForm) }}
-            </div>
-        </div>
+        <twig:OrderForm />
 
         <div class="text-center mt-3">
             <a class="btn btn-outline-secondary m-1" href="{{ path('order_available_dates') }}"><i class="ci-arrow-left me1"></i> Zpět na výběr data</a>

@@ -22,16 +22,19 @@ final class OrderFormType extends AbstractType
         $builder->add('name', TextType::class, [
             'label' => 'Jméno a příjmení',
             'required' => true,
+            'empty_data' => '',
         ]);
 
         $builder->add('email', EmailType::class, [
             'label' => 'E-mail',
             'required' => true,
+            'empty_data' => '',
         ]);
 
         $builder->add('phone', TextType::class, [
             'label' => 'Telefon',
             'required' => true,
+            'empty_data' => '',
         ]);
 
         $builder->add('note', TextareaType::class, [
