@@ -1,7 +1,12 @@
 <div {{ attributes }}>
     <div class="card shadow mx-auto my-3" style="max-width: 600px;">
         <div class="card-body">
-            {{ form_start(form) }}
+            {{ form_start(form, {
+                attr: {
+                    'data-action': 'live#action:prevent',
+                    'data-live-action-param': 'handleSubmit',
+                }
+            }) }}
 
             <div class="form-floating">
                 {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Jméno a příjmení'}}) }}
