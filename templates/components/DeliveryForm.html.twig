@@ -9,7 +9,7 @@
     {% if isOrder %}
         {% if error %}
             <div class="alert small alert-danger mb-2">
-                <div>{{ error }}</div>
+                <div>{{ error|raw }}</div>
             </div>
         {% endif %}
 
@@ -28,7 +28,7 @@
                 <div class="form-floating mb-2">
                     {% if error %}
                         <div class="alert small alert-danger mb-2">
-                            <div>{{ error }}</div>
+                            <div>{{ error|raw }}</div>
                         </div>
                     {% endif %}
 

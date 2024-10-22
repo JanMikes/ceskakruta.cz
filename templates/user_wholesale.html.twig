@@ -32,10 +32,12 @@
                                             <input type="radio" class="form-check-input" id="product-{{ product.id }}-no" name="amount[{{ product.id }}]" checked>
                                             <label for="product-{{ product.id }}-no" class="form-option-label">Ne</label>
                                         </div>
-                                        <div class="form-check form-option form-check-inline mb-2">
-                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-500" name="amount[{{ product.id }}]">
-                                            <label for="product-{{ product.id }}-500" class="form-option-label">500g</label>
-                                        </div>
+                                        {% if product.id != 5 %}
+                                            <div class="form-check form-option form-check-inline mb-2">
+                                                <input type="radio" class="form-check-input" id="product-{{ product.id }}-500" name="amount[{{ product.id }}]">
+                                                <label for="product-{{ product.id }}-500" class="form-option-label">500g</label>
+                                            </div>
+                                        {% endif %}
                                         <div class="form-check form-option form-check-inline mb-2">
                                             <input type="radio" class="form-check-input" id="product-{{ product.id }}-1" name="amount[{{ product.id }}]">
                                             <label for="product-{{ product.id }}-1" class="form-option-label">1kg</label>
