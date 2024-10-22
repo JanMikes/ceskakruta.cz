@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Velkoobchod{% endblock %}
+
+{% block content %}
+    <section class="content-section">
+        <h1>Velkoobchod</h1>
+
+        {{ include('_my_account_panel.html.twig') }}
+
+        <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-compare"></i> Zopakovat objednávku z minula</a>
+        <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání (nyní: 1x týdně)</a>
+
+        <div class="card my-3">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="wholesable-table table m-0">
+                        {% for product in products %}
+                            <tr>
+                                <td style="width: 80px;" class="p-1">
+                                    {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
+                                        <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 50px;" alt="Product">
+                                    {% else %}
+                                        <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                                    {% endif %}
+                                </td>
+                                <td>{{ product.title }}</td>
+
+                                <td class="text-end">
+                                    {% if not product.turkeyType %}
+                                        <div class="form-check form-option form-check-inline mb-2">
+                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-no" name="amount[{{ product.id }}]" checked>
+                                            <label for="product-{{ product.id }}-no" class="form-option-label">Ne</label>
+                                        </div>
+                                        <div class="form-check form-option form-check-inline mb-2">
+                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-500" name="amount[{{ product.id }}]">
+                                            <label for="product-{{ product.id }}-500" class="form-option-label">500g</label>
+                                        </div>
+                                        <div class="form-check form-option form-check-inline mb-2">
+                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-1" name="amount[{{ product.id }}]">
+                                            <label for="product-{{ product.id }}-1" class="form-option-label">1kg</label>
+                                        </div>
+                                        <div class="form-check form-option form-check-inline mb-2">
+                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-2" name="amount[{{ product.id }}]">
+                                            <label for="product-{{ product.id }}-2" class="form-option-label">2kg</label>
+                                        </div>
+                                        <div class="form-check form-option form-check-inline mb-2">
+                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-5" name="amount[{{ product.id }}]">
+                                            <label for="product-{{ product.id }}-5" class="form-option-label">5kg</label>
+                                        </div>
+                                    {% else %}
+                                        <input type="text" class="form-control text-center me-1 form-control-sm d-inline-block" style="width: 40px;" value="0"> ks
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <a class="btn btn-sm btn-primary" href="#">Objednat jednorázově</a>
+        <a class="btn btn-sm btn-primary" href="#">Objednat pravidelně: 2x týdně</a>
+        <a class="btn btn-sm btn-primary" href="#">Objednat pravidelně: 1x týdně</a>
+        <a class="btn btn-sm btn-primary" href="#">Objednat pravidelně: 1x za 2 týdny</a>
+
+
+    </section>
+
+{% endblock %}

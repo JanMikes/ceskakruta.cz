@@ -57,6 +57,7 @@ readonly final class UserProvider implements UserProviderInterface
          *     invoicing_street: null|string,
          *     invoicing_city: null|string,
          *     invoicing_zip: null|string,
+         *     is_admin: bool,
          * } $data
          */
         $data = $this->connection
@@ -69,11 +70,17 @@ readonly final class UserProvider implements UserProviderInterface
             throw new UserNotRegistered();
         }
 
+        $roles = ['ROLE_USER'];
+
+        if ($data['is_admin']) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
         return new User(
             id: $data['id'],
             email: $data['email'],
             password: $data['password'],
-            roles: ['ROLE_USER'],
+            roles: $roles,
             name: $data['name'],
             preferredPlaceId: $data['preferred_place_id'],
             phone: $data['phone'],
