@@ -257,12 +257,14 @@ final class CeskaKrutaDelivery
         $this->mapping[74706] = [1];
         $this->mapping[74717] = [1];
         $this->mapping[74794] = [1];
+        $this->mapping[79401] = [1];
         $this->mapping[74794] = [1];
         $this->mapping[74722] = [1];
         $this->mapping[74722] = [1];
         $this->mapping[74756] = [1];
         $this->mapping[74755] = [1];
         $this->mapping[74792] = [1];
+        $this->mapping[79201] = [1];
         $this->mapping[74792] = [1];
         $this->mapping[74792] = [1];
         $this->mapping[74792] = [1];
