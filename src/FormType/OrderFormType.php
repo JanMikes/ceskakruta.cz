@@ -6,6 +6,7 @@ namespace CeskaKruta\Web\FormType;
 use CeskaKruta\Web\FormData\OrderFormData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -42,9 +43,15 @@ final class OrderFormType extends AbstractType
             'required' => false,
         ]);
 
-        $builder->add('payByCard', CheckboxType::class, [
+        $builder->add('payByCard', ChoiceType::class, [
+            'label' => 'Způsob platby při předávce',
+            'choices' => [
+                'Platba hotově' => '',
+                'Platba kartou' => true,
+            ],
+            'expanded' => true,
+            'multiple' => false,
             'required' => false,
-            'label' => 'Platba kartou při předávce',
         ]);
 
         $builder->add('termsAgreement', CheckboxType::class, [

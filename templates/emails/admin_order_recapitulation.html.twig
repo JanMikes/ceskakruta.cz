@@ -10,6 +10,14 @@
             <h3>
                 Rozvoz <small>({{ cart.place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}) na adresu:</small>
                 <br><strong>{{ cart.deliveryAddress.street }}, {{ cart.deliveryAddress.city }} {{ cart.deliveryAddress.postalCode }}</strong>
+                <br>
+                <small><strong>
+                    {% if cart.orderData.payByCard %}
+                        Platba kartou při předávce
+                    {% else %}
+                        Platba hotově při předávce
+                    {% endif %}
+                </strong></small>
             </h3>
         {% endif %}
 

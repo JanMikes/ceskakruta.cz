@@ -270,6 +270,7 @@ final class CartStorage
                 'email' => $orderData->email,
                 'phone' => $orderData->phone,
                 'note' => $orderData->note,
+                'payByCard' => $orderData->payByCard,
                 'subscribeToNewsletter' => $orderData->subscribeToNewsletter,
             ];
         }
@@ -287,6 +288,7 @@ final class CartStorage
          *     phone?: string,
          *     note?: string,
          *     subscribeToNewsletter?: bool,
+         *     payByCard?: bool,
          * } $data
          */
         $data = $this->requestStack->getSession()
@@ -298,6 +300,7 @@ final class CartStorage
             $orderData->email = $data['email'] ?? '';
             $orderData->phone = $data['phone'] ?? '';
             $orderData->note = $data['note'] ?? '';
+            $orderData->payByCard = $data['payByCard'] ?? false;
             $orderData->subscribeToNewsletter = $data['subscribeToNewsletter'] ?? false;
             return $orderData;
         }

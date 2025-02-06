@@ -35,6 +35,12 @@ readonly final class OrderService
 
             $deliveryAddress = $this->cartService->getDeliveryAddress();
 
+            $payByCard = false;
+
+            if ($deliveryAddress !== null) {
+                $payByCard = $orderData->payByCard;
+            }
+
             $now = new DateTimeImmutable();
 
             $this->connection->insert('`order`', [
@@ -44,7 +50,7 @@ readonly final class OrderService
                 'email'                 => $orderData->email,
                 'phone'                 => $orderData->phone,
                 'name'                  => $orderData->name,
-                'pay_by_card'           => $orderData->payByCard,
+                'pay_by_card'           => $payByCard,
                 'delivery_street'       => $deliveryAddress?->street,
                 'delivery_city'         => $deliveryAddress?->city,
                 'delivery_postal_code'  => $deliveryAddress?->postalCode,

@@ -24,13 +24,16 @@
     {% else %}
 
         <div class="row row-delivery-inputs g-2">
+            {% if error %}
+                <div class="col-12">
+                    <div class="alert small alert-danger mb-2">
+                        <div>{{ error|raw }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="col-6">
                 <div class="form-floating mb-2">
-                    {% if error %}
-                        <div class="alert small alert-danger mb-2">
-                            <div>{{ error|raw }}</div>
-                        </div>
-                    {% endif %}
 
                     {{ form_widget(form.street, {
                         'attr': {

@@ -8,8 +8,33 @@
 
         {{ include('_my_account_panel.html.twig') }}
 
+        {#}
         <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-compare"></i> Zopakovat objednávku z minula</a>
-        <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání (nyní: 1x týdně)</a>
+        #}
+
+        <a class="btn btn-sm btn-outline-secondary" href="#">Jednorázová objednávka</a>
+
+        <div class="row calendars-picking mt-2">
+            <div class="col-md-6 col-lg-4 mb-2">
+                <div class="calendar-wrapper shadow p-1">
+                    <table class="table table-borderless text-center mb-0">
+                        <thead>
+                        <tr>
+                            <th><a href="#">Po</a></th>
+                            <th><a href="#">Út</a></th>
+                            <th><a href="#">St</a></th>
+                            <th><a href="#" style="display: inline-block;border: 1px solid red;padding: 10px;">Čt</a></th>
+                            <th><a href="#">Pá</a></th>
+                            <th class="text-muted">So</th>
+                            <th class="text-muted">Ne</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na čt</a><br>
 
         <div class="card my-3">
             <div class="card-body p-0">
@@ -26,33 +51,14 @@
                                 </td>
                                 <td>{{ product.title }}</td>
 
-                                <td class="text-end">
-                                    {% if not product.turkeyType %}
-                                        <div class="form-check form-option form-check-inline mb-2">
-                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-no" name="amount[{{ product.id }}]" checked>
-                                            <label for="product-{{ product.id }}-no" class="form-option-label">Ne</label>
-                                        </div>
-                                        {% if product.id != 5 %}
-                                            <div class="form-check form-option form-check-inline mb-2">
-                                                <input type="radio" class="form-check-input" id="product-{{ product.id }}-500" name="amount[{{ product.id }}]">
-                                                <label for="product-{{ product.id }}-500" class="form-option-label">500g</label>
-                                            </div>
-                                        {% endif %}
-                                        <div class="form-check form-option form-check-inline mb-2">
-                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-1" name="amount[{{ product.id }}]">
-                                            <label for="product-{{ product.id }}-1" class="form-option-label">1kg</label>
-                                        </div>
-                                        <div class="form-check form-option form-check-inline mb-2">
-                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-2" name="amount[{{ product.id }}]">
-                                            <label for="product-{{ product.id }}-2" class="form-option-label">2kg</label>
-                                        </div>
-                                        <div class="form-check form-option form-check-inline mb-2">
-                                            <input type="radio" class="form-check-input" id="product-{{ product.id }}-5" name="amount[{{ product.id }}]">
-                                            <label for="product-{{ product.id }}-5" class="form-option-label">5kg</label>
-                                        </div>
-                                    {% else %}
-                                        <input type="text" class="form-control text-center me-1 form-control-sm d-inline-block" style="width: 40px;" value="0"> ks
-                                    {% endif %}
+                                <td class="text-end small">
+                                    500g: <input type="text" class="form-control text-center me-1 form-control-sm d-inline-block mb-1" style="width: 40px;" value="0"> balíčků<br>
+                                    1kg: <input type="text" class="form-control text-center me-1 form-control-sm d-inline-block mb-1" style="width: 40px;" value="0"> balíčků<br>
+                                    5kg: <input type="text" class="form-control text-center me-1 form-control-sm d-inline-block mb-1" style="width: 40px;" value="0"> balíčků<br>
+                                    Jiné: <input type="text" class="form-control text-center me-1 form-control-sm d-inline-block mb-1" style="width: 40px;" value="0"> kg<br>
+                                    Celkem: 0 kg
+
+
                                 </td>
                             </tr>
                         {% endfor %}
@@ -61,10 +67,9 @@
             </div>
         </div>
 
-        <a class="btn btn-sm btn-primary" href="#">Objednat jednorázově</a>
-        <a class="btn btn-sm btn-primary" href="#">Objednat pravidelně: 2x týdně</a>
-        <a class="btn btn-sm btn-primary" href="#">Objednat pravidelně: 1x týdně</a>
-        <a class="btn btn-sm btn-primary" href="#">Objednat pravidelně: 1x za 2 týdny</a>
+        <a class="btn btn-sm btn-primary" href="#">Uložit pravidelnou objednávku: Čtvrtek</a>
+
+        <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na čt</a><br>
 
 
     </section>

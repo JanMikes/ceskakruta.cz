@@ -37,7 +37,13 @@
             }) }}
             {{ form_errors(form.termsAgreement) }}
 
-            {{ form_row(form.payByCard) }}
+            {% if cart.pickupPlace %}
+                <input type="hidden" name="{{ form.payByCard.vars.full_name }}" value="">
+                {% do form.payByCard.setRendered() %}
+            {% else %}
+                {{ form_row(form.payByCard) }}
+            {% endif %}
+
             {{ form_row(form.subscribeToNewsletter) }}
 
             {% if cart.itemsCount > 0 and cart.date and cart.place %}

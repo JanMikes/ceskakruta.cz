@@ -99,6 +99,14 @@
                             {% endif %}
 
                             <h3 class="fw-normal mb-0">{{ cart.totalPrice.amount|price|raw }} <small>Kč</small></h3>
+
+                            {% if cart.deliveryPlace and cart.deliveryAddress %}
+                                {% if cart.orderData.payByCard %}
+                                    Platba kartou při předávce
+                                {% else %}
+                                    Platba hotově při předávce
+                                {% endif %}
+                            {% endif %}
                         </div>
 
                         <div class="mb-2 pb-3">
