@@ -146,7 +146,7 @@ readonly final class CartService
         return $items;
     }
 
-    public function totalPriceWithoutDiscount(): Price
+    public function totalItemsPriceWithoutDiscount(): Price
     {
         $totalPrice = new Price(0);
 
@@ -161,9 +161,19 @@ readonly final class CartService
             }
         }
 
+        return $totalPrice;
+    }
+
+    public function totalPriceWithoutDiscount(): Price
+    {
+        $totalPrice = $this->totalItemsPriceWithoutDiscount();
+
         if ($totalPrice->amount > 0 && $this->getDeliveryAddress() !== null && $this->getDeliveryPlace() !== null) {
-            $totalPrice = $totalPrice->add($this->getDeliveryPrice());
             $totalPrice = $totalPrice->add($this->getPackingPrice());
+
+            if ($this->isFreeDelivery() === false) {
+                $totalPrice = $totalPrice->add($this->getDeliveryPrice());
+            }
         }
 
         return $totalPrice;
@@ -184,15 +194,35 @@ readonly final class CartService
         }
 
         if ($totalPrice->amount > 0 && $this->getDeliveryAddress() !== null && $this->getDeliveryPlace() !== null) {
-            $totalPrice = $totalPrice->add($this->getDeliveryPrice());
             $totalPrice = $totalPrice->add($this->getPackingPrice());
+
+            if ($this->isFreeDelivery() === false) {
+                $totalPrice = $totalPrice->add($this->getDeliveryPrice());
+            }
         }
 
         return $totalPrice;
     }
 
+    public function isFreeDelivery(): bool
+    {
+        if ($this->getDeliveryAddress() === null || $this->getDeliveryPlace() === null) {
+            return true;
+        }
+
+        if ($this->getPlace()?->isOwnDelivery === false) {
+            return false;
+        }
+
+        return $this->totalItemsPriceWithoutDiscount()->amount > 5000;
+    }
+
     public function getDeliveryPrice(): int
     {
+        if ($this->isFreeDelivery()) {
+            return 0;
+        }
+
         return 195;
     }
 

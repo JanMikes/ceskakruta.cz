@@ -118,7 +118,7 @@
 
             {% if cart.deliveryPlace and cart.deliveryAddress %}
                 <p>
-                    Doprava: {{ cart.deliveryPrice }} Kč<br>
+                    Doprava: {{ cart.deliveryPrice }} Kč {% if cart.freeDelivery%}(zdarma nad 5000 Kč){% endif %}<br>
                     Balné: {{ cart.packingPrice }} Kč
                 </p>
             {% endif %}
