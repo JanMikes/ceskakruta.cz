@@ -10,7 +10,10 @@ export default class extends Controller {
 
     connect() {
         this.checkConsent();
-        document.addEventListener("turbo:load", () => this.checkConsent());
+        document.addEventListener("turbo:load", () => {
+            this.checkConsent();
+            this.loadRetargetingScript();
+        });
     }
 
     checkConsent() {
@@ -75,6 +78,23 @@ export default class extends Controller {
             `;
             document.head.appendChild(fbScript);
         }
+    }
+
+    loadRetargetingScript() {
+        const script = document.createElement('script');
+        script.src = "https://c.seznam.cz/js/rc.js";
+        script.async = true;
+        script.onload = () => {
+            const retargetingConsent = localStorage.getItem('trackingConsent');
+            var retargetingConf = {
+                rtgId: 1544216,
+                consent: retargetingConsent === 'accepted' ? 1 : (retargetingConsent === 'rejected' ? 0 : null)
+            };
+            if (window.rc && typeof window.rc.retargetingHit === 'function') {
+                window.rc.retargetingHit(retargetingConf);
+            }
+        };
+        document.head.appendChild(script);
     }
 
     isTrackingLoaded() {

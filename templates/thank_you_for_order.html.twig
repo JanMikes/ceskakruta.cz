@@ -35,9 +35,11 @@
         </div>
     </section>
 
-
-
     {% if last_order %}
+        <div
+            data-controller="conversion"
+            data-conversion-order-total-value="{{ last_order.priceTotal }}"></div>
+
         <script>
             fbq('track', 'Purchase', { value: {{ last_order.priceTotal }}, currency: 'CZK' });
         </script>
