@@ -6,7 +6,7 @@
 
         {% if is_granted('ROLE_ADMIN') %}
             <li>
-                <a  class="nav-link {{ app.request.pathInfo == path('user_wholesale') ? 'active' }}" href="{{ path('user_wholesale') }}">Velkoobchod</a>
+                <a  class="nav-link {{ app.request.pathInfo == path('user_recurring_order') ? 'active' }}" href="{{ path('user_recurring_order') }}">Velkoobchod</a>
             </li>
         {% endif %}
 

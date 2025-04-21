@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CeskaKruta\Web\Entity;
+
+use CeskaKruta\Web\Doctrine\PackagesAmountsDoctrineType;
+use CeskaKruta\Web\Value\PackageAmount;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Ramsey\Uuid\Doctrine\UuidType;
+use Ramsey\Uuid\UuidInterface;
+
+#[Entity]
+class RecurringOrderItem
+{
+    public function __construct(
+        #[Id]
+        #[Column(type: UuidType::NAME, unique: true)]
+        public UuidInterface $id,
+
+        #[ManyToOne(targetEntity: RecurringOrder::class, inversedBy: 'items')]
+        #[JoinColumn(nullable: false, onDelete: "CASCADE")]
+        readonly public RecurringOrder $order,
+
+        #[Column]
+        readonly public int $productId,
+
+        /** @var array<PackageAmount> */
+        #[Column(type: PackagesAmountsDoctrineType::NAME)]
+        public array $packages,
+
+        #[Column]
+        public float $otherPackageSizeAmount,
+    ) {
+        $order->addItem($this);
+    }
+
+    /** @param array<PackageAmount> $packages */
+    public function changeQuantities(array $packages, float $otherPackageSizeAmount): void
+    {
+        $this->packages = $packages;
+        $this->otherPackageSizeAmount = $otherPackageSizeAmount;
+    }
+}

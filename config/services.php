@@ -34,6 +34,7 @@ return static function(ContainerConfigurator $configurator): void
     // Services
     $services->load('CeskaKruta\\Web\\Services\\', __DIR__ . '/../src/Services/**/{*.php}');
     $services->load('CeskaKruta\\Web\\Query\\', __DIR__ . '/../src/Query/**/{*.php}');
+    $services->load('CeskaKruta\\Web\\Repository\\', __DIR__ . '/../src/Repository/**/{*.php}');
 
     // Components
     $services->load('CeskaKruta\\Web\\Components\\', __DIR__ . '/../src/Components/**/{*.php}');

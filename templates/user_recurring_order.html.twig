@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Velkoobchod{% endblock %}
+
+{% block content %}
+    <section class="content-section">
+        <h1>Velkoobchod</h1>
+
+        {{ include('_my_account_panel.html.twig') }}
+
+        {#}
+        <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-compare"></i> Zopakovat objednávku z minula</a>
+
+        <a class="btn btn-sm btn-outline-secondary" href="#">Jednorázová objednávka</a>
+        #}
+
+        <div class="row calendars-picking mt-2">
+            <div class="col-md-6 col-lg-4 mb-2">
+                <div class="calendar-wrapper shadow p-1">
+                    <table class="table table-borderless text-center mb-0">
+                        <thead>
+                        <tr>
+                            <th><a href="{{ path('user_recurring_order', {'day': 1}) }}">Po</a></th>
+                            <th><a href="{{ path('user_recurring_order', {'day': 2}) }}">Út</a></th>
+                            <th><a href="{{ path('user_recurring_order', {'day': 3}) }}">St</a></th>
+                            <th><a href="{{ path('user_recurring_order', {'day': 4}) }}" style="display: inline-block;border: 1px solid red;padding: 10px;">Čt</a></th>
+                            <th><a href="{{ path('user_recurring_order', {'day': 5}) }}">Pá</a></th>
+                            <th class="text-muted">So</th>
+                            <th class="text-muted">Ne</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {% if day and (orders_by_day[day] ?? false) %}
+            <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na čt</a><br>
+        {% else %}
+            <p class="text-muted my-2">Na tento den nemáte žádnou pravidelnou objednávku</p>
+        {% endif %}
+
+        <form method="post" action="{{ path('user_recurring_order', {'day': day}) }}">
+
+            <div class="card my-3">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="wholesable-table table m-0">
+                            {% for product in products %}
+                                <tr>
+                                    <td style="width: 80px;" class="p-1">
+                                        {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
+                                            <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 50px;" alt="Product">
+                                        {% else %}
+                                            <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ product.title }}</td>
+
+                                    <td class="text-end small">
+                                        500 g: <input
+                                            type="text"
+                                            name="item[{{ product.id }}][amount][500]"
+                                            class="form-control form-control-sm text-center"
+                                            value="0"
+                                            style="width:40px"
+                                        > balíčků<br>
+                                        1 kg: <input
+                                            type="text"
+                                            name="item[{{ product.id }}][amount][1000]"
+                                            class="form-control form-control-sm text-center"
+                                            value="0"
+                                            style="width:40px"
+                                        > balíčků<br>
+                                        5 kg: <input
+                                            type="text"
+                                            name="item[{{ product.id }}][amount][5000]"
+                                            class="form-control form-control-sm text-center"
+                                            value="0"
+                                            style="width:40px"
+                                        > balíčků<br>
+                                        Jiné: <input
+                                            type="text"
+                                            name="item[{{ product.id }}][amount][other]"
+                                            class="form-control form-control-sm text-center"
+                                            value="0"
+                                            style="width:40px"
+                                        > kg<br>
+                                        Celkem: <span class="total-kg">0 kg</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Uložit pravidelnou objednávku</button>
+        </form>
+
+        {% if day and (orders_by_day[day] ?? false) %}
+            <a class="btn btn-sm btn-outline-primary" href="#"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na čt</a><br>
+        {% endif %}
+
+
+    </section>
+
+{% endblock %}
