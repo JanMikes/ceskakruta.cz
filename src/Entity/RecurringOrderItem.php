@@ -39,6 +39,21 @@ class RecurringOrderItem
         $order->addItem($this);
     }
 
+    public function packageSizeAmount(string $packageSize): null|int|float
+    {
+        if ($packageSize === 'other') {
+            return $this->otherPackageSizeAmount;
+        }
+
+        foreach ($this->packages as $package) {
+            if ($package->sizeKg === (float) $packageSize) {
+                return $package->amount;
+            }
+        }
+
+        return null;
+    }
+
     /** @param array<PackageAmount> $packages */
     public function changeQuantities(array $packages, float $otherPackageSizeAmount): void
     {

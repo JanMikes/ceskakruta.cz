@@ -23,7 +23,7 @@ readonly final class SaveRecurringOrderHandler
     public function __invoke(SaveRecurringOrder $message): void
     {
         // Load existing order for this user/day or create new one
-            $orders = $this->recurringOrderRepository->getForUserByDay($message->userId);
+        $orders = $this->recurringOrderRepository->getForUserByDay($message->userId);
         $order = $orders[$message->dayOfWeek] ?? new RecurringOrder(
             Uuid::uuid7(),
             $message->userId,
@@ -42,6 +42,7 @@ readonly final class SaveRecurringOrderHandler
 
             if (isset($itemData['amount']['other'])) {
                 $other = (float) $itemData['amount']['other'];
+                unset($itemData['amount']['other']);
             }
 
             $packages = [];
@@ -79,6 +80,11 @@ readonly final class SaveRecurringOrderHandler
         // Remove any items the user has cleared out
         foreach ($existingItems as $itemToRemove) {
             $order->removeItem($itemToRemove);
+        }
+
+        if (count($order->items) === 0) {
+            $this->recurringOrderRepository->remove($order);
+            return;
         }
 
         $this->recurringOrderRepository->save($order);

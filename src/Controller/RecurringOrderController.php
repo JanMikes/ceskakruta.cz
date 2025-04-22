@@ -59,6 +59,43 @@ final class RecurringOrderController extends AbstractController
             'products' => $products,
             'day' => $day,
             'orders_by_day' => $ordersByDay,
+            'package_sizes' => $this->getPackageSizes($products),
+            'days_short' => [
+                1 => 'Po',
+                2 => 'Út',
+                3 => 'St',
+                4 => 'Čt',
+                5 => 'Pá',
+                6 => 'So',
+                7 => 'Ne',
+            ],
+            'days' => [
+                1 => 'Pondělí',
+                2 => 'Úterý',
+                3 => 'Středa',
+                4 => 'Čtvrtek',
+                5 => 'Pátek',
+                6 => 'Sobota',
+                7 => 'Neděle',
+            ],
         ]);
+    }
+
+    /**
+     * @param array<Product> $products
+     * @return array<int, array<int|string, string>>
+     */
+    private function getPackageSizes(array $products): array
+    {
+        $sizes = [];
+
+        foreach ($products as $product) {
+            $sizes[$product->id]['500'] = '500g';
+            $sizes[$product->id]['1000'] = '1kg';
+            $sizes[$product->id]['3000'] = '3kg';
+            $sizes[$product->id]['other'] = 'Jiné';
+        }
+
+        return $sizes;
     }
 }

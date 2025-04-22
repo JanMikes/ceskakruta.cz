@@ -39,6 +39,17 @@ class RecurringOrder
         $this->items = new ArrayCollection();
     }
 
+    public function itemForProduct(int $productId): null|RecurringOrderItem
+    {
+        foreach ($this->items as $item) {
+            if ($item->productId === $productId) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
     public function addItem(RecurringOrderItem $item): void
     {
         $this->items->add($item);
