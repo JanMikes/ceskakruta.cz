@@ -46,7 +46,7 @@ class RecurringOrderItem
         }
 
         foreach ($this->packages as $package) {
-            if ($package->sizeKg === (float) $packageSize) {
+            if ($package->sizeG === (float) $packageSize) {
                 return $package->amount;
             }
         }
@@ -59,5 +59,39 @@ class RecurringOrderItem
     {
         $this->packages = $packages;
         $this->otherPackageSizeAmount = $otherPackageSizeAmount;
+    }
+
+    public function calculateQuantityInKg(): float
+    {
+        $quantity = $this->otherPackageSizeAmount;
+
+        foreach ($this->packages as $package) {
+            $quantity += $package->sizeG/1000 * $package->amount;
+        }
+
+        return $quantity;
+    }
+
+    public function quantitiesAsNote(): string
+    {
+        $note = '';
+
+        foreach ($this->packages as $package) {
+            $note .= sprintf(
+                '%sBalení %s Kg: %sx',
+                strlen($note) > 0 ? ', ' : '',
+                $package->sizeG/1000,
+                $package->amount,
+            );
+        }
+
+        if ($this->otherPackageSizeAmount > 0) {
+            $note .= sprintf('%sJiné: %s Kg',
+                strlen($note) > 0 ? ', ' : '',
+                $this->otherPackageSizeAmount
+            );
+        }
+
+        return $note;
     }
 }

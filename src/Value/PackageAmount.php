@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Value;
 
 /**
- * @phpstan-type PackageAmountArray array{sizeKg: float, amount: int}
+ * @phpstan-type PackageAmountArray array{sizeG: float, amount: int}
  */
 readonly final class PackageAmount
 {
     public function __construct(
-        public float $sizeKg,
+        public float $sizeG,
         public int $amount,
     ) {
     }
@@ -21,7 +21,7 @@ readonly final class PackageAmount
     public function toArray(): array
     {
         return [
-            'sizeKg' => $this->sizeKg,
+            'sizeG' => $this->sizeG,
             'amount' => $this->amount,
         ];
     }
@@ -32,7 +32,7 @@ readonly final class PackageAmount
     public static function fromArray(array $data): self
     {
         return new self(
-            sizeKg: $data['sizeKg'],
+            sizeG: $data['sizeG'],
             amount: $data['amount'],
         );
     }

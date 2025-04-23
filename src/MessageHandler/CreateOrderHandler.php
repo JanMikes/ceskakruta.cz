@@ -27,7 +27,7 @@ readonly final class CreateOrderHandler
 
     public function __invoke(CreateOrder $message): void
     {
-        $orderId = $this->orderService->createOrder($message->userId);
+        $orderId = $this->orderService->createOrderFromCart($message->userId);
 
         $this->cartStorage->storeLastOrderId($orderId);
 

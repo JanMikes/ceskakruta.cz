@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Value;
 
+use CeskaKruta\Web\Entity\RecurringOrderItem;
+
 readonly final class ProductInCart
 {
     public function __construct(
@@ -18,5 +20,19 @@ readonly final class ProductInCart
     public function price(null|Coupon $coupon = null): int
     {
         return (int) round($this->quantity * $this->product->price($coupon));
+    }
+
+    public static function createFromRecurringOrderItem(RecurringOrderItem $recurringOrderItem, Product $product): self
+    {
+        $quantity = $recurringOrderItem->calculateQuantityInKg();
+        $note = $recurringOrderItem->quantitiesAsNote();
+
+        return new self(
+            quantity: $quantity,
+            product: $product,
+            slice: false,
+            pack: false,
+            note: $note,
+        );
     }
 }

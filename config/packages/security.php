@@ -37,6 +37,6 @@ return static function (SecurityConfig $securityConfig): void {
         ->roles([AuthenticatedVoter::IS_AUTHENTICATED_FULLY]);
 
     $securityConfig->accessControl()
-        ->path('^/')
+        ->path('^(/|/cron)')
         ->roles([AuthenticatedVoter::PUBLIC_ACCESS]);
 };

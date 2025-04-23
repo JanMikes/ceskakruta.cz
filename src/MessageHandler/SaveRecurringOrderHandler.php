@@ -51,7 +51,7 @@ readonly final class SaveRecurringOrderHandler
                 $amount = (int) $amount;
 
                 if ($amount > 0) {
-                    $packages[] = new PackageAmount(sizeKg: (int) $sizeKey, amount: $amount);
+                    $packages[] = new PackageAmount(sizeG: (int) $sizeKey, amount: $amount);
                 }
             }
 
