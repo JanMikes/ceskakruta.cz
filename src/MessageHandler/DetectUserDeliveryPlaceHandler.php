@@ -40,9 +40,7 @@ readonly final class DetectUserDeliveryPlaceHandler
 
         if ($this->ceskaKrutaDelivery->canDeliverToPostalCode($user->deliveryZip)) {
             $placeId = $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID;
-        }
-
-        if ($this->coolBalikDelivery->canDeliverToPostalCode($user->deliveryZip)) {
+        } elseif ($this->coolBalikDelivery->canDeliverToPostalCode($user->deliveryZip)) {
             $placeId = $this->coolBalikDelivery::DELIVERY_PLACE_ID;
         }
 

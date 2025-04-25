@@ -49,4 +49,13 @@ readonly final class User implements UserInterface, PasswordAuthenticatedUserInt
     {
         return $this->password;
     }
+
+    public function hasFilledDeliveryAddress(): bool
+    {
+        return $this->name !== null
+            && $this->phone !== null
+            && $this->deliveryStreet !== null
+            && $this->deliveryCity !== null
+            && $this->deliveryZip !== null;
+    }
 }

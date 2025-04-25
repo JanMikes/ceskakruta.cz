@@ -12,6 +12,7 @@ use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
+use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\Coupon;
 use CeskaKruta\Web\Value\Place;
@@ -153,7 +154,6 @@ readonly final class CartService
         foreach ($this->getItems() as $item) {
             $product = $item->product;
             $unitPrice = $product->price();
-
             $totalPrice = $totalPrice->add((int) ($item->quantity * $unitPrice));
 
             if ($item->pack === true) {
@@ -181,54 +181,32 @@ readonly final class CartService
 
     public function totalPrice(): Price
     {
-        $coupon = $this->getCoupon();
-        $totalPrice = new Price(0);
-
-        foreach ($this->getItems() as $item) {
-            $product = $item->product;
-            $totalPrice = $totalPrice->add($item->price($coupon));
-
-            if ($item->pack === true) {
-                $totalPrice = $totalPrice->add($product->packPrice ?? 0);
-            }
-        }
-
-        if ($totalPrice->amount > 0 && $this->getDeliveryAddress() !== null && $this->getDeliveryPlace() !== null) {
-            $totalPrice = $totalPrice->add($this->getPackingPrice());
-
-            if ($this->isFreeDelivery() === false) {
-                $totalPrice = $totalPrice->add($this->getDeliveryPrice());
-            }
-        }
-
-        return $totalPrice;
+        return OrderPriceCalculator::totalPrice(
+            $this->getItems(),
+            $this->getCoupon(),
+            $this->getPlace(),
+        );
     }
 
     public function isFreeDelivery(): bool
     {
-        if ($this->getDeliveryAddress() === null || $this->getDeliveryPlace() === null) {
-            return true;
-        }
-
-        if ($this->getPlace()?->isOwnDelivery === false) {
-            return false;
-        }
-
-        return $this->totalItemsPriceWithoutDiscount()->amount > 5000;
+        return OrderPriceCalculator::isFreeDelivery(
+            $this->totalItemsPriceWithoutDiscount(),
+            $this->getPlace(),
+        );
     }
 
     public function getDeliveryPrice(): int
     {
-        if ($this->isFreeDelivery()) {
-            return 0;
-        }
-
-        return 195;
+        return OrderPriceCalculator::getDeliveryPrice(
+            $this->totalItemsPriceWithoutDiscount(),
+            $this->getPlace(),
+        );
     }
 
     public function getPackingPrice(): int
     {
-        return 35;
+        return OrderPriceCalculator::getPackingPrice();
     }
 
     public function getOrderData(): null|OrderFormData

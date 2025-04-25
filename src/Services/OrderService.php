@@ -8,7 +8,6 @@ use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\Coupon;
-use CeskaKruta\Web\Value\Product;
 use CeskaKruta\Web\Value\ProductInCart;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;

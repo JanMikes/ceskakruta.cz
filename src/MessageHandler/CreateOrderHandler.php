@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\MessageHandler;
 
 use CeskaKruta\Web\Message\CreateOrder;
-use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
+use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -21,7 +21,6 @@ readonly final class CreateOrderHandler
         private CartStorage $cartStorage,
         private MailerInterface $mailer,
         private CartService $cartService,
-        private GetPlaces $getPlaces,
     ) {
     }
 
@@ -34,17 +33,29 @@ readonly final class CreateOrderHandler
         $address = $this->cartService->getOrderData()?->email;
         assert($address !== null);
 
+        $templateVariables = [
+            'items' => $this->cartService->getItems(),
+            'order_id' => $orderId,
+            'place' => $this->cartService->getPlace(),
+            'order_data' => $this->cartStorage->getOrderData(),
+            'date_to' => $this->cartService->getDate(),
+            'contains_turkey' => $this->cartService->containsTurkey(),
+            'coupon' => $this->cartService->getCoupon(),
+            'total_price_without_discount' => $this->cartService->totalPriceWithoutDiscount(),
+            'total_price' => $this->cartService->totalPrice(),
+            'delivery_price' => $this->cartService->getDeliveryPrice(),
+            'packing_price' => OrderPriceCalculator::getPackingPrice(),
+            'delivery_address' => $this->cartService->getDeliveryAddress(),
+            'is_free_delivery' => $this->cartService->isFreeDelivery(),
+        ];
+
         // Email for the admin
         $email = (new TemplatedEmail())
             ->from('objednavky@ceskakruta.cz')
             ->to('info@ceskakruta.cz')
             ->subject('Rekapitulace objednávky č. ' . $orderId)
             ->htmlTemplate('emails/admin_order_recapitulation.html.twig')
-            ->context([
-                'items' => $this->cartService->getItems(),
-                'places' => $this->getPlaces->all(),
-                'order_id' => $orderId,
-            ]);
+            ->context($templateVariables);
 
         $email->getHeaders()->addTextHeader('X-Transport', 'orders');
 
@@ -56,11 +67,7 @@ readonly final class CreateOrderHandler
             ->to($address)
             ->subject('Rekapitulace objednávky č. ' . $orderId)
             ->htmlTemplate('emails/user_order_recapitulation.html.twig')
-            ->context([
-                'items' => $this->cartService->getItems(),
-                'places' => $this->getPlaces->all(),
-                'order_id' => $orderId,
-            ]);
+            ->context($templateVariables);
 
         $email->getHeaders()->addTextHeader('X-Transport', 'orders');
 

@@ -35,6 +35,12 @@ final class RecurringOrderController extends AbstractController
     {
         $deliveryPlacesIds = [CeskaKrutaDelivery::DELIVERY_PLACE_ID, CoolBalikDelivery::DELIVERY_PLACE_ID];
 
+        if ($loggedUser->hasFilledDeliveryAddress() === false) {
+            $this->addFlash('warning', 'Prosím, vyplňte si doručovací adresu!');
+
+            return $this->redirectToRoute('edit_user_info');
+        }
+
         if (in_array($loggedUser->preferredPlaceId, $deliveryPlacesIds, true) === false) {
             try {
                 $this->bus->dispatch(
