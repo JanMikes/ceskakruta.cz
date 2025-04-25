@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller;
 
+use CeskaKruta\Web\Exceptions\UnsupportedDeliveryToPostalCode;
+use CeskaKruta\Web\Message\DetectUserDeliveryPlace;
 use CeskaKruta\Web\Message\SaveRecurringOrder;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
+use CeskaKruta\Web\Services\CeskaKrutaDelivery;
+use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Value\Product;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -28,6 +33,26 @@ final class RecurringOrderController extends AbstractController
     #[Route(path: '/uzivatel/pravidelne-objednavky', name: 'user_recurring_order')]
     public function __invoke(#[CurrentUser] User $loggedUser, Request $request): Response
     {
+        $deliveryPlacesIds = [CeskaKrutaDelivery::DELIVERY_PLACE_ID, CoolBalikDelivery::DELIVERY_PLACE_ID];
+
+        if (in_array($loggedUser->preferredPlaceId, $deliveryPlacesIds, true) === false) {
+            try {
+                $this->bus->dispatch(
+                    new DetectUserDeliveryPlace($loggedUser->id),
+                );
+            } catch (HandlerFailedException $handlerFailedException) {
+                $previousException = $handlerFailedException->getPrevious();
+
+                if ($previousException instanceof UnsupportedDeliveryToPostalCode) {
+                    $this->addFlash('warning', 'Na vámi vyplněnou doručovací adresu bohužel nerozvážíme, prosím, vyberte jinou adresu!');
+
+                    return $this->redirectToRoute('edit_user_info');
+                } else {
+                    throw $handlerFailedException;
+                }
+            }
+        }
+
         $products = $this->getProducts->all();
         $products = array_filter($products, function(Product $product): bool {
             return $product->isTurkey === false;

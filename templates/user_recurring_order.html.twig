@@ -88,7 +88,7 @@
                 <p>Aktuálně nastavené pravidelné objednávky:</p>
 
                 {% for recurring_order_day, recurring_order in orders_by_day %}
-                    <a href="{{ path('user_recurring_order', {'day': recurring_order}) }}">{{ days[recurring_order_day] }}</a><br>
+                    <a href="{{ path('user_recurring_order', {'day': recurring_order_day}) }}">{{ days[recurring_order_day] }}</a><br>
                 {% endfor %}
             {% endif %}
         {% endif %}

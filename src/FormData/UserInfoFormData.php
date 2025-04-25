@@ -5,20 +5,37 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\FormData;
 
 use CeskaKruta\Web\Value\User;
+use Symfony\Component\Validator\Constraints\Regex;
 
 final class UserInfoFormData
 {
     public null|string $name = null;
     public null|int $preferredPlaceId = null;
     public null|string $phone = null;
+    #[Regex(
+        pattern: '/.*\s\d+.*/',
+        message: 'Ulice musí obsahovat číslo popisné.'
+    )]
     public null|string $deliveryStreet = null;
     public null|string $deliveryCity = null;
+    #[Regex(
+        pattern: '/^(\d{3} \d{2})$|^(\d{5})$/',
+        message: 'Číslo popísné musí být ve formátu "123 45" nebo "12345".'
+    )]
     public null|string $deliveryZip = null;
     public bool $companyInvoicing = false;
     public null|string $companyName = null;
     public null|string $companyId = null;
+    #[Regex(
+        pattern: '/.*\s\d+.*/',
+        message: 'Ulice musí obsahovat číslo popisné.'
+    )]
     public null|string $invoicingStreet = null;
     public null|string $invoicingCity = null;
+    #[Regex(
+        pattern: '/^(\d{3} \d{2})$|^(\d{5})$/',
+        message: 'Číslo popísné musí být ve formátu "123 45" nebo "12345".'
+    )]
     public null|string $invoicingZip = null;
 
     public static function fromUser(User $user): self
