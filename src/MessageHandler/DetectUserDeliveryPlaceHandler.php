@@ -59,6 +59,7 @@ readonly final class DetectUserDeliveryPlaceHandler
             companyInvoicing: $user->companyInvoicing,
             companyName: $user->companyName,
             companyId: $user->companyId,
+            companyVatId: $user->companyVatId,
             invoicingStreet: $user->invoicingStreet,
             invoicingCity: $user->invoicingCity,
             invoicingZip: $user->invoicingZip,

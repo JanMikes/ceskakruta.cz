@@ -17,6 +17,7 @@ use CeskaKruta\Web\Services\OrderService;
 use CeskaKruta\Web\Services\Security\UserProvider;
 use CeskaKruta\Web\Services\UserService;
 use CeskaKruta\Web\Value\Address;
+use CeskaKruta\Web\Value\CompanyBillingInfo;
 use CeskaKruta\Web\Value\Place;
 use CeskaKruta\Web\Value\ProductInCart;
 use CeskaKruta\Web\Value\User;
@@ -82,6 +83,17 @@ readonly final class CreateOrderFromRecurringOrderHandler
             postalCode: $user->deliveryZip ?? '',
         );
 
+        $companyBillingInfo = new CompanyBillingInfo(
+            companyName: $user->companyName ?? '',
+            companyId: $user->companyId ?? '',
+            companyVatId: $user->companyVatId ?? '',
+            address: new Address(
+                street: $user->invoicingStreet ?? '',
+                city: $user->invoicingCity ?? '',
+                postalCode: $user->invoicingZip ?? '',
+            ),
+        );
+
         $items = [];
 
         foreach ($recurringOrder->items as $item) {
@@ -102,6 +114,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
             items: $items,
             totalPrice: $totalPrice->amount,
             source: 'Opakovaná objednávka',
+            companyBillingInfo: $companyBillingInfo,
         );
 
         $templateVariables = [
@@ -119,6 +132,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
             'packing_price' => OrderPriceCalculator::getPackingPrice(),
             'delivery_address' => $deliveryAddress,
             'is_free_delivery' => OrderPriceCalculator::isFreeDelivery($totalItemsPriceWithoutDiscount, $place),
+            'company_billing_info' => $companyBillingInfo,
         ];
 
         // Email for the admin

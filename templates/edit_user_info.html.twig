@@ -9,21 +9,30 @@
         {{ include('_my_account_panel.html.twig') }}
 
         {{ form_start(form) }}
-            {{ form_row(form.name) }}
-            {{ form_row(form.phone) }}
-            {{ form_row(form.deliveryStreet) }}
-            {{ form_row(form.deliveryCity) }}
-            {{ form_row(form.deliveryZip) }}
-            {{ form_row(form.companyInvoicing) }}
-            {{ form_row(form.companyName) }}
-            {{ form_row(form.companyId) }}
-            {{ form_row(form.invoicingStreet) }}
-            {{ form_row(form.invoicingCity) }}
-            {{ form_row(form.invoicingZip) }}
 
-            <p>
-                <button class="btn btn-primary" type="submit">Uložit</button>
-            </p>
+        <div class="row">
+            <div class="col-sm-6">
+                {{ form_row(form.name) }}
+                {{ form_row(form.phone) }}
+                {{ form_row(form.deliveryStreet) }}
+                {{ form_row(form.deliveryCity) }}
+                {{ form_row(form.deliveryZip) }}
+            </div>
+            <div class="col-sm-6">
+                {{ form_row(form.companyInvoicing) }}
+                {{ form_row(form.companyName) }}
+                {{ form_row(form.companyId) }}
+                {{ form_row(form.companyVatId) }}
+                {{ form_row(form.invoicingStreet) }}
+                {{ form_row(form.invoicingCity) }}
+                {{ form_row(form.invoicingZip) }}
+            </div>
+        </div>
+
+        <p>
+            <button class="btn btn-primary" type="submit">Uložit</button>
+        </p>
+
         {{ form_end(form) }}
     </section>
 {% endblock %}

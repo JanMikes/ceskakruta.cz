@@ -51,6 +51,7 @@ final class GetProducts
                  *     half_of_product_id: null|int,
                  *     force_packing: int,
                  *     price_pack: null|int,
+                 *     packages_size: string,
                  * } $productRow
                  */
 
@@ -84,6 +85,9 @@ final class GetProducts
                     $forcePacking = true;
                 }
 
+                /** @var array<int> $packagesSize */
+                $packagesSize = json_decode($productRow['packages_size']);
+
                 $products[$productId] = new Product(
                     id: $productId,
                     title: $productRow['name'],
@@ -101,6 +105,7 @@ final class GetProducts
                     type: $type,
                     isTurkey: $type === 3 || $type === 4,
                     turkeyType: $turkeyType,
+                    packagesSize: $packagesSize,
                 );
             }
 

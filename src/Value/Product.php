@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Value;
 
+use Symfony\Component\Asset\Package;
+
 readonly final class Product
 {
     public null|float $weightFrom;
@@ -26,6 +28,8 @@ readonly final class Product
         public null|int $type,
         public bool $isTurkey,
         public null|int $turkeyType,
+        /** @var array<int> */
+        private array $packagesSize,
     ) {
         $this->weightFrom = ($isHalf === true && $weightFrom !== null) ? $weightFrom / 2 : $weightFrom;
         $this->weightTo = ($isHalf === true && $weightTo !== null) ? $weightTo / 2 : $weightTo;
@@ -46,5 +50,19 @@ readonly final class Product
         }
 
         return $pricePerUnit;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function packagesSize(): array
+    {
+        $packages = [];
+
+        foreach ($this->packagesSize as $packageSize) {
+            $packages[$packageSize] = number_format($packageSize/1000, 1, ',') . ' Kg';
+        }
+
+        return $packages;
     }
 }

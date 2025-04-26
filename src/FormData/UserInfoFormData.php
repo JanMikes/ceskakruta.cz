@@ -26,6 +26,7 @@ final class UserInfoFormData
     public bool $companyInvoicing = false;
     public null|string $companyName = null;
     public null|string $companyId = null;
+    public null|string $companyVatId = null;
     #[Regex(
         pattern: '/.*\s\d+.*/',
         message: 'Ulice musí obsahovat číslo popisné.'
@@ -50,6 +51,7 @@ final class UserInfoFormData
         $self->companyInvoicing = $user->companyInvoicing;
         $self->companyName = $user->companyName;
         $self->companyId = $user->companyId;
+        $self->companyVatId = $user->companyVatId;
         $self->invoicingStreet = $user->invoicingStreet;
         $self->invoicingCity = $user->invoicingCity;
         $self->invoicingZip = $user->invoicingZip;

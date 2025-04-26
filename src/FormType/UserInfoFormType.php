@@ -57,6 +57,11 @@ final class UserInfoFormType extends AbstractType
             'required' => false,
         ]);
 
+        $builder->add('companyVatId', TextType::class, [
+            'label' => 'DIČ společnosti',
+            'required' => false,
+        ]);
+
         $builder->add('invoicingStreet', TextType::class, [
             'label' => 'Fakturační ulice',
             'required' => false,

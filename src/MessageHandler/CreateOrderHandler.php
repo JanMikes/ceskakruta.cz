@@ -47,6 +47,7 @@ readonly final class CreateOrderHandler
             'packing_price' => OrderPriceCalculator::getPackingPrice(),
             'delivery_address' => $this->cartService->getDeliveryAddress(),
             'is_free_delivery' => $this->cartService->isFreeDelivery(),
+            'company_billing_info' => null,
         ];
 
         // Email for the admin

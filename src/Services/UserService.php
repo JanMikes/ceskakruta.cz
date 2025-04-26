@@ -68,6 +68,7 @@ readonly final class UserService
                 'preferred_place_id' => $message->preferredPlaceId,
                 'company_name' => $message->companyName,
                 'company_id' => $message->companyId,
+                'company_vat_id' => $message->companyVatId,
                 'delivery_street' => $message->deliveryStreet,
                 'delivery_city' => $message->deliveryCity,
                 'delivery_zip' => $message->deliveryZip,

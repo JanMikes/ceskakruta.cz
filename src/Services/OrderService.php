@@ -7,6 +7,7 @@ namespace CeskaKruta\Web\Services;
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Value\Address;
+use CeskaKruta\Web\Value\CompanyBillingInfo;
 use CeskaKruta\Web\Value\Coupon;
 use CeskaKruta\Web\Value\ProductInCart;
 use DateTimeImmutable;
@@ -111,6 +112,7 @@ readonly final class OrderService
         int $totalPrice,
         string $source,
         null|Coupon $coupon = null,
+        null|CompanyBillingInfo $companyBillingInfo = null,
     ): int
     {
         $this->connection->beginTransaction();
@@ -128,6 +130,12 @@ readonly final class OrderService
                 'delivery_street'       => $deliveryAddress->street,
                 'delivery_city'         => $deliveryAddress->city,
                 'delivery_postal_code'  => $deliveryAddress->postalCode,
+                'company_name'          => $companyBillingInfo?->companyName,
+                'company_id'            => $companyBillingInfo?->companyId,
+                'company_vat_id'        => $companyBillingInfo?->companyVatId,
+                'invoicing_street'      => $companyBillingInfo?->address->street,
+                'invoicing_city'        => $companyBillingInfo?->address->city,
+                'invoicing_postal_code' => $companyBillingInfo?->address->postalCode,
                 'note'                  => $orderData->note,
                 'price_total'           => $totalPrice,
                 'source'                => $source,

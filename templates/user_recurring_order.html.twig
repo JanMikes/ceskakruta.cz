@@ -43,7 +43,7 @@
                 <div class="card my-3">
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="wholesable-table table m-0">
+                            <table class="wholesable-table table m-0" data-controller="weight-calculator">
                                 {% for product in products %}
                                     <tr>
                                         <td style="width: 80px;" class="p-1">
@@ -56,35 +56,59 @@
                                         <td>{{ product.title }}</td>
 
                                         <td class="text-end small">
-                                            {% for size_key, size_name in package_sizes[product.id] ?? [] %}
-                                                {{ size_name }}: <input
+                                            {% for package_size, package_name in product.packagesSize %}
+                                                {{ package_name }} balíčků (ks): <input
                                                     type="text"
-                                                    name="item[{{ product.id }}][amount][{{ size_key }}]"
-                                                    class="form-control form-control-sm text-center"
-                                                    value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount(size_key) ?? 0 }}"
+                                                    name="item[{{ product.id }}][amount][{{ package_size }}]"
+                                                    class="d-inline-block form-control form-control-sm text-center"
+                                                    value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount(package_size) ?? 0 }}"
                                                     style="width:40px"
-                                                > balíčků<br>
+                                                    data-package-weight="{{ package_size/1000 }}"
+                                                    data-weight-calculator-target="packageInput"
+                                                    data-action="input->weight-calculator#calculate"
+                                                > ks<br>
                                            {% endfor %}
+
+                                            Váha (kg): <input
+                                                type="text"
+                                                name="item[{{ product.id }}][amount][other]"
+                                                class="d-inline-block form-control form-control-sm text-center"
+                                                value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount('other') ?? 0 }}"
+                                                data-package-weight-input
+                                                data-weight-calculator-target="customInput"
+                                                data-action="input->weight-calculator#calculate"
+                                                style="width:40px"
+                                            ><br>
 
                                             <br>Poznámka: <input
                                                 type="text"
                                                 name="item[{{ product.id }}][note]"
-                                                class="form-control form-control-sm text-center"
+                                                class="d-inline-block form-control form-control-sm text-center"
                                                 value="{{ orders_by_day[day].itemForProduct(product.id).note ?? '' }}"
                                                 style="width:200px"
                                             ><br>
 
                                             {% if product.canBeSliced %}
-                                                <div class="form-check m-0">
+                                                <div class="form-check d-inline-block m-0">
                                                     <input name="item[{{ product.id }}][is_sliced]" class="form-check-input" type="checkbox" id="slice-check-{{ product.id }}" {% if orders_by_day[day].itemForProduct(product.id).isSliced ?? false %}checked="checked"{% endif %}>
                                                     <label class="form-check-label" for="slice-check-{{ product.id }}">Nakrájet</label>
                                                 </div>
                                             {% endif %}
 
-                                            Celkem: <span class="total-kg">0 kg</span>
+                                            <p class="m-0">
+                                                Celkem: <span data-weight-calculator-target="rowTotal">0 kg</span>
+                                            </p>
                                         </td>
                                     </tr>
                                 {% endfor %}
+                                <tfoot>
+                                  <tr>
+                                    <td colspan="2"></td>
+                                    <td class="text-end small">
+                                      Celkem objednávky: <span data-weight-calculator-target="grandTotal">0 kg</span>
+                                    </td>
+                                  </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>

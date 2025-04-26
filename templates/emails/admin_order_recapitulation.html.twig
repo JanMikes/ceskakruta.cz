@@ -29,6 +29,28 @@
             <strong>Jméno a příjmení:</strong>
             {{ order_data.name }}<br>
 
+            {% if company_billing_info and company_billing_info.companyName %}
+                <strong>Společnost:</strong>
+                {{ company_billing_info.companyName }}
+
+                {% if company_billing_info.companyId %}
+                    <br><strong>IČ:</strong>
+                    {{ company_billing_info.companyId }}
+                {% endif %}
+
+                {% if company_billing_info.companyVatId %}
+                    <br><strong>DIČ:</strong>
+                    {{ company_billing_info.companyVatId }}
+                {% endif %}
+                <br>
+            {% endif %}
+
+            {% if company_billing_info and company_billing_info.address %}
+                <strong>Fakturační adresa:</strong>
+                {{ company_billing_info.address.street }}, {{ company_billing_info.address.city }} {{ company_billing_info.address.postalCode }},
+                <br>
+            {% endif %}
+
             <strong>E-mail:</strong>
             {{ order_data.email }}<br>
 

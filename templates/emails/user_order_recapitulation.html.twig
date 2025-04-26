@@ -51,6 +51,36 @@
                     <td class="td">{{ order_data.name }}</td>
                 </tr>
 
+                {% if company_billing_info and company_billing_info.companyName %}
+                    <tr>
+                        <th class="th-backgroundless">Společnost:</th>
+                        <td class="td">
+                            {{ company_billing_info.companyName }}
+
+                            {% if company_billing_info.companyId %}
+                                <br><strong>IČ:</strong>
+                                {{ company_billing_info.companyId }}
+                            {% endif %}
+
+                            {% if company_billing_info.companyVatId %}
+                                <br><strong>DIČ:</strong>
+                                {{ company_billing_info.companyVatId }}
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% if company_billing_info and company_billing_info.address %}
+                        <tr>
+                            <th class="th-backgroundless">Fakturační adresa:</th>
+                            <td class="td">
+                                {{ company_billing_info.address.street }},
+                                {{ company_billing_info.address.city }}
+                                {{ company_billing_info.address.postalCode }}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endif %}
+
                 <tr>
                     <th class="th-backgroundless">E-mail:</th>
                     <td class="td">{{ order_data.email }}</td>
