@@ -35,6 +35,12 @@ class RecurringOrderItem
 
         #[Column]
         public float $otherPackageSizeAmount,
+
+        #[Column(options: ['default' => false])]
+        public bool $isSliced,
+
+        #[Column(nullable: true)]
+        public null|string $note,
     ) {
         $order->addItem($this);
     }
@@ -55,10 +61,12 @@ class RecurringOrderItem
     }
 
     /** @param array<PackageAmount> $packages */
-    public function changeQuantities(array $packages, float $otherPackageSizeAmount): void
+    public function change(array $packages, float $otherPackageSizeAmount, null|string $note, bool $isSliced): void
     {
         $this->packages = $packages;
         $this->otherPackageSizeAmount = $otherPackageSizeAmount;
+        $this->isSliced = $isSliced;
+        $this->note = $note;
     }
 
     public function calculateQuantityInKg(): float

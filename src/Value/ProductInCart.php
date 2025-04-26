@@ -25,13 +25,17 @@ readonly final class ProductInCart
     public static function createFromRecurringOrderItem(RecurringOrderItem $recurringOrderItem, Product $product): self
     {
         $quantity = $recurringOrderItem->calculateQuantityInKg();
-        $note = $recurringOrderItem->quantitiesAsNote();
+        $note = sprintf('%s%s%s',
+            trim((string) $recurringOrderItem->note),
+            trim((string) $recurringOrderItem->note) !== '' ? ' | ' : '',
+            $recurringOrderItem->quantitiesAsNote(),
+        );
 
         return new self(
             quantity: $quantity,
             product: $product,
-            slice: false,
-            pack: false,
+            slice: $recurringOrderItem->isSliced,
+            pack: $product->canBePacked,
             note: $note,
         );
     }

@@ -39,10 +39,20 @@ readonly final class SaveRecurringOrderHandler
         // Process incoming items
         foreach ($message->items as $productId => $itemData) {
             $other = 0.0;
+            $note = null;
+            $isSliced = false;
 
             if (isset($itemData['amount']['other'])) {
                 $other = (float) $itemData['amount']['other'];
                 unset($itemData['amount']['other']);
+            }
+
+            if (isset($itemData['note'])) {
+                $note = $itemData['note'];
+            }
+
+            if (isset($itemData['is_sliced'])) {
+                $isSliced = (bool) $itemData['is_sliced'];
             }
 
             $packages = [];
@@ -62,7 +72,12 @@ readonly final class SaveRecurringOrderHandler
             if (isset($existingItems[$productId])) {
                 // Update existing item
                 $item = $existingItems[$productId];
-                $item->changeQuantities($packages, $other);
+                $item->change(
+                    packages: $packages,
+                    otherPackageSizeAmount: $other,
+                    note: $note,
+                    isSliced: $isSliced,
+                );
                 unset($existingItems[$productId]);
                 continue;
             }
@@ -74,6 +89,8 @@ readonly final class SaveRecurringOrderHandler
                 (int) $productId,
                 $packages,
                 otherPackageSizeAmount: $other,
+                isSliced: $isSliced,
+                note: $note,
             );
         }
 

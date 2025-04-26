@@ -66,6 +66,21 @@
                                                 > balíčků<br>
                                            {% endfor %}
 
+                                            <br>Poznámka: <input
+                                                type="text"
+                                                name="item[{{ product.id }}][note]"
+                                                class="form-control form-control-sm text-center"
+                                                value="{{ orders_by_day[day].itemForProduct(product.id).note ?? '' }}"
+                                                style="width:200px"
+                                            ><br>
+
+                                            {% if product.canBeSliced %}
+                                                <div class="form-check m-0">
+                                                    <input name="item[{{ product.id }}][is_sliced]" class="form-check-input" type="checkbox" id="slice-check-{{ product.id }}" {% if orders_by_day[day].itemForProduct(product.id).isSliced ?? false %}checked="checked"{% endif %}>
+                                                    <label class="form-check-label" for="slice-check-{{ product.id }}">Nakrájet</label>
+                                                </div>
+                                            {% endif %}
+
                                             Celkem: <span class="total-kg">0 kg</span>
                                         </td>
                                     </tr>

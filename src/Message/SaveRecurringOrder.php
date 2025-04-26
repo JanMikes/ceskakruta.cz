@@ -11,7 +11,7 @@ readonly final class SaveRecurringOrder
     public function __construct(
         public int $userId,
         public int $dayOfWeek,
-        /** @var array<int, array{amount: array<string, string>}> */
+        /** @var array<int, array{amount: array<string, string>, note: null|string, is_sliced?: bool}> */
         public array $items,
     ) {
     }
