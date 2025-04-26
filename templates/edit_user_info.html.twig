@@ -20,9 +20,11 @@
             </div>
             <div class="col-sm-6">
                 {{ form_row(form.companyInvoicing) }}
-                {{ form_row(form.companyName) }}
                 {{ form_row(form.companyId) }}
+                <button class="btn btn-outline-primary btn-sm mb-2" type="submit" name="action" value="load_ares">Načíst z ARESu</button>
+
                 {{ form_row(form.companyVatId) }}
+                {{ form_row(form.companyName) }}
                 {{ form_row(form.invoicingStreet) }}
                 {{ form_row(form.invoicingCity) }}
                 {{ form_row(form.invoicingZip) }}
@@ -30,7 +32,7 @@
         </div>
 
         <p>
-            <button class="btn btn-primary" type="submit">Uložit</button>
+            <button class="btn btn-primary" type="submit" name="action" value="save">Uložit</button>
         </p>
 
         {{ form_end(form) }}

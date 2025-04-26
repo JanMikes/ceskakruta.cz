@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Services\Security\PasswordHasher;
+use h4kuna\Ares\Ares;
+use h4kuna\Ares\AresFactory;
 use Monolog\Processor\PsrLogMessageProcessor;
+use Psr\Http\Client\ClientInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function(ContainerConfigurator $configurator): void
 {
@@ -46,4 +50,11 @@ return static function(ContainerConfigurator $configurator): void
             '$leadingSalt' => env('SECURITY_SALT_1'),
             '$trailingSalt' => env('SECURITY_SALT_2'),
         ]);
+
+    // Register AresFactory as a service, injecting the PSR HTTP client
+    $services->set(AresFactory::class)
+        ->args([ service(ClientInterface::class) ]);
+
+    $services->set(Ares::class)
+        ->factory([service(AresFactory::class), 'create']);
 };
