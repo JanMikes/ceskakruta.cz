@@ -137,6 +137,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
             'delivery_address' => $deliveryAddress,
             'is_free_delivery' => OrderPriceCalculator::isFreeDelivery($totalItemsPriceWithoutDiscount, $place),
             'company_billing_info' => $companyBillingInfo,
+            'show_prices' => false,
         ];
 
         // Email for the admin

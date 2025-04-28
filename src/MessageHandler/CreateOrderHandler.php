@@ -49,6 +49,7 @@ readonly final class CreateOrderHandler
             'delivery_address' => $this->cartService->getDeliveryAddress(),
             'is_free_delivery' => $this->cartService->isFreeDelivery(),
             'company_billing_info' => null,
+            'show_prices' => true,
         ];
 
         // Email for the admin

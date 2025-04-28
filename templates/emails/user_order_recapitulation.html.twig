@@ -30,14 +30,16 @@
                 <h3>
                     Rozvoz <small>({{ place.isOwnDelivery ? 'Náš rozvoz' : 'CoolBalík' }}) na adresu:</small>
                     <br><strong>{{ delivery_address.street }}, {{ delivery_address.city }} {{ delivery_address.postalCode }}</strong>
-                    <br>
-                    <small><strong>
-                        {% if order_data.payByCard %}
-                            Platba kartou při předávce
-                        {% else %}
-                            Platba hotově při předávce
-                        {% endif %}
-                    </strong></small>
+                    {% if show_prices %}
+                        <br>
+                        <small><strong>
+                            {% if order_data.payByCard %}
+                                Platba kartou při předávce
+                            {% else %}
+                                Platba hotově při předávce
+                            {% endif %}
+                        </strong></small>
+                    {% endif %}
                 </h3>
             {% endif %}
 
@@ -104,8 +106,10 @@
                             <th class="th">Zboží</th>
                             <th class="th text-center">Počet</th>
                             <th class="th text-center">Váha/ks</th>
-                            <th class="th text-center">Kč/ks</th>
-                            <th class="th text-end">Celkem</th>
+                            {% if show_prices %}
+                                <th class="th text-center">Kč/ks</th>
+                                <th class="th text-end">Celkem</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -115,12 +119,14 @@
                                     <td class="td"><strong>{{ item.product.title }}</strong></td>
                                     <td class="td text-center">{{ item.quantity }} ks</td>
                                     <td class="td text-center">{{ item.product.weightFrom }} až {{ item.product.weightTo }}kg</td>
-                                    <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/ks</td>
-                                    <td class="td text-end">{% if coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(coupon)|price|raw }} Kč</strong></td>
+                                    {% if show_prices %}
+                                        <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/ks</td>
+                                        <td class="td text-end">{% if coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(coupon)|price|raw }} Kč</strong></td>
+                                    {% endif %}
                                 </tr>
                                 {% if item.note %}
                                     <tr>
-                                        <td colspan="5" class="td td-note">Poznámka: {{ item.note }}</td>
+                                        <td colspan="{{ show_prices ? '5' : '3' }}" class="td td-note">Poznámka: {{ item.note }}</td>
                                     </tr>
                                 {% endif %}
                             {% endif %}
@@ -135,8 +141,10 @@
                     <tr>
                         <th class="th">Zboží</th>
                         <th class="th text-center">Kg</th>
-                        <th class="th text-center">Kč/kg</th>
-                        <th class="th text-end">Celkem</th>
+                        {% if show_prices %}
+                            <th class="th text-center">Kč/kg</th>
+                            <th class="th text-end">Celkem</th>
+                        {% endif %}
                     </tr>
                     </thead>
                     <tbody>
@@ -145,16 +153,18 @@
                                 <tr>
                                     <td class="td">
                                         <strong>{{ item.product.title }}</strong>
-                                        {% if item.pack %}<br>+ Vakuovat (+{{ item.product.packPrice }} kč){% endif %}
+                                        {% if item.pack %}<br>+ Vakuovat {% if show_prices %}(+{{ item.product.packPrice }} kč){% endif %}{% endif %}
                                         {% if item.slice %}<br>+ Nakrájet{% endif %}
                                     </td>
                                     <td class="td text-center">{{ item.quantity }} Kg</td>
-                                    <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/kg</td>
-                                    <td class="td text-end">{% if coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(coupon)|price|raw }} Kč</strong></td>
+                                    {% if show_prices %}
+                                        <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/kg</td>
+                                        <td class="td text-end">{% if coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(coupon)|price|raw }} Kč</strong></td>
+                                    {% endif %}
                                 </tr>
                                 {% if item.note %}
                                     <tr>
-                                        <td colspan="4" class="td td-note">Poznámka: {{ item.note }}</td>
+                                        <td colspan="{{ show_prices ? '4' : '2' }}" class="td td-note">Poznámka: {{ item.note }}</td>
                                     </tr>
                                 {% endif %}
                             {% endif %}
@@ -163,26 +173,28 @@
                 </table>
             {% endif %}
 
-            <div>
-                {% if coupon %}
-                    <p>
-                        Slevový kód: <strong>{{ coupon.code }}</strong><br>
-                        {% if coupon.percentValue %}
-                            Sleva: <strong>-{{ coupon.percentValue }}%</strong><br>
-                        {% endif %}
-                        Před slevou: <del>{{ total_price_without_discount.amount|price|raw }} Kč </del>
-                    </p>
-                {% endif %}
+            {% if show_prices %}
+                <div>
+                    {% if coupon %}
+                        <p>
+                            Slevový kód: <strong>{{ coupon.code }}</strong><br>
+                            {% if coupon.percentValue %}
+                                Sleva: <strong>-{{ coupon.percentValue }}%</strong><br>
+                            {% endif %}
+                            Před slevou: <del>{{ total_price_without_discount.amount|price|raw }} Kč </del>
+                        </p>
+                    {% endif %}
 
-                {% if place.isDelivery and delivery_address %}
-                    <p>
-                        Doprava: {{ delivery_price }} Kč {% if is_free_delivery %}(zdarma nad 5000 Kč){% endif %} <br>
-                        Balné: {{ packing_price }} Kč
-                    </p>
-                {% endif %}
+                    {% if place.isDelivery and delivery_address %}
+                        <p>
+                            Doprava: {{ delivery_price }} Kč {% if is_free_delivery %}(zdarma nad 5000 Kč){% endif %} <br>
+                            Balné: {{ packing_price }} Kč
+                        </p>
+                    {% endif %}
 
-                <h3>Orientační cena celkem: <strong>{{ total_price.amount|price|raw }} Kč</strong></h3>
-            </div>
+                    <h3>Orientační cena celkem: <strong>{{ total_price.amount|price|raw }} Kč</strong></h3>
+                </div>
+            {% endif %}
         </div>
 
     </body>
