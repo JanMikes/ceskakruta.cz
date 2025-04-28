@@ -91,7 +91,7 @@
 
         <main>
             {% for label, messages in app.flashes %}
-                <div class="container mt-3">
+                <div class="container flashes mt-3">
                     {% for message in messages %}
                         <div class="alert alert-{{ label }} fs-sm" role="alert">
                             {{ message|raw }}

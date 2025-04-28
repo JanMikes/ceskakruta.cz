@@ -11,23 +11,41 @@
         {{ form_start(form) }}
 
         <div class="row">
-            <div class="col-sm-6">
-                {{ form_row(form.name) }}
-                {{ form_row(form.phone) }}
-                {{ form_row(form.deliveryStreet) }}
-                {{ form_row(form.deliveryCity) }}
-                {{ form_row(form.deliveryZip) }}
+            <div class="col-sm-6 mb-2">
+                <div class="card card-body shadow">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.phone) }}
+                    {{ form_row(form.deliveryStreet) }}
+                    {{ form_row(form.deliveryCity) }}
+                    {{ form_row(form.deliveryZip) }}
+                </div>
             </div>
-            <div class="col-sm-6">
-                {{ form_row(form.companyInvoicing) }}
-                {{ form_row(form.companyId) }}
-                <button class="btn btn-outline-primary btn-sm mb-2" type="submit" name="action" value="load_ares">Načíst z ARESu</button>
+            <div class="col-sm-6 mb-2">
+                <div class="card card-body shadow">
+                    <div data-controller="company-invoicing">
+                        {{ form_row(form.companyInvoicing, {
+                            'attr': {
+                                'data-action': 'change->company-invoicing#toggle'
+                            }
+                        }) }}
 
-                {{ form_row(form.companyVatId) }}
-                {{ form_row(form.companyName) }}
-                {{ form_row(form.invoicingStreet) }}
-                {{ form_row(form.invoicingCity) }}
-                {{ form_row(form.invoicingZip) }}
+                        <div data-company-invoicing-target="details" class="{{ app.user.companyInvoicing ? '' : 'd-none' }}">
+                            {{ form_row(form.companyId) }}
+
+                            <div class="mt-n2">
+                                <button class="btn btn-outline-primary btn-sm mb-2" type="submit" name="action" value="load_ares">Načíst z ARESu</button>
+                            </div>
+
+                            <div class="{{ app.user.companyId ? '' : 'd-none' }}">
+                                {{ form_row(form.companyVatId) }}
+                                {{ form_row(form.companyName) }}
+                                {{ form_row(form.invoicingStreet) }}
+                                {{ form_row(form.invoicingCity) }}
+                                {{ form_row(form.invoicingZip) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -12,7 +12,7 @@
             <a class="btn btn-sm btn-primary" href="{{ path('edit_user_info') }}">Upravit údaje</a>
             <a class="btn btn-sm btn-outline-primary" href="{{ path('change_user_password') }}"><i class="ci-locked"></i>  Změnit heslo</a>
 
-            <table class="table">
+            <table class="table mt-2 mb-0">
                 <tr>
                     <th style="max-width: 100px;">Jméno:</th>
                     <td>{{ app.user.name }}</td>
@@ -32,8 +32,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <th style="max-width: 100px;">Fakturovat na společnost:</th>
-                    <td>
+                    <th class="border-0" style="max-width: 100px;">Fakturovat na společnost:</th>
+                    <td class="border-0">
                         {% if app.user.companyInvoicing %}
                             {{ app.user.companyName }} ({{ app.user.companyId }})<br>
                             {{ app.user.invoicingStreet }}, {{ app.user.invoicingCity }} {{ app.user.invoicingZip }}

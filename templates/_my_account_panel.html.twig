@@ -1,20 +1,33 @@
 <nav class="navbar navbar-expand p-0 mb-3">
-    <ul class="navbar-nav flex-wrap navbar-my-account shadow-lg">
+    <ul class="navbar-nav flex-wrap">
         <li class="nav-item">
-            <a class="nav-link {{ app.request.pathInfo == path('user_my_account') or app.request.pathInfo == path('edit_user_info') ? 'active' }}" href="{{ path('user_my_account') }}">Můj účet</a>
+            <a class="nav-link py-2 px-0 me-4 {{ app.request.pathInfo == path('user_my_account') or app.request.pathInfo == path('edit_user_info') ? 'active' }}" href="{{ path('user_my_account') }}">
+                <i class="ci-user me-1"></i>
+                Můj účet
+            </a>
         </li>
 
         {% if app.user.wholesaleAllowed %}
             <li>
-                <a  class="nav-link {{ app.request.pathInfo == path('user_recurring_order') ? 'active' }}" href="{{ path('user_recurring_order') }}">Pravidelné objednávky</a>
+                <a  class="nav-link py-2 px-0 me-4 {{ app.request.pathInfo == path('user_recurring_order') ? 'active' }}" href="{{ path('user_recurring_order') }}">
+                    <i class="ci-reload me-1"></i>
+                    Pravidelné objednávky
+                </a>
             </li>
         {% endif %}
 
         <li class="nav-item">
-            <a class="nav-link {{ app.request.pathInfo == path('user_my_orders') ? 'active' }}" href="{{ path('user_my_orders') }}">Objednávky</a>
+            <a class="nav-link py-2 px-0 me-4 {{ app.request.pathInfo == path('user_my_orders') ? 'active' }}" href="{{ path('user_my_orders') }}">
+                <i class="ci-cart me-1"></i>
+                Objednávky
+            </a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link" href="{{ path('logout') }}">Odhlásit se</a>
+            <a class="nav-link py-2 px-0 me-4" href="{{ path('logout') }}">
+                <i class="ci-sign-out me-1"></i>
+                Odhlásit se
+            </a>
         </li>
     </ul>
 </nav>
