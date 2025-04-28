@@ -119,7 +119,7 @@
                             <tr class="tr condensed">
                                 <td class="td condensed td-text-bigger {% if not item.note %}td-no-note{% endif %}"><strong>{{ item.product.title }}</strong></td>
                                 <td class="td condensed td-text-bigger text-center {% if not item.note %}td-no-note{% endif %}">{{ item.quantity }} Kg</td>
-                                <td class="td condensed td-text-bigger text-center {% if not item.note %}td-no-note{% endif %}">{% if item.pack %}Ano (+{{ item.product.packPrice }} kč){% else %}-{% endif %}</td>
+                                <td class="td condensed td-text-bigger text-center {% if not item.note %}td-no-note{% endif %}">{% if item.pack %}Ano {% if show_prices %}(+{{ item.product.packPrice }} kč){% endif %}{% else %}-{% endif %}</td>
                                 <td class="td condensed td-text-bigger text-center {% if not item.note %}td-no-note{% endif %}">{% if item.slice %}Ano{% else %}-{% endif %}</td>
                                 {% if show_prices %}
                                     <td class="td condensed text-center {% if not item.note %}td-no-note{% endif %}">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(coupon)|price|raw }} Kč/kg</td>
