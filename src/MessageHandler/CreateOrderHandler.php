@@ -40,6 +40,7 @@ readonly final class CreateOrderHandler
             'order_data' => $this->cartStorage->getOrderData(),
             'date_to' => $this->cartService->getDate(),
             'contains_turkey' => $this->cartService->containsTurkey(),
+            'contains_non_turkey' => $this->cartService->containsNonTurkey(),
             'coupon' => $this->cartService->getCoupon(),
             'total_price_without_discount' => $this->cartService->totalPriceWithoutDiscount(),
             'total_price' => $this->cartService->totalPrice(),

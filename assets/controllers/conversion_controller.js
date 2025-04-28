@@ -34,7 +34,6 @@ export default class extends Controller {
             // Execute the conversion hit if available
             if (window.rc && typeof window.rc.conversionHit === 'function') {
                 window.rc.conversionHit(conversionConf);
-                alert('conversion');
             }
         };
         document.head.appendChild(script);
