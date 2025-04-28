@@ -59,4 +59,9 @@ class RecurringOrder
     {
         $this->items->removeElement($item);
     }
+
+    public function updateLastOrdered(DateTimeImmutable $now): void
+    {
+        $this->lastOrderedAt = $now;
+    }
 }

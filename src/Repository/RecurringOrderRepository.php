@@ -62,4 +62,19 @@ readonly final class RecurringOrderRepository
 
         return $ordersByDay;
     }
+
+    /**
+     * @return list<RecurringOrder>
+     */
+    public function getScheduledForOrdering(): array
+    {
+        /** @var list<RecurringOrder> $orders */
+        $orders = $this->entityManager->createQueryBuilder()
+            ->select('o')
+            ->from(RecurringOrder::class, 'o')
+            ->getQuery()
+            ->getResult();
+
+        return $orders;
+    }
 }

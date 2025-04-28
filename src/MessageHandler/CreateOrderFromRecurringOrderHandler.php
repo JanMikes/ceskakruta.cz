@@ -21,6 +21,7 @@ use CeskaKruta\Web\Value\CompanyBillingInfo;
 use CeskaKruta\Web\Value\Place;
 use CeskaKruta\Web\Value\ProductInCart;
 use CeskaKruta\Web\Value\User;
+use Psr\Clock\ClockInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -38,6 +39,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
         private UserService $userService,
         private CeskaKrutaDelivery $ceskaKrutaDelivery,
         private CoolBalikDelivery $coolBalikDelivery,
+        private ClockInterface $clock,
     ) {
     }
 
@@ -57,7 +59,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
         $products = $this->getProducts->all();
 
         $dayOfWeek = $recurringOrder->dayOfWeek;
-        $dateTo = new \DateTimeImmutable();
+        $dateTo = $this->clock->now();
         $currentWeekday = (int) $dateTo->format('N');
 
         $daysToAdd = ($dayOfWeek - $currentWeekday + 7) % 7;
@@ -116,6 +118,8 @@ readonly final class CreateOrderFromRecurringOrderHandler
             source: 'Opakovaná objednávka',
             companyBillingInfo: $companyBillingInfo,
         );
+
+        $recurringOrder->updateLastOrdered($this->clock->now());
 
         $templateVariables = [
             'items' => $items,

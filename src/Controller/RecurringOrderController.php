@@ -11,6 +11,7 @@ use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
+use CeskaKruta\Web\Services\OrderingDeadline;
 use CeskaKruta\Web\Value\Product;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +28,9 @@ final class RecurringOrderController extends AbstractController
         readonly private GetProducts $getProducts,
         readonly private RecurringOrderRepository $recurringOrderRepository,
         readonly private MessageBusInterface $bus,
+        readonly private CeskaKrutaDelivery $ceskaKrutaDelivery,
+        readonly private CoolBalikDelivery $coolBalikDelivery,
+        readonly private OrderingDeadline $orderingDeadline,
     ) {
     }
 
@@ -86,10 +90,34 @@ final class RecurringOrderController extends AbstractController
             return $this->redirectToRoute('user_recurring_order', ['day' => $day]);
         }
 
+        $allowedDays = [];
+        $placeId = $loggedUser->preferredPlaceId;
+        assert($placeId !== null);
+
+        $postalCode = $loggedUser->deliveryZip ?? '';
+        if ($placeId === CeskaKrutaDelivery::DELIVERY_PLACE_ID) {
+            $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
+        }
+
+        if ($placeId === CoolBalikDelivery::DELIVERY_PLACE_ID) {
+            $allowedDays = $this->coolBalikDelivery->getAllowedDaysForPostalCode($postalCode);
+        }
+
+        $nextDeadline = null;
+        $nextOrderingDay = null;
+        if ($day !== null) {
+            $nextDeadline = $this->orderingDeadline->nextDeadline((int) $day, $placeId);
+            $nextOrderingDay = $this->orderingDeadline->nextOrderDay((int) $day, $placeId);
+        }
+
+
         return $this->render('user_recurring_order.html.twig', [
             'products' => $products,
             'day' => $day,
             'orders_by_day' => $ordersByDay,
+            'allowed_days' => $allowedDays,
+            'next_deadline' => $nextDeadline,
+            'next_ordering_day' => $nextOrderingDay,
             'days_short' => [
                 1 => 'Po',
                 2 => 'Út',

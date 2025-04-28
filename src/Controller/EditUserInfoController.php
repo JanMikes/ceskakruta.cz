@@ -50,9 +50,9 @@ final class EditUserInfoController extends AbstractController
                     } else {
                         $this->addFlash('warning', 'Nepovedlo se načíst data z ARES. Ostatní údaje uloženy');
                     }
-
-                    return $this->redirectToRoute('edit_user_info');
                 }
+
+                return $this->redirectToRoute('edit_user_info');
             } else {
                 $this->bus->dispatch(
                     EditUserInfo::fromFormData($loggedUser->email, $formData),

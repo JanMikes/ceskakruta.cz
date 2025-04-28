@@ -17,7 +17,7 @@
         <div class="calendars-picking mt-2 mb-3">
             <div class="shadow p-1 d-inline-block">
                 {% for day_number, day_name in days_short %}
-                        {% if day_number < 6 %}
+                        {% if day_number < 6 and (allowed_days[day_number] ?? false) %}
                             <a class="p-3 d-inline-block" href="{{ path('user_recurring_order', {'day': day_number}) }}" {% if day == day_number %}style="border: 1px solid red;"{% endif %}>
                                 {{ day_name }}
                                 {% if orders_by_day[day_number] ?? false %}
@@ -41,6 +41,21 @@
             {% else %}
                 <p class="text-muted my-2">Na tento den nemáte žádnou pravidelnou objednávku</p>
             {% endif %}
+
+            <p class="my-3">
+                {% if orders_by_day[day] ?? false and orders_by_day[day].lastOrderedAt %}
+                    Poslední uzávěrka byla: {{ orders_by_day[day].lastOrderedAt ? orders_by_day[day].lastOrderedAt|date('d.m.Y') : '-' }}<br>
+                {% endif %}
+
+                {% if next_deadline %}
+                    Uzávěrka{% if next_ordering_day %} <small>(doručení {{ next_ordering_day|date('d.m.') }})</small>{% endif %}: {{ next_deadline|ago }} <small>({{ next_deadline|date('d.m.Y H:i') }})</small><br>
+                {% endif %}
+                <small class="text-muted">
+                    Objednávku můžete upravit nebo zrušit až do tohoto termínu.
+                    Poté už začneme s přípravou, abychom pro vás měli vše čerstvé a včas nachystané.
+                    Po uzávěrce vám pro jistotu pošleme potvrzovací e-mail.
+                </small>
+            </p>
 
             <form method="post" action="{{ path('user_recurring_order', {'day': day}) }}">
 
@@ -117,7 +132,7 @@
                                   <tr>
                                     <td colspan="2"></td>
                                     <td class="text-end small">
-                                      Celkem objednávky: <span data-weight-calculator-target="grandTotal">0 kg</span>
+                                      Celková váha: <span data-weight-calculator-target="grandTotal">0 kg</span>
                                     </td>
                                   </tr>
                                 </tfoot>
@@ -126,10 +141,10 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Uložit pravidelnou objednávku</button>
+                <button type="submit" class="btn btn-primary me-2 mb-2">Uložit pravidelnou objednávku</button>
 
                 {% if day and (orders_by_day[day] ?? false) %}
-                    <a class="ms-2 btn btn-sm btn-outline-primary"
+                    <a class="btn btn-sm btn-outline-primary"
                        href="{{ path('user_cancel_recurring_order', {'day': day}) }}"
                        data-controller="confirm"
                        data-action="confirm#confirm"

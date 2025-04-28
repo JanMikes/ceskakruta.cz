@@ -18,6 +18,7 @@
         "doctrine/doctrine-bundle": "^2.4",
         "doctrine/orm": "^3.0",
         "h4kuna/ares": "^3.0",
+        "knplabs/knp-time-bundle": "^2.4",
         "monolog/monolog": "^3.0",
         "php-http/discovery": "^1.20",
         "psr/http-client": "*",
