@@ -6,7 +6,7 @@
 
         {% if app.user.wholesaleAllowed %}
             <li>
-                <a  class="nav-link {{ app.request.pathInfo == path('user_recurring_order') ? 'active' }}" href="{{ path('user_recurring_order') }}">Velkoobchod</a>
+                <a  class="nav-link {{ app.request.pathInfo == path('user_recurring_order') ? 'active' }}" href="{{ path('user_recurring_order') }}">Pravidelné objednávky</a>
             </li>
         {% endif %}
 

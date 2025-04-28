@@ -110,22 +110,4 @@ final class RecurringOrderController extends AbstractController
             ],
         ]);
     }
-
-    /**
-     * @param array<Product> $products
-     * @return array<int, array<int|string, string>>
-     */
-    private function getPackageSizes(array $products): array
-    {
-        $sizes = [];
-
-        foreach ($products as $product) {
-            $sizes[$product->id]['500'] = '500g';
-            $sizes[$product->id]['1000'] = '1kg';
-            $sizes[$product->id]['3000'] = '3kg';
-            $sizes[$product->id]['other'] = 'Jiné';
-        }
-
-        return $sizes;
-    }
 }
