@@ -43,12 +43,12 @@
         <td class="text-center align-middle td-price">
             {% if products_halves[product.id] is defined %}
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
-                    <strong>{{ weight_from / 2 }} až {{ weight_to / 2 }}kg</strong>
+                    <strong>{{ weight_from / 2 }} až {{ weight_to / 2 }} kg</strong>
                 </div>
             {% endif %}
 
             <div class="toggleable visible" data-turkey-half-toggle-target="whole">
-                <strong>{{ weight_from }} až {{ weight_to }}kg</strong>
+                <strong>{{ weight_from }} až {{ weight_to }} kg</strong>
             </div>
 
             {% if products_halves[product.id] is defined %}

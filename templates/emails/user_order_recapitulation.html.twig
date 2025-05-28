@@ -117,7 +117,7 @@
                             {% if item.product.isTurkey %}
                                 <tr>
                                     <td class="td"><strong>{{ item.product.title }}</strong></td>
-                                    <td class="td text-center">{{ item.quantity }} ks</td>
+                                    <td class="td text-center">{{ item.quantity }} {{ item.product.unit }}</td>
                                     <td class="td text-center">{{ item.product.weightFrom }} až {{ item.product.weightTo }}kg</td>
                                     {% if show_prices %}
                                         <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/ks</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/ks</td>
@@ -140,9 +140,9 @@
                     <thead>
                     <tr>
                         <th class="th">Zboží</th>
-                        <th class="th text-center">Kg</th>
+                        <th class="th text-center">Množství</th>
                         {% if show_prices %}
-                            <th class="th text-center">Kč/kg</th>
+                            <th class="th text-center">Kč</th>
                             <th class="th text-end">Celkem</th>
                         {% endif %}
                     </tr>
@@ -153,12 +153,12 @@
                                 <tr>
                                     <td class="td">
                                         <strong>{{ item.product.title }}</strong>
-                                        {% if item.pack %}<br>+ Vakuovat {% if show_prices %}(+{{ item.product.packPrice }} kč){% endif %}{% endif %}
+                                        {% if item.pack %}<br>+ Vakuovat {% if show_prices %}(+{{ item.product.packPrice }} Kč){% endif %}{% endif %}
                                         {% if item.slice %}<br>+ Nakrájet{% endif %}
                                     </td>
-                                    <td class="td text-center">{{ item.quantity }} Kg</td>
+                                    <td class="td text-center">{{ item.quantity }} {{ item.product.unit }}</td>
                                     {% if show_prices %}
-                                        <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/kg</td>
+                                        <td class="td text-center">{% if coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/{{ item.product.unit }}</del><br>{% endif%}{{ item.product.price(coupon)|price|raw }} Kč/{{ item.product.unit }}</td>
                                         <td class="td text-end">{% if coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del><br>{% endif%}<strong>{{ item.price(coupon)|price|raw }} Kč</strong></td>
                                     {% endif %}
                                 </tr>

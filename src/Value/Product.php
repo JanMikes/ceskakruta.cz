@@ -28,6 +28,8 @@ readonly final class Product
         public null|int $type,
         public bool $isTurkey,
         public null|int $turkeyType,
+        public string $unit,
+        public float $weightPerUnit,
         /** @var array<int> */
         private array $packagesSize,
     ) {

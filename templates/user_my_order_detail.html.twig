@@ -58,13 +58,13 @@
 
                     <div style="width: 140px;">
                         {% if product.isTurkey %}
-                            {{ order_item.amount }} Ks<br>
+                            {{ order_item.amount }} ks<br>
                             {{ order_item.pricePerUnit }} Kč/ks<br>
-                            Váha od: {{ order_item.weightFrom }} Kg<br>
-                            Váha do: {{ order_item.weightTo }} Kg
+                            Váha od: {{ order_item.weightFrom }} kg<br>
+                            Váha do: {{ order_item.weightTo }} kg
                         {% else %}
-                            {{ order_item.amount }} Kg<br>
-                            {{ order_item.pricePerUnit }} Kč/kg
+                            {{ order_item.amount }} {{ product.unit }}<br>
+                            {{ order_item.pricePerUnit }} Kč/{{ product.unit }}
                         {% endif %}
                     </div>
 

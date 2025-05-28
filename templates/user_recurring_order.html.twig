@@ -72,39 +72,52 @@
                                                 <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                                             {% endif %}
                                         </td>
-                                        <td>{{ product.title }}</td>
+                                        <td>
+                                            {{ product.title }}
+                                            {% if product.unit == 'ks' %}
+                                                <br><small class="text-muted">balení {{ product.weightPerUnit }} kg</small>
+                                            {% endif %}
+                                        </td>
 
                                         <td class="text-end small">
-                                            {% for package_size, package_name in product.packagesSize %}
-                                                <span class="d-inline-block mb-1 me-3">
-                                                    Balení {{ package_name }}: <input
-                                                        type="text"
-                                                        name="item[{{ product.id }}][amount][{{ package_size }}]"
-                                                        class="d-inline-block form-control form-control-sm text-center mx-1"
-                                                        value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount(package_size) ?? 0 }}"
-                                                        style="width:40px"
-                                                        data-package-weight="{{ package_size/1000 }}"
-                                                        data-weight-calculator-target="packageInput"
-                                                        data-action="input->weight-calculator#calculate"
-                                                    > ks<br>
-                                                </span>
-                                           {% endfor %}
+                                            {% if product.unit == 'kg' %}
+                                                {% for package_size, package_name in product.packagesSize %}
+                                                    <span class="d-inline-block mb-1 me-3">
+                                                        Balení {{ package_name }}: <input
+                                                            type="text"
+                                                            name="item[{{ product.id }}][amount][{{ package_size }}]"
+                                                            class="d-inline-block form-control form-control-sm text-center mx-1"
+                                                            value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount(package_size) ?? 0 }}"
+                                                            style="width:40px"
+                                                            data-package-weight="{{ package_size/1000 }}"
+                                                            data-weight-calculator-target="packageInput"
+                                                            data-action="input->weight-calculator#calculate"
+                                                        > ks<br>
+                                                    </span>
+                                                {% endfor %}
+                                            {% endif %}
 
-                                            Jiná váha: <input
+                                            {% if product.unit == 'kg' %}
+                                                Jiná váha:
+                                            {% else %}
+                                                Počet:
+                                            {% endif %}
+
+                                            <input
                                                 type="text"
                                                 name="item[{{ product.id }}][amount][other]"
                                                 class="d-inline-block form-control form-control-sm text-center mx-1"
                                                 value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount('other') ?? 0 }}"
-                                                data-package-weight-input
-                                                data-weight-calculator-target="customInput"
+                                                data-package-weight="{{ product.unit == 'kg' ? 1 : product.weightPerUnit }}"
+                                                data-weight-calculator-target="packageInput"
                                                 data-action="input->weight-calculator#calculate"
                                                 style="width:40px"
-                                            > kg<br>
+                                            > {{ product.unit }}<br>
 
 
                                             {% if product.canBeSliced %}
                                                 <div class="form-check d-inline-block m-0">
-                                                    <input name="item[{{ product.id }}][is_sliced]" class="form-check-input" type="checkbox" id="slice-check-{{ product.id }}" {% if orders_by_day[day].itemForProduct(product.id).isSliced ?? false %}checked="checked"{% endif %}>
+                                                    <input name="item[{{ product.id }}][is_sliced]" class="form-check-input" type="checkbox" id="slice-check-{{ product.id }}" {% if orders_by_day[day].itemForProduct(product.id).isSliced ?? true %}checked="checked"{% endif %}>
                                                     <label class="form-check-label" for="slice-check-{{ product.id }}">Nakrájet</label>
                                                 </div>
                                             {% endif %}

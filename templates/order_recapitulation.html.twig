@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="cart-item-info ps-3">
-                            <h3 class="h6 product-title mb-1">{{ item.product.title }}: {{ item.quantity }} {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}</h3>
+                            <h3 class="h6 product-title mb-1">{{ item.product.title }}: {{ item.quantity }} {{ item.product.unit }}</h3>
                             <div class="d-inline-block">
                                 {% if item.product.turkeyType %}
                                     <span class="text-muted fs-xs">
@@ -35,7 +35,7 @@
                                     Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
                                 {% else %}
                                     <span class="text-muted fs-xs">
-                                        Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
+                                        Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/{{ item.product.unit }}</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/{{ item.product.unit }}
                                     </span>
                                     <br>
                                     Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
@@ -43,7 +43,7 @@
                                         <br>+ Nakrájet
                                     {% endif %}
                                     {% if item.pack %}
-                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} kč)
+                                        <br>+ Vakuově zabalit (+{{ item.product.packPrice }} Kč)
                                     {% endif %}
                                 {% endif %}
                                 {% if item.note %}

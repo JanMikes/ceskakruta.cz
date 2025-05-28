@@ -52,6 +52,8 @@ final class GetProducts
                  *     force_packing: int,
                  *     price_pack: null|int,
                  *     packages_size: string,
+                 *     unit: string,
+                 *     weight_per_unit: float|numeric-string,
                  * } $productRow
                  */
 
@@ -105,6 +107,8 @@ final class GetProducts
                     type: $type,
                     isTurkey: $type === 3 || $type === 4,
                     turkeyType: $turkeyType,
+                    unit: $productRow['unit'],
+                    weightPerUnit: (float) $productRow['weight_per_unit'],
                     packagesSize: $packagesSize,
                 );
             }

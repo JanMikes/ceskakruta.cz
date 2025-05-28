@@ -83,7 +83,7 @@
                                         Celkem: {% if cart.coupon.percentValue ?? null %}<del>{{ item.price|price|raw }} Kč</del> {% endif%}{{ item.price(cart.coupon)|price|raw }} Kč
                                     {% else %}
                                         <span class="text-muted fs-xs">
-                                            Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/kg</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/kg
+                                            Cena: {% if cart.coupon.percentValue ?? null %}<del>{{ item.product.price|price|raw }} Kč/{{ item.product.unit }}</del> {% endif%}{{ item.product.price(cart.coupon)|price|raw }} Kč/{{ item.product.unit }}
                                         </span>
                                         <br>
                                         <span class="d-inline-block pb-1">
@@ -126,7 +126,7 @@
                                     <div class="text-end mb-2">
                                     </div>
 
-                                    <input name="{{ field_name(change_quantity_forms[loop.index0].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {% if item.product.turkeyType %}ks{% else %}Kg{% endif %}
+                                    <input name="{{ field_name(change_quantity_forms[loop.index0].quantity) }}" style="width: 60px;" class="text-center form-control d-inline-block form-control-sm me-1" type="text" value="{{ item.quantity }}"> {{ item.product.unit }}
                                     <button class="btn btn-primary btn-sm ms-2 " type="submit">Přepočítat</button>
                                 </div>
 
