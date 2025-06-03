@@ -17,16 +17,16 @@
         <div class="calendars-picking mt-2 mb-3">
             <div class="shadow p-1 d-inline-block">
                 {% for day_number, day_name in days_short %}
-                        {% if day_number < 6 and (allowed_days[day_number] ?? false) %}
-                            <a class="p-3 d-inline-block" href="{{ path('user_recurring_order', {'day': day_number}) }}" {% if day == day_number %}style="border: 1px solid red;"{% endif %}>
-                                {{ day_name }}
-                                {% if orders_by_day[day_number] ?? false %}
-                                    <i class="ci-check"></i>
-                                {% endif %}
-                            </a>
-                        {% else %}
-                            <span class="text-muted d-inline-block p-3">{{ day_name }}</span>
-                        {% endif %}
+                    {% if day_number < 6 and day_number in allowed_days %}
+                        <a class="p-3 d-inline-block" href="{{ path('user_recurring_order', {'day': day_number}) }}" {% if day == day_number %}style="border: 1px solid red;"{% endif %}>
+                            {{ day_name }}
+                            {% if orders_by_day[day_number] ?? false %}
+                                <i class="ci-check"></i>
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        <span class="text-muted d-inline-block p-3">{{ day_name }}</span>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

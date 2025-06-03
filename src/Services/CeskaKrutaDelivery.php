@@ -16,11 +16,15 @@ final class CeskaKrutaDelivery
      */
     public function getAllowedDaysForPostalCode(string $postalCode): array
     {
+        $postalCode = str_replace(' ', '', $postalCode);
+
         return $this->mapping[(int) $postalCode] ?? [];
     }
 
     public function canDeliverToPostalCode(string $postalCode): bool
     {
+        $postalCode = str_replace(' ', '', $postalCode);
+
         return ($this->mapping[(int) $postalCode] ?? []) !== [];
     }
 
