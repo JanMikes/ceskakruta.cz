@@ -39,7 +39,6 @@ readonly final class CreateOrderFromRecurringOrderHandler
         private GetProducts $getProducts,
         private UserService $userService,
         private CeskaKrutaDelivery $ceskaKrutaDelivery,
-        private CeskaKrutaShopDelivery $ceskaKrutaShopDelivery,
         private CoolBalikDelivery $coolBalikDelivery,
         private ClockInterface $clock,
     ) {
