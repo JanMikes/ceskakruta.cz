@@ -10,6 +10,7 @@ use CeskaKruta\Web\Message\SaveRecurringOrder;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
+use CeskaKruta\Web\Services\CeskaKrutaShopDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderingDeadline;
 use CeskaKruta\Web\Value\Product;
@@ -29,6 +30,7 @@ final class RecurringOrderController extends AbstractController
         readonly private RecurringOrderRepository $recurringOrderRepository,
         readonly private MessageBusInterface $bus,
         readonly private CeskaKrutaDelivery $ceskaKrutaDelivery,
+        readonly private CeskaKrutaShopDelivery $ceskaKrutaShopDelivery,
         readonly private CoolBalikDelivery $coolBalikDelivery,
         readonly private OrderingDeadline $orderingDeadline,
     ) {
@@ -37,7 +39,11 @@ final class RecurringOrderController extends AbstractController
     #[Route(path: '/uzivatel/pravidelne-objednavky', name: 'user_recurring_order')]
     public function __invoke(#[CurrentUser] User $loggedUser, Request $request): Response
     {
-        $deliveryPlacesIds = [CeskaKrutaDelivery::DELIVERY_PLACE_ID, CoolBalikDelivery::DELIVERY_PLACE_ID];
+        $deliveryPlacesIds = [
+            CeskaKrutaDelivery::DELIVERY_PLACE_ID,
+            CeskaKrutaShopDelivery::DELIVERY_PLACE_ID,
+            CoolBalikDelivery::DELIVERY_PLACE_ID,
+        ];
 
         if ($loggedUser->hasFilledDeliveryAddress() === false) {
             $this->addFlash('warning', 'Prosím, vyplňte si doručovací adresu!');
@@ -99,6 +105,10 @@ final class RecurringOrderController extends AbstractController
             $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
         }
 
+        if ($placeId === CeskaKrutaShopDelivery::DELIVERY_PLACE_ID) {
+            $allowedDays = $this->ceskaKrutaShopDelivery->getAllowedDaysForPostalCode($postalCode);
+        }
+
         if ($placeId === CoolBalikDelivery::DELIVERY_PLACE_ID) {
             $allowedDays = $this->coolBalikDelivery->getAllowedDaysForPostalCode($postalCode);
         }
@@ -109,7 +119,6 @@ final class RecurringOrderController extends AbstractController
             $nextDeadline = $this->orderingDeadline->nextDeadline((int) $day, $placeId);
             $nextOrderingDay = $this->orderingDeadline->nextOrderDay((int) $day, $placeId);
         }
-
 
         return $this->render('user_recurring_order.html.twig', [
             'products' => $products,

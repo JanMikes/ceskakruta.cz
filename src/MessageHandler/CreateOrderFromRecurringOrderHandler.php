@@ -11,6 +11,7 @@ use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
+use CeskaKruta\Web\Services\CeskaKrutaShopDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
@@ -38,6 +39,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
         private GetProducts $getProducts,
         private UserService $userService,
         private CeskaKrutaDelivery $ceskaKrutaDelivery,
+        private CeskaKrutaShopDelivery $ceskaKrutaShopDelivery,
         private CoolBalikDelivery $coolBalikDelivery,
         private ClockInterface $clock,
     ) {
@@ -173,7 +175,11 @@ readonly final class CreateOrderFromRecurringOrderHandler
         assert($user->deliveryZip !== null);
 
         $placeId = $user->preferredPlaceId;
-        $deliveryPlacesIds = [CeskaKrutaDelivery::DELIVERY_PLACE_ID, CoolBalikDelivery::DELIVERY_PLACE_ID];
+        $deliveryPlacesIds = [
+            CeskaKrutaDelivery::DELIVERY_PLACE_ID,
+            CeskaKrutaShopDelivery::DELIVERY_PLACE_ID,
+            CoolBalikDelivery::DELIVERY_PLACE_ID,
+        ];
 
         if (in_array($placeId, $deliveryPlacesIds, true) === false) {
             if ($this->ceskaKrutaDelivery->canDeliverToPostalCode($user->deliveryZip)) {
