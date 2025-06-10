@@ -16,8 +16,8 @@
                 {% for item in cart.items %}
                     <div class="d-flex cart-items-row p-3 my-2 shadow">
                         <div class="cart-item-image">
-                            {% if asset_exists('img/produkty/' ~ item.product.id ~ '.png') %}
-                                <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.png') }}" alt="Product">
+                            {% if asset_exists('img/produkty/' ~ item.product.id ~ '.jpg') %}
+                                <img class="rounded-3" src="{{ asset('img/produkty/' ~ item.product.id ~ '.jpg') }}" alt="Product">
                             {% else %}
                                 <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                             {% endif %}

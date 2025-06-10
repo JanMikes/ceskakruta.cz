@@ -6,8 +6,8 @@
         <td class="align-middle calendar-image">
             {% if products_halves[product.id] is defined %}
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
-                    {% if asset_exists('img/produkty/' ~ products_halves[product.id].id ~ '.png') %}
-                        <img src="{{ asset('img/produkty/' ~ products_halves[product.id].id ~ '.png') }}" alt="Product">
+                    {% if asset_exists('img/produkty/' ~ products_halves[product.id].id ~ '.jpg') %}
+                        <img src="{{ asset('img/produkty/' ~ products_halves[product.id].id ~ '.jpg') }}" alt="Product">
                     {% else %}
                         <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                     {% endif %}
@@ -15,8 +15,8 @@
             {% endif %}
 
             <div class="toggleable visible" data-turkey-half-toggle-target="whole">
-                {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
-                    <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" alt="Product">
+                {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
+                    <img src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" alt="Product">
                 {% else %}
                     <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                 {% endif %}

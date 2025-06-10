@@ -66,8 +66,8 @@
                                 {% for product in products %}
                                     <tr data-controller="note-toggle">
                                         <td style="width: 80px;" class="p-1">
-                                            {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
-                                                <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 50px;" alt="Product">
+                                            {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
+                                                <img src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" style="max-height: 50px;" alt="Product">
                                             {% else %}
                                                 <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                                             {% endif %}

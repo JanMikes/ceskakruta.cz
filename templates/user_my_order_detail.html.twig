@@ -42,8 +42,8 @@
                 {% set product = products[order_item.productId] %}
                 <div class="shadow mx-sm-4 p-3 d-sm-flex justify-content-between">
                     <div style="max-width: 60px;">
-                        {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
-                            <img class="rounded-3" src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" alt="Product">
+                        {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
+                            <img class="rounded-3" src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" alt="Product">
                         {% else %}
                             <img class="rounded-3" src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                         {% endif %}

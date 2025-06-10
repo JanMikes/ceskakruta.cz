@@ -6,8 +6,8 @@
                 <div class="toggleable d-none" data-turkey-half-toggle-target="half">
                     <div style="height: 150px;" class="overflow-hidden">
                         <a class="card-img-top d-block text-center" href="#" data-bs-toggle="modal" data-bs-target="#product-modal-{{ products_halves[product.id].id }}">
-                            {% if asset_exists('img/produkty/' ~ products_halves[product.id].id ~ '.png') %}
-                                <img src="{{ asset('img/produkty/' ~ products_halves[product.id].id ~ '.png') }}" style="max-height: 150px;" alt="Product">
+                            {% if asset_exists('img/produkty/' ~ products_halves[product.id].id ~ '.jpg') %}
+                                <img src="{{ asset('img/produkty/' ~ products_halves[product.id].id ~ '.jpg') }}" style="max-height: 150px;" alt="Product">
                             {% else %}
                                 <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                             {% endif %}
@@ -34,8 +34,8 @@
             <div class="toggleable visible" data-turkey-half-toggle-target="whole">
                 <div style="height: 150px;" class="overflow-hidden">
                     <a class="card-img-top d-block text-center" href="#" data-bs-toggle="modal" data-bs-target="#product-modal-{{ product.id }}">
-                        {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
-                            <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 150px;" alt="Product">
+                        {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
+                            <img src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" style="max-height: 150px;" alt="Product">
                         {% else %}
                             <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                         {% endif %}
@@ -143,8 +143,8 @@
                         {% endif %}
                     </div>
                     <div class="col-sm-4 text-center">
-                        {% if asset_exists('img/produkty/' ~ product.id ~ '.png') %}
-                            <img src="{{ asset('img/produkty/' ~ product.id ~ '.png') }}" style="max-height: 150px;" alt="Product">
+                        {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
+                            <img src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" style="max-height: 150px;" alt="Product">
                         {% else %}
                             <img src="{{ asset('img/placeholder.jpg') }}" alt="Product">
                         {% endif %}
