@@ -6,13 +6,22 @@ namespace CeskaKruta\Web\Repository;
 
 use CeskaKruta\Web\Entity\RecurringOrder;
 use CeskaKruta\Web\Exceptions\RecurringOrderNotFound;
+use CeskaKruta\Web\Query\GetPlaces;
+use CeskaKruta\Web\Services\Security\UserProvider;
+use CeskaKruta\Web\Services\UserService;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Clock\ClockInterface;
 use Ramsey\Uuid\UuidInterface;
 
 readonly final class RecurringOrderRepository
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private ClockInterface $clock,
+        private GetPlaces $getPlaces,
+        private UserService $userService,
+        private UserProvider $userProvider,
     ) {
     }
 
@@ -68,13 +77,69 @@ readonly final class RecurringOrderRepository
      */
     public function getScheduledForOrdering(): array
     {
+        $scheduledOrders = [];
+        $timeForDeadline = $this->clock->now()
+            ->modify('-1 day')
+            ->setTime(23, 59);
+
+        $users = [];
+
         /** @var list<RecurringOrder> $orders */
         $orders = $this->entityManager->createQueryBuilder()
             ->select('o')
             ->from(RecurringOrder::class, 'o')
+            ->where('o.lastOrderedAt IS NULL OR o.lastOrderedAt < :timeForDeadline')
+            ->setParameter('timeForDeadline', $timeForDeadline)
+            ->orderBy('o.lastOrderedAt', 'ASC')
             ->getQuery()
             ->getResult();
 
-        return $orders;
+        foreach ($orders as $order) {
+            if (isset($users[$order->userId]) === false) {
+                $email = $this->userService->getEmailById($order->userId);
+                $users[$order->userId] = $this->userProvider->loadUserByIdentifier($email);
+            }
+
+            $user = $users[$order->userId];
+            assert($user->preferredPlaceId !== null);
+
+            $place = $this->getPlaces->oneById($user->preferredPlaceId);
+            $allowDaysBefore = [
+                1 => $place->day1AllowedDaysBefore,
+                2 => $place->day2AllowedDaysBefore,
+                3 => $place->day3AllowedDaysBefore,
+                4 => $place->day4AllowedDaysBefore,
+                5 => $place->day5AllowedDaysBefore,
+                6 => $place->day6AllowedDaysBefore,
+                7 => $place->day7AllowedDaysBefore,
+            ];
+
+            $deadlineDaysBefore = $allowDaysBefore[$order->dayOfWeek];
+            $nextOrderDate = $this->getNextDateByDayOfWeek($order->dayOfWeek, $this->clock->now());
+            $deadline = $nextOrderDate->modify("-$deadlineDaysBefore days");
+
+            if ($deadline->format('Y-m-d') === $timeForDeadline->format('Y-m-d')) {
+                $scheduledOrders[] = $order;
+
+                if (count($scheduledOrders) >= 5) {
+                    break;
+                }
+            }
+        }
+
+        return $scheduledOrders;
+    }
+
+
+    private function getNextDateByDayOfWeek(int $dayOfWeek, DateTimeImmutable $from): DateTimeImmutable
+    {
+        $currentDow = (int) $from->format('N');
+        $daysToAdd = ($dayOfWeek - $currentDow + 7) % 7;
+
+        if ($daysToAdd === 0) {
+            $daysToAdd = 7;
+        }
+
+        return $from->modify(sprintf('+%d days', $daysToAdd));
     }
 }
