@@ -100,7 +100,11 @@ readonly final class CreateOrderFromRecurringOrderHandler
         $items = [];
 
         foreach ($recurringOrder->items as $item) {
-            $product = $products[$item->productId];
+            $product = $products[$item->productId] ?? null;
+
+            if ($product === null) {
+                continue;
+            }
 
             $items[] = ProductInCart::createFromRecurringOrderItem($item, $product);
         }
