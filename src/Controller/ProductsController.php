@@ -51,6 +51,7 @@ final class ProductsController extends AbstractController
 
             $form = $this->createForm(AddToCartFormType::class, $data, [
                 'action' => $this->generateUrl($routeName, ['productId' => $product->id]),
+                'csrf_protection' => false,
             ]);
 
             $forms[$product->id] = $form;
@@ -61,37 +62,40 @@ final class ProductsController extends AbstractController
         $submittedProductId = $request->query->get('productId');
 
         if ($submittedProductId !== null) {
-            $requestForm = $forms[(int) $submittedProductId];
-            $requestForm->handleRequest($request);
+            $requestForm = $forms[(int) $submittedProductId] ?? null;
 
-            if ($requestForm->isSubmitted() && $requestForm->isValid()) {
-                $data = $requestForm->getData();
-                assert($data instanceof AddToCartFormData);
+            if ($requestForm !== null) {
+                $requestForm->handleRequest($request);
 
-                $this->bus->dispatch(
-                    new AddItemToCart(
-                        productId: (int) $data->productId,
-                        quantity: $data->quantity,
-                        slice: $data->slice,
-                        pack: $data->pack,
-                    ),
-                );
+                if ($requestForm->isSubmitted() && $requestForm->isValid()) {
+                    $data = $requestForm->getData();
+                    assert($data instanceof AddToCartFormData);
 
-                if ($data->year !== null && $data->week !== null) {
-                    $this->cartStorage->storeLockedWeek($data->year, $data->week);
+                    $this->bus->dispatch(
+                        new AddItemToCart(
+                            productId: (int) $data->productId,
+                            quantity: $data->quantity,
+                            slice: $data->slice,
+                            pack: $data->pack,
+                        ),
+                    );
+
+                    if ($data->year !== null && $data->week !== null) {
+                        $this->cartStorage->storeLockedWeek($data->year, $data->week);
+                    }
+
+                    if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
+                        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+                        return $this->render('cart_item_added.stream.html.twig', [
+                           'product' => $products[(int) $data->productId],
+                        ]);
+                    }
+
+                    $this->addFlash('success', 'Přidáno do košíku');
+
+                    return $this->redirectToRoute($routeName);
                 }
-
-                if ($request->getPreferredFormat() === TurboBundle::STREAM_FORMAT) {
-                    $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-
-                    return $this->render('cart_item_added.stream.html.twig', [
-                       'product' => $products[(int) $data->productId],
-                    ]);
-                }
-
-                $this->addFlash('success', 'Přidáno do košíku');
-
-                return $this->redirectToRoute($routeName);
             }
         }
 

@@ -23,7 +23,7 @@ final class ProductDetailController extends AbstractController
     public function __invoke(Request $request, string $productId): Response
     {
         $addToCartForm = $this->createForm(AddToCartFormType::class, options: [
-            'variants' => [],
+            'csrf_protection' => false,
         ]);
 
         $addToCartForm->handleRequest($request);

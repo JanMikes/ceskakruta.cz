@@ -56,6 +56,8 @@ final class RecurringOrderController extends AbstractController
                 $this->bus->dispatch(
                     new DetectUserDeliveryPlace($loggedUser->id),
                 );
+
+                return $this->redirectToRoute('user_recurring_order');
             } catch (HandlerFailedException $handlerFailedException) {
                 $previousException = $handlerFailedException->getPrevious();
 
@@ -98,7 +100,6 @@ final class RecurringOrderController extends AbstractController
 
         $allowedDays = [];
         $placeId = $loggedUser->preferredPlaceId;
-        assert($placeId !== null);
 
         $postalCode = $loggedUser->deliveryZip ?? '';
         if ($placeId === CeskaKrutaDelivery::DELIVERY_PLACE_ID) {
