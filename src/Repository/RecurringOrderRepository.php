@@ -12,6 +12,7 @@ use CeskaKruta\Web\Services\UserService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\UuidInterface;
 
 readonly final class RecurringOrderRepository
@@ -22,6 +23,7 @@ readonly final class RecurringOrderRepository
         private GetPlaces $getPlaces,
         private UserService $userService,
         private UserProvider $userProvider,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -114,7 +116,17 @@ readonly final class RecurringOrderRepository
                 7 => $place->day7AllowedDaysBefore,
             ];
 
+
             $deadlineDaysBefore = $allowDaysBefore[$order->dayOfWeek];
+
+            if (!is_int($deadlineDaysBefore) || $deadlineDaysBefore < 0) {
+                $this->logger->error('Invalid deadline for recurring order', [
+                    'recurring_order_id' => $order->id,
+                ]);
+
+                continue;
+            }
+
             $nextOrderDate = $this->getNextDateByDayOfWeek($order->dayOfWeek, $this->clock->now());
             $deadline = $nextOrderDate->modify("-$deadlineDaysBefore days");
 
