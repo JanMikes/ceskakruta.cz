@@ -9,6 +9,7 @@ use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
+use CeskaKruta\Web\Value\ProductInCart;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -33,8 +34,11 @@ readonly final class CreateOrderHandler
         $address = $this->cartService->getOrderData()?->email;
         assert($address !== null);
 
+        $items = $this->cartService->getItems();
+        $items = ProductInCart::sortItemsByType($items);
+
         $templateVariables = [
-            'items' => $this->cartService->getItems(),
+            'items' => $items,
             'order_id' => $orderId,
             'place' => $this->cartService->getPlace(),
             'order_data' => $this->cartStorage->getOrderData(),

@@ -39,4 +39,32 @@ readonly final class ProductInCart
             note: $note,
         );
     }
+
+    /**
+     * @param array<ProductInCart> $items
+     * @return array<ProductInCart>
+     */
+    public static function sortItemsByType(array $items): array
+    {
+        usort($items, static function (ProductInCart $a, ProductInCart $b): int {
+            $typeA = $a->product->type;
+            $typeB = $b->product->type;
+
+            if ($typeA === null && $typeB === null) {
+                return 0;
+            }
+
+            if ($typeA === null) {
+                return 1;
+            }
+
+            if ($typeB === null) {
+                return -1;
+            }
+
+            return $typeA <=> $typeB;
+        });
+
+        return $items;
+    }
 }

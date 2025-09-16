@@ -62,7 +62,9 @@ readonly final class Product
         $packages = [];
 
         foreach ($this->packagesSize as $packageSize) {
-            $packages[$packageSize] = number_format($packageSize/1000, 2, '.') . ' Kg';
+            $kg = $packageSize / 1000;
+            $decimals = ($packageSize % 100 === 0) ? 1 : 2;
+            $packages[$packageSize] = number_format($kg, $decimals, '.') . ' Kg';
         }
 
         return $packages;

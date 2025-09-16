@@ -109,6 +109,8 @@ readonly final class CreateOrderFromRecurringOrderHandler
             $items[] = ProductInCart::createFromRecurringOrderItem($item, $product);
         }
 
+        $items = ProductInCart::sortItemsByType($items);
+
         $totalPrice = OrderPriceCalculator::totalPrice($items, null, $place);
         $totalItemsPriceWithoutDiscount = OrderPriceCalculator::totalItemsPriceWithoutDiscount($items);
 

@@ -363,12 +363,12 @@ readonly final class CartService
             7 => $place->day7AllowedDaysBefore,
         ];
 
-        if ($placeId === 1 && $date->format('Y-m-d') === '2024-12-22') {
-            $allowDaysBefore[7] = 3;
+        if ($placeId === 1 && $date->format('Y-m-d') === '2025-12-22') {
+            $allowDaysBefore[1] = 3;
         }
 
-        if ($placeId === 1 && $date->format('Y-m-d') === '2024-12-23') {
-            $allowDaysBefore[1] = 4;
+        if ($placeId === 1 && $date->format('Y-m-d') === '2025-12-23') {
+            $allowDaysBefore[2] = 4;
         }
 
         $postalCode = $this->getDeliveryAddress()?->postalCode;
