@@ -24,7 +24,10 @@
                     <strong>Cena:</strong> {{ order.priceTotal }} Kč
                 </div>
                 <div>
-                    <a class="btn btn-sm btn-outline-primary mt-2 mt-sm-0" href="{{ path('user_my_order_detail', {'orderId': order.id}) }}">Detail</a>
+                    <a class="btn btn-sm btn-outline-primary mt-2 mt-sm-0 me-2" href="{{ path('user_my_order_detail', {'orderId': order.id}) }}">Detail</a>
+                    <form method="post" action="{{ path('user_repeat_order', {'orderId': order.id}) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary mt-2 mt-sm-0">Zopakovat objednávku</button>
+                    </form>
                 </div>
             </div>
         {% endfor %}

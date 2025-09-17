@@ -8,13 +8,19 @@
 
         {{ include('_my_account_panel.html.twig') }}
 
+        <div class="my-3">
+            <form method="post" action="{{ path('user_repeat_order', {'orderId': order.id}) }}" style="display: inline;">
+                <button type="submit" class="btn btn-sm btn-outline-primary">Zopakovat objednávku</button>
+            </form>
+        </div>
+
         <div class="shadow mt-3 p-3 d-sm-flex justify-content-between">
-            <div>
+            <div style="width: 110px;" class="flex-grow-0">
                 <span class="text-primary">Číslo: {{ order.id }}</span><br>
                 {{ order.date.format('d.m.Y') }}
             </div>
 
-            <div>
+            <div class="small mt-3 mt-sm-0">
                 Objednáno: {{ order.orderedAt.format('d.m.Y H:i') }}<br>
                 Doprava: {{ places[order.placeId].name }}<br>
                 {{ order.email }}<br>
@@ -24,8 +30,8 @@
                 {{ order.deliveryPostalCode }}
             </div>
 
-            <div>
-                {{ order.payByCard }}<br>
+            <div class="small mt-3 mt-sm-0">
+                {{ order.payByCard ? 'Platba kartou' }}<br>
                 {% if order.coupon and order.coupon.percentValue %}
                     <small>
                         Sleva -{{ order.coupon.percentValue }}%<br>

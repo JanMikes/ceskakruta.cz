@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(composer run-script:*)"
+      "Bash(composer run-script:*)",
+      "Bash(bin/console cache:clear:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []
