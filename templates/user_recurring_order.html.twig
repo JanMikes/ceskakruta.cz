@@ -38,6 +38,25 @@
                    data-controller="confirm"
                    data-action="confirm#confirm"
                    data-confirm-message-value="Opravdu chcete zrušit pravidelné objednávání?"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na: {{ days[day] }}</a>
+
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ci ci-copy"></i> Zkopírovat pravidelnou objednávku na jiný den
+                    </button>
+                    <ul class="dropdown-menu">
+                        {% for target_day in allowed_days %}
+                            {% if target_day != day %}
+                                <li>
+                                    <form method="post" action="{{ path('user_copy_recurring_order') }}" class="d-inline">
+                                        <input type="hidden" name="source_day" value="{{ day }}">
+                                        <input type="hidden" name="target_day" value="{{ target_day }}">
+                                        <button type="submit" class="dropdown-item">{{ days[target_day] }}</button>
+                                    </form>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
             {% else %}
                 <p class="text-muted my-2">Na tento den nemáte žádnou pravidelnou objednávku</p>
             {% endif %}
@@ -161,7 +180,26 @@
                        href="{{ path('user_cancel_recurring_order', {'day': day}) }}"
                        data-controller="confirm"
                        data-action="confirm#confirm"
-                       data-confirm-message-value="Opravdu chcete zrušit pravidelné objednávání?"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na: {{ days[day] }}</a><br>
+                       data-confirm-message-value="Opravdu chcete zrušit pravidelné objednávání?"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na: {{ days[day] }}</a>
+
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ci ci-copy"></i> Zkopírovat pravidelnou objednávku na jiný den
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% for target_day in allowed_days %}
+                                {% if target_day != day %}
+                                    <li>
+                                        <form method="post" action="{{ path('user_copy_recurring_order') }}" class="d-inline">
+                                            <input type="hidden" name="source_day" value="{{ day }}">
+                                            <input type="hidden" name="target_day" value="{{ target_day }}">
+                                            <button type="submit" class="dropdown-item">{{ days[target_day] }}</button>
+                                        </form>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div><br>
                 {% endif %}
             </form>
         {% else %}
