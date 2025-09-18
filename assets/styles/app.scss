@@ -740,3 +740,15 @@ main {
         }
     }
 }
+
+.recurring-order-product-title i {
+    display: none;
+}
+
+.table-primary .recurring-order-product-title {
+    font-weight: bold;
+
+    i {
+        display: inline;
+    }
+}

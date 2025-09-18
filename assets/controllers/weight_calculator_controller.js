@@ -24,7 +24,7 @@ export default class extends Controller {
             });
 
             // Highlight row if weight > 0
-            row.classList.toggle('table-info', rowSum > 0);
+            row.classList.toggle('table-primary', rowSum > 0);
 
             // Update row total display
             rowTotalEl.textContent = `${rowSum.toFixed(2)} kg`;

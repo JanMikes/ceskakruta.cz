@@ -106,7 +106,7 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {{ product.title }}
+                                            <span class="recurring-order-product-title">{{ product.title }} <i class="ms-1 ci ci-check-circle text-success"></i></span>
                                             {% if product.unit == 'ks' and not product.isTurkey %}
                                                 <br><small class="text-muted">balení {{ product.weightPerUnit }} kg</small>
                                             {% elseif product.isTurkey %}
