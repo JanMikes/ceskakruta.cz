@@ -32,6 +32,7 @@ readonly final class Product
         public float $weightPerUnit,
         /** @var array<int> */
         private array $packagesSize,
+        public null|int $order,
     ) {
         $this->weightFrom = ($isHalf === true && $weightFrom !== null) ? $weightFrom / 2 : $weightFrom;
         $this->weightTo = ($isHalf === true && $weightTo !== null) ? $weightTo / 2 : $weightTo;

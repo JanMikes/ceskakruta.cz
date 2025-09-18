@@ -51,7 +51,7 @@ readonly final class ProductInCart
             $typeB = $b->product->type;
 
             if ($typeA === null && $typeB === null) {
-                return 0;
+                return $b->product->order <=> $a->product->order;
             }
 
             if ($typeA === null) {
@@ -62,7 +62,13 @@ readonly final class ProductInCart
                 return -1;
             }
 
-            return $typeA <=> $typeB;
+            $typeComparison = $typeA <=> $typeB;
+
+            if ($typeComparison !== 0) {
+                return $typeComparison;
+            }
+
+            return $b->product->order <=> $a->product->order;
         });
 
         return $items;

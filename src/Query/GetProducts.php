@@ -59,6 +59,7 @@ final class GetProducts
                  *     packages_size: string,
                  *     unit: string,
                  *     weight_per_unit: float|numeric-string,
+                 *     order: null|int,
                  * } $productRow
                  */
 
@@ -115,6 +116,7 @@ final class GetProducts
                     unit: $productRow['unit'],
                     weightPerUnit: (float) $productRow['weight_per_unit'],
                     packagesSize: $packagesSize,
+                    order: $productRow['order'],
                 );
             }
 
