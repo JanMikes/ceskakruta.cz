@@ -85,7 +85,7 @@ final class RecurringOrderController extends AbstractController
         $day = $request->query->get('day');
 
         if ($day !== null && $request->isMethod('POST')) {
-            /** @var array<int, array{amount: array<string, string>, note: null|string, is_sliced?: bool}> $items */
+            /** @var array<int, array{amount: array<string, string>, note: null|string, is_sliced?: bool, is_packed?: bool}> $items */
             $items = $request->request->all('item');
 
             $this->bus->dispatch(

@@ -35,7 +35,7 @@ readonly final class ProductInCart
             quantity: $quantity,
             product: $product,
             slice: $recurringOrderItem->isSliced,
-            pack: $product->canBePacked,
+            pack: $recurringOrderItem->isPacked,
             note: $note,
         );
     }

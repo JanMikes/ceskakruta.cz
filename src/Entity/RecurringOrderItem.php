@@ -39,6 +39,9 @@ class RecurringOrderItem
         #[Column(options: ['default' => false])]
         public bool $isSliced,
 
+        #[Column(options: ['default' => false])]
+        public bool $isPacked,
+
         #[Column(nullable: true)]
         public null|string $note,
     ) {
@@ -61,11 +64,12 @@ class RecurringOrderItem
     }
 
     /** @param array<PackageAmount> $packages */
-    public function change(array $packages, float $otherPackageSizeAmount, null|string $note, bool $isSliced): void
+    public function change(array $packages, float $otherPackageSizeAmount, null|string $note, bool $isSliced, bool $isPacked): void
     {
         $this->packages = $packages;
         $this->otherPackageSizeAmount = $otherPackageSizeAmount;
         $this->isSliced = $isSliced;
+        $this->isPacked = $isPacked;
         $this->note = $note;
     }
 

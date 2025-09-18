@@ -41,6 +41,7 @@ readonly final class SaveRecurringOrderHandler
             $other = 0.0;
             $note = null;
             $isSliced = false;
+            $isPacked = false;
 
             if (isset($itemData['amount']['other'])) {
                 $other = (float) $itemData['amount']['other'];
@@ -53,6 +54,10 @@ readonly final class SaveRecurringOrderHandler
 
             if (isset($itemData['is_sliced'])) {
                 $isSliced = (bool) $itemData['is_sliced'];
+            }
+
+            if (isset($itemData['is_packed'])) {
+                $isPacked = (bool) $itemData['is_packed'];
             }
 
             $packages = [];
@@ -77,6 +82,7 @@ readonly final class SaveRecurringOrderHandler
                     otherPackageSizeAmount: $other,
                     note: $note,
                     isSliced: $isSliced,
+                    isPacked: $isPacked,
                 );
                 unset($existingItems[$productId]);
                 continue;
@@ -90,6 +96,7 @@ readonly final class SaveRecurringOrderHandler
                 $packages,
                 otherPackageSizeAmount: $other,
                 isSliced: $isSliced,
+                isPacked: $isPacked,
                 note: $note,
             );
         }
