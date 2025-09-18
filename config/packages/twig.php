@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use CeskaKruta\Web\Services\Cart\CartService;
+use CeskaKruta\Web\Services\ContentService;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (\Symfony\Config\TwigConfig $twig): void {
@@ -10,6 +11,10 @@ return static function (\Symfony\Config\TwigConfig $twig): void {
 
     $twig->global('cart')->value(
         service(CartService::class)
+    );
+
+    $twig->global('content')->value(
+        service(ContentService::class)
     );
 
     $twig->date([
