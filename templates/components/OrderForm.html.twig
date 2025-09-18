@@ -37,7 +37,7 @@
             }) }}
             {{ form_errors(form.termsAgreement) }}
 
-            {% if cart.pickupPlace or (cart.place and cart.place.isOwnDelivery) %}
+            {% if cart.pickupPlace or (cart.place and not cart.place.isOwnDelivery) %}
                 <input type="hidden" name="{{ form.payByCard.vars.full_name }}" value="">
                 {% do form.payByCard.setRendered() %}
             {% else %}
