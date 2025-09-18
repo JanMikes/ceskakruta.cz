@@ -81,7 +81,7 @@ readonly final class RecurringOrderRepository
     {
         $scheduledOrders = [];
         $timeForDeadline = $this->clock->now()
-            ->modify('-1 day')
+            //->modify('-1 day')
             ->setTime(23, 59);
 
         $users = [];

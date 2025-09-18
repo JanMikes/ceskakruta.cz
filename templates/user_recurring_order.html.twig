@@ -107,13 +107,15 @@
                                         </td>
                                         <td>
                                             {{ product.title }}
-                                            {% if product.unit == 'ks' %}
+                                            {% if product.unit == 'ks' and not product.isTurkey %}
                                                 <br><small class="text-muted">balení {{ product.weightPerUnit }} kg</small>
+                                            {% elseif product.isTurkey %}
+                                                <br><small class="text-muted">zadávejte v kg, bude zvolena nejbližší vyšší možná váha dle aktuálního váhového kalendáře</small>
                                             {% endif %}
                                         </td>
 
                                         <td class="text-end small">
-                                            {% if product.unit == 'kg' %}
+                                            {% if product.unit == 'kg' or product.isTurkey %}
                                                 {% for package_size, package_name in product.packagesSize %}
                                                     <span class="d-inline-block mb-1 me-3">
                                                         Balení {{ package_name }}: <input
@@ -130,7 +132,7 @@
                                                 {% endfor %}
                                             {% endif %}
 
-                                            {% if product.unit == 'kg' %}
+                                            {% if product.unit == 'kg' or product.isTurkey %}
                                                 Jiná váha:
                                             {% else %}
                                                 Počet:
@@ -141,11 +143,11 @@
                                                 name="item[{{ product.id }}][amount][other]"
                                                 class="d-inline-block form-control form-control-sm text-center mx-1"
                                                 value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount('other') ?? 0 }}"
-                                                data-package-weight="{{ product.unit == 'kg' ? 1 : product.weightPerUnit }}"
+                                                data-package-weight="{{ product.unit == 'kg' or product.isTurkey ? 1 : product.weightPerUnit }}"
                                                 data-weight-calculator-target="packageInput"
                                                 data-action="input->weight-calculator#calculate"
                                                 style="width:40px"
-                                            > {{ product.unit }}<br>
+                                            > {% if product.isTurkey %}kg{% else %}{{ product.unit }}{% endif %}<br>
 
 
                                             {% if product.canBeSliced %}

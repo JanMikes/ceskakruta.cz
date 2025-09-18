@@ -75,7 +75,8 @@ final class RecurringOrderController extends AbstractController
 
         $products = $this->getProducts->all();
         $products = array_filter($products, function(Product $product): bool {
-            return $product->isTurkey === false;
+            // Include non-turkey products and only turkeyType 2 (exclude turkeyType 1)
+            return !$product->isTurkey || ($product->turkeyType === 2 && $product->isHalf === false);
         });
 
         $ordersByDay = $this->recurringOrderRepository->getForUserByDay($loggedUser->id);

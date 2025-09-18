@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\MessageHandler;
 
+use CeskaKruta\Web\Entity\RecurringOrderItem;
 use CeskaKruta\Web\Exceptions\UnsupportedDeliveryToPostalCode;
 use CeskaKruta\Web\FormData\OrderFormData;
 use CeskaKruta\Web\Message\CreateOrderFromRecurringOrder;
@@ -20,8 +21,10 @@ use CeskaKruta\Web\Services\UserService;
 use CeskaKruta\Web\Value\Address;
 use CeskaKruta\Web\Value\CompanyBillingInfo;
 use CeskaKruta\Web\Value\Place;
+use CeskaKruta\Web\Value\Product;
 use CeskaKruta\Web\Value\ProductInCart;
 use CeskaKruta\Web\Value\User;
+use CeskaKruta\Web\Value\Week;
 use Psr\Clock\ClockInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -57,7 +60,6 @@ readonly final class CreateOrderFromRecurringOrderHandler
             return;
         }
 
-        $products = $this->getProducts->all();
 
         $dayOfWeek = $recurringOrder->dayOfWeek;
         $dateTo = $this->clock->now();
@@ -69,6 +71,9 @@ readonly final class CreateOrderFromRecurringOrderHandler
         }
 
         $dateTo = $dateTo->modify("+{$daysToAdd} days");
+        $week = new Week((int) $dateTo->format('W'), (int) $dateTo->format('Y'));
+        $products = $this->getProducts->all($week);
+
         $place = $this->getDeliveryPlace($user);
 
         $orderData = new OrderFormData(
@@ -106,7 +111,46 @@ readonly final class CreateOrderFromRecurringOrderHandler
                 continue;
             }
 
-            $items[] = ProductInCart::createFromRecurringOrderItem($item, $product);
+            // Special handling for turkey products
+            if ($product->isTurkey) {
+                $turkeyProduct = $this->selectAvailableTurkeyProduct($products);
+                if ($turkeyProduct === null) {
+                    // No turkey available for this week, skip this product
+                    continue;
+                }
+
+                // Calculate turkey amount based on requested kg weight
+                $requestedKg = $this->calculateRequestedTurkeyWeight($item);
+                if ($requestedKg <= 0) {
+                    continue;
+                }
+
+                $turkeyAmount = $this->calculateTurkeyAmount($turkeyProduct, $requestedKg);
+                if ($turkeyAmount <= 0) {
+                    continue;
+                }
+
+                // Create ProductInCart directly for turkey with calculated amount
+                // For turkey products, quantity represents number of pieces (turkeyAmount)
+                // The note will include the original requested kg and actual turkey type selected
+                $note = sprintf('%s%s%s | Původní požadavek: %.1f kg, pokryje: %d ks',
+                    trim((string) $item->note),
+                    trim((string) $item->note) !== '' ? ' | ' : '',
+                    $item->quantitiesAsNote(),
+                    $requestedKg,
+                    $turkeyAmount,
+                );
+
+                $items[] = new ProductInCart(
+                    quantity: $turkeyAmount,
+                    product: $turkeyProduct,
+                    slice: $item->isSliced,
+                    pack: $item->isPacked,
+                    note: $note,
+                );
+            } else {
+                $items[] = ProductInCart::createFromRecurringOrderItem($item, $product);
+            }
         }
 
         $items = ProductInCart::sortItemsByType($items);
@@ -199,5 +243,66 @@ readonly final class CreateOrderFromRecurringOrderHandler
         }
 
         return $this->getPlaces->oneById($placeId);
+    }
+
+    /**
+     * Select available turkey product for given delivery date, preferring type 2 over type 1
+     *
+     * @param array<int, Product> $products
+     */
+    private function selectAvailableTurkeyProduct(array $products): ?Product
+    {
+        // First try to find type 2 turkey with weight data available
+        foreach ($products as $product) {
+            if ($product->isTurkey && $product->turkeyType === 2 && $product->weightFrom !== null && $product->weightTo !== null) {
+                return $product;
+            }
+        }
+
+        // Fallback to type 1 turkey with weight data available
+        foreach ($products as $product) {
+            if ($product->isTurkey && $product->turkeyType === 1 && $product->weightFrom !== null && $product->weightTo !== null) {
+                return $product;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculate requested turkey weight in kg from recurring order item
+     */
+    private function calculateRequestedTurkeyWeight(RecurringOrderItem $item): float
+    {
+        $totalKg = 0.0;
+
+        // Add weight from package amounts
+        foreach ($item->packages as $package) {
+            $kgPerPackage = $package->sizeG / 1000;
+            $totalKg += $kgPerPackage * $package->amount;
+        }
+
+        // Add weight from "other" amount - for turkey this represents kg directly
+        $totalKg += $item->otherPackageSizeAmount;
+
+        return $totalKg;
+    }
+
+    /**
+     * Calculate how many turkey pieces are needed for requested weight
+     */
+    private function calculateTurkeyAmount(Product $turkeyProduct, float $requestedKg): int
+    {
+        if ($turkeyProduct->weightFrom === null || $turkeyProduct->weightTo === null) {
+            return 0;
+        }
+
+        // Use average weight for calculation, but round up to ensure we meet the requested weight
+        $averageWeight = ($turkeyProduct->weightFrom + $turkeyProduct->weightTo) / 2;
+
+        // Calculate pieces needed and round up to ensure sufficient weight
+        $piecesNeeded = (int) ceil($requestedKg / $averageWeight);
+
+        return max(1, $piecesNeeded); // At least 1 piece
     }
 }

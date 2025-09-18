@@ -5,6 +5,7 @@ namespace CeskaKruta\Web\Query;
 
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Value\Product;
+use CeskaKruta\Web\Value\Week;
 use Doctrine\DBAL\Connection;
 
 final class GetProducts
@@ -23,11 +24,15 @@ final class GetProducts
     /**
      * @return array<int, Product>
      */
-    public function all(): array
+    public function all(null|Week $week = null): array
     {
         if ($this->products === null) {
             $calendar = $this->getColdProductsCalendar->all();
-            $week = $this->cartStorage->getWeek();
+
+            if ($week === null) {
+                $week = $this->cartStorage->getWeek();
+            }
+
             $chosenPlaceId = $this->cartStorage->getPickupPlace() ?? $this->cartStorage->getDeliveryPlace();
             $chosenPlace = $chosenPlaceId !== null ? $this->getPlaces->oneById($chosenPlaceId) : null;
 
