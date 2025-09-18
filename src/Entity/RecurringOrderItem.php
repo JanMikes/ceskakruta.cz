@@ -97,9 +97,8 @@ class RecurringOrderItem
             );
         }
 
-        if ($this->otherPackageSizeAmount > 0) {
-            $note .= sprintf('%sJiné: %s Kg',
-                strlen($note) > 0 ? ', ' : '',
+        if (count($this->packages) > 0 && $this->otherPackageSizeAmount > 0) {
+            $note .= sprintf(', Jiné: %s Kg',
                 $this->otherPackageSizeAmount
             );
         }
