@@ -77,7 +77,7 @@
                 {% if next_deadline %}
                     Uzávěrka{% if next_ordering_day %} <small>(doručení {{ next_ordering_day|date('d.m.') }})</small>{% endif %}: {{ next_deadline|ago }} <small>({{ next_deadline|date('d.m.Y H:i') }})</small>
 
-                    {% if active_skips[day] ?? false %}
+                    {% if (orders_by_day[day] ?? false) and (active_skips[day] ?? false) %}
                         <span class="text-primary">bude přeskočena</span>
                     {% endif %}
 
@@ -159,7 +159,7 @@
 
                                             {% if product.canBePacked %}
                                                 <div class="form-check d-inline-block m-0">
-                                                    <input name="item[{{ product.id }}][is_packed]" class="form-check-input" type="checkbox" id="pack-check-{{ product.id }}" {% if orders_by_day[day].itemForProduct(product.id).isPacked ?? false %}checked="checked"{% endif %}>
+                                                    <input name="item[{{ product.id }}][is_packed]" class="form-check-input" type="checkbox" id="pack-check-{{ product.id }}" {% if orders_by_day[day].itemForProduct(product.id).isPacked ?? true %}checked="checked"{% endif %}>
                                                     <label class="form-check-label" for="pack-check-{{ product.id }}">Vakuově zabalit</label>
                                                 </div>
                                             {% endif %}
