@@ -39,6 +39,14 @@
                    data-action="confirm#confirm"
                    data-confirm-message-value="Opravdu chcete zrušit pravidelné objednávání?"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na: {{ days[day] }}</a>
 
+                {% if active_skips[day] ?? false %}
+                    <a class="btn btn-sm btn-outline-warning"
+                       href="{{ path('user_unskip_recurring_order', {'day': day}) }}"><i class="ci ci-refresh"></i> Zrušit přeskočení</a>
+                {% else %}
+                    <a class="btn btn-sm btn-outline-secondary"
+                       href="{{ path('user_skip_recurring_order', {'day': day}) }}"><i class="ci ci-skip-forward"></i> Přeskočit příští objednávku</a>
+                {% endif %}
+
                 <div class="btn-group">
                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="ci ci-copy"></i> Zkopírovat pravidelnou objednávku na jiný den
@@ -67,7 +75,13 @@
                 {% endif %}
 
                 {% if next_deadline %}
-                    Uzávěrka{% if next_ordering_day %} <small>(doručení {{ next_ordering_day|date('d.m.') }})</small>{% endif %}: {{ next_deadline|ago }} <small>({{ next_deadline|date('d.m.Y H:i') }})</small><br>
+                    Uzávěrka{% if next_ordering_day %} <small>(doručení {{ next_ordering_day|date('d.m.') }})</small>{% endif %}: {{ next_deadline|ago }} <small>({{ next_deadline|date('d.m.Y H:i') }})</small>
+
+                    {% if active_skips[day] ?? false %}
+                        <span class="text-primary">bude přeskočena</span>
+                    {% endif %}
+
+                    <br>
                 {% endif %}
                 <small class="text-muted">
                     Objednávku můžete upravit nebo zrušit až do tohoto termínu.
@@ -181,6 +195,14 @@
                        data-controller="confirm"
                        data-action="confirm#confirm"
                        data-confirm-message-value="Opravdu chcete zrušit pravidelné objednávání?"><i class="ci ci-close-circle"></i> Zrušit pravidelné objednávání na: {{ days[day] }}</a>
+
+                    {% if active_skips[day] ?? false %}
+                        <a class="btn btn-sm btn-outline-warning"
+                           href="{{ path('user_unskip_recurring_order', {'day': day}) }}"><i class="ci ci-refresh"></i> Zrušit přeskočení</a>
+                    {% else %}
+                        <a class="btn btn-sm btn-outline-secondary"
+                           href="{{ path('user_skip_recurring_order', {'day': day}) }}"><i class="ci ci-skip-forward"></i> Přeskočit příští objednávku</a>
+                    {% endif %}
 
                     <div class="btn-group">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

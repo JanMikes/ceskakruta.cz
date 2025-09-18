@@ -6,6 +6,7 @@ namespace CeskaKruta\Web\Controller;
 
 use CeskaKruta\Web\Message\CreateOrderFromRecurringOrder;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
+use CeskaKruta\Web\Repository\RecurringOrderSkipRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -16,6 +17,7 @@ final class RecurringOrderTriggerController extends AbstractController
     public function __construct(
         readonly private MessageBusInterface $bus,
         readonly private RecurringOrderRepository $recurringOrderRepository,
+        readonly private RecurringOrderSkipRepository $recurringOrderSkipRepository,
     ) {
     }
 
@@ -23,9 +25,16 @@ final class RecurringOrderTriggerController extends AbstractController
     public function __invoke(): Response
     {
         $orders = $this->recurringOrderRepository->getScheduledForOrdering();
+        $activeSkips = $this->recurringOrderSkipRepository->getActiveSkipsByUserAndDay();
         $orderIds = [];
 
         foreach ($orders as $order) {
+            $skipKey = $order->userId . '_' . $order->dayOfWeek;
+
+            if (isset($activeSkips[$skipKey])) {
+                continue;
+            }
+
             $this->bus->dispatch(
                 new CreateOrderFromRecurringOrder($order->id),
             );

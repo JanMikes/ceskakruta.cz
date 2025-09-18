@@ -9,6 +9,7 @@ use CeskaKruta\Web\Message\DetectUserDeliveryPlace;
 use CeskaKruta\Web\Message\SaveRecurringOrder;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
+use CeskaKruta\Web\Repository\RecurringOrderSkipRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
 use CeskaKruta\Web\Services\CeskaKrutaShopDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
@@ -28,6 +29,7 @@ final class RecurringOrderController extends AbstractController
     public function __construct(
         readonly private GetProducts $getProducts,
         readonly private RecurringOrderRepository $recurringOrderRepository,
+        readonly private RecurringOrderSkipRepository $recurringOrderSkipRepository,
         readonly private MessageBusInterface $bus,
         readonly private CeskaKrutaDelivery $ceskaKrutaDelivery,
         readonly private CeskaKrutaShopDelivery $ceskaKrutaShopDelivery,
@@ -77,6 +79,7 @@ final class RecurringOrderController extends AbstractController
         });
 
         $ordersByDay = $this->recurringOrderRepository->getForUserByDay($loggedUser->id);
+        $activeSkips = $this->recurringOrderSkipRepository->getActiveSkipsForUser($loggedUser->id);
 
         /** @var null|string $day */
         $day = $request->query->get('day');
@@ -125,6 +128,7 @@ final class RecurringOrderController extends AbstractController
             'products' => $products,
             'day' => $day,
             'orders_by_day' => $ordersByDay,
+            'active_skips' => $activeSkips,
             'allowed_days' => $allowedDays,
             'next_deadline' => $nextDeadline,
             'next_ordering_day' => $nextOrderingDay,
