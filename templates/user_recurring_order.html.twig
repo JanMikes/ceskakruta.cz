@@ -123,10 +123,12 @@
                                                             name="item[{{ product.id }}][amount][{{ package_size }}]"
                                                             class="d-inline-block form-control form-control-sm text-center mx-1"
                                                             value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount(package_size) ?? 0 }}"
-                                                            style="width:40px"
+                                                            style="width:40px;padding-left: 3px;padding-right: 3px;"
                                                             data-package-weight="{{ package_size/1000 }}"
                                                             data-weight-calculator-target="packageInput"
-                                                            data-action="input->weight-calculator#calculate"
+                                                            data-dynamic-width-target="input"
+                                                            data-action="input->weight-calculator#calculate input->dynamic-width#adjust"
+                                                            data-controller="dynamic-width"
                                                         > ks<br>
                                                     </span>
                                                 {% endfor %}
@@ -145,8 +147,10 @@
                                                 value="{{ orders_by_day[day].itemForProduct(product.id).packageSizeAmount('other') ?? 0 }}"
                                                 data-package-weight="{{ product.unit == 'kg' or product.isTurkey ? 1 : product.weightPerUnit }}"
                                                 data-weight-calculator-target="packageInput"
-                                                data-action="input->weight-calculator#calculate"
-                                                style="width:40px"
+                                                data-dynamic-width-target="input"
+                                                data-action="input->weight-calculator#calculate input->dynamic-width#adjust"
+                                                data-controller="dynamic-width"
+                                                style="width:40px;padding-left: 3px;padding-right: 3px;"
                                             > {% if product.isTurkey %}kg{% else %}{{ product.unit }}{% endif %}<br>
 
 
