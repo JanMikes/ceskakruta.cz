@@ -46,12 +46,11 @@ final class OrderFormType extends AbstractType
         $builder->add('payByCard', ChoiceType::class, [
             'label' => 'Způsob platby při předávce',
             'choices' => [
-                'Platba hotově' => '',
+                'Platba hotově' => false,
                 'Platba kartou' => true,
             ],
             'expanded' => true,
             'multiple' => false,
-            'required' => false,
         ]);
 
         $builder->add('termsAgreement', CheckboxType::class, [

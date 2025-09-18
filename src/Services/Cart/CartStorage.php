@@ -270,7 +270,7 @@ final class CartStorage
                 'email' => $orderData->email,
                 'phone' => $orderData->phone,
                 'note' => $orderData->note,
-                'payByCard' => $orderData->payByCard,
+                'payByCard' => $orderData->payByCard ?? false,
                 'subscribeToNewsletter' => $orderData->subscribeToNewsletter,
             ];
         }

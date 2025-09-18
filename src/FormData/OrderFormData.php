@@ -25,7 +25,7 @@ final class OrderFormData
         )]
         public string $phone = '',
 
-        public bool $payByCard = false,
+        public null|bool $payByCard = null,
         public null|string $note = null,
         public bool $subscribeToNewsletter = true,
     ) {
