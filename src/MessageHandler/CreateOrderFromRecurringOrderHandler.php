@@ -16,6 +16,7 @@ use CeskaKruta\Web\Services\CeskaKrutaShopDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
+use CeskaKruta\Web\Services\ProductTypesSorter;
 use CeskaKruta\Web\Services\Security\UserProvider;
 use CeskaKruta\Web\Services\UserService;
 use CeskaKruta\Web\Value\Address;
@@ -133,10 +134,11 @@ readonly final class CreateOrderFromRecurringOrderHandler
                 // Create ProductInCart directly for turkey with calculated amount
                 // For turkey products, quantity represents number of pieces (turkeyAmount)
                 // The note will include the original requested kg and actual turkey type selected
-                $note = sprintf('%s%s%s | Původní požadavek: %.1f kg, pokryje: %d ks',
+                $note = sprintf('%s%s%s%sPůvodní požadavek: %.1f kg, pokryje: %d ks',
                     trim((string) $item->note),
                     trim((string) $item->note) !== '' ? ' | ' : '',
                     $item->quantitiesAsNote(),
+                    trim($item->note . $item->quantitiesAsNote()) !== '' ? ' | ' : '',
                     $requestedKg,
                     $turkeyAmount,
                 );
@@ -172,14 +174,19 @@ readonly final class CreateOrderFromRecurringOrderHandler
 
         $recurringOrder->updateLastOrdered($this->clock->now());
 
+        [$itemsTurkey, $itemsMeat, $itemsOther] = ProductTypesSorter::sort($items);
+
         $templateVariables = [
             'items' => $items,
+            'items_turkey' => $itemsTurkey,
+            'items_meat' => $itemsMeat,
+            'items_other' => $itemsOther,
+            'contains_turkey' => count($itemsTurkey) > 0,
+            'contains_non_turkey' => (count($itemsMeat) + count($itemsOther)) > 0,
             'order_id' => $orderId,
             'place' => $place,
             'order_data' => $orderData,
             'date_to' => $dateTo,
-            'contains_turkey' => false,
-            'contains_non_turkey' => true,
             'coupon' => null,
             'total_price_without_discount' => $totalPrice,
             'total_price' => $totalPrice,
@@ -189,6 +196,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
             'is_free_delivery' => OrderPriceCalculator::isFreeDelivery($totalItemsPriceWithoutDiscount, $place),
             'company_billing_info' => $companyBillingInfo,
             'show_prices' => false,
+            'is_ceskakruta' => $user->isCeskakruta,
         ];
 
         // Email for the admin

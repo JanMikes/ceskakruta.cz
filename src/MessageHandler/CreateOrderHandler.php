@@ -9,6 +9,7 @@ use CeskaKruta\Web\Services\Cart\CartService;
 use CeskaKruta\Web\Services\Cart\CartStorage;
 use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
+use CeskaKruta\Web\Services\ProductTypesSorter;
 use CeskaKruta\Web\Value\ProductInCart;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -36,9 +37,13 @@ readonly final class CreateOrderHandler
 
         $items = $this->cartService->getItems();
         $items = ProductInCart::sortItemsByType($items);
+        [$itemsTurkey, $itemsMeat, $itemsOther] = ProductTypesSorter::sort($items);
 
         $templateVariables = [
             'items' => $items,
+            'items_turkey' => $itemsTurkey,
+            'items_meat' => $itemsMeat,
+            'items_other' => $itemsOther,
             'order_id' => $orderId,
             'place' => $this->cartService->getPlace(),
             'order_data' => $this->cartStorage->getOrderData(),
@@ -54,6 +59,7 @@ readonly final class CreateOrderHandler
             'is_free_delivery' => $this->cartService->isFreeDelivery(),
             'company_billing_info' => null,
             'show_prices' => true,
+            'is_ceskakruta' => false,
         ];
 
         // Email for the admin

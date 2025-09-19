@@ -30,7 +30,7 @@ final class GetOrders
     {
         if ($this->orders === null) {
             $rows = $this->connection
-                ->executeQuery('SELECT * FROM `order` WHERE user_id = :userId AND active_flag = 1 AND del_flag = 0 ORDER BY date DESC, id DESC', [
+                ->executeQuery('SELECT * FROM `order` WHERE user_id = :userId AND active_flag = 1 AND del_flag = 0 ORDER BY id DESC', [
                     'userId' => $userId,
                 ])
                 ->fetchAllAssociative();

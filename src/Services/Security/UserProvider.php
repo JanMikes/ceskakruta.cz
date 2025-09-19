@@ -60,6 +60,7 @@ readonly final class UserProvider implements UserProviderInterface
          *     invoicing_zip: null|string,
          *     is_admin: bool,
          *     allow_wholesale: bool,
+         *     is_ceskakruta: bool,
          * } $data
          */
         $data = $this->connection
@@ -97,6 +98,7 @@ readonly final class UserProvider implements UserProviderInterface
             invoicingCity: $data['invoicing_city'],
             invoicingZip: $data['invoicing_zip'],
             wholesaleAllowed: (bool) $data['allow_wholesale'],
+            isCeskakruta: (bool) $data['is_ceskakruta'],
         );
     }
 }

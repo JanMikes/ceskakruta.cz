@@ -29,6 +29,7 @@ readonly final class User implements UserInterface, PasswordAuthenticatedUserInt
         public null|string $invoicingCity,
         public null|string $invoicingZip,
         public bool $wholesaleAllowed,
+        public bool $isCeskakruta,
     ) {
     }
 
