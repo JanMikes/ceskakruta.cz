@@ -23,8 +23,7 @@ export default class extends Controller {
                 rowSum += count * pkgWeight;
             });
 
-            // Highlight row if weight > 0
-            row.classList.toggle('table-primary', rowSum > 0);
+            // Note: table-primary class is now handled server-side in Twig template
 
             // Update row total display
             rowTotalEl.textContent = `${rowSum.toFixed(2)} kg`;

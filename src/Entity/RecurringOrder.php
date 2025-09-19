@@ -50,6 +50,13 @@ class RecurringOrder
         return null;
     }
 
+    public function isInOrder(int $productId): bool
+    {
+        $item = $this->itemForProduct($productId);
+
+        return $item !== null && $item->calculateQuantityInKg() > 0;
+    }
+
     public function addItem(RecurringOrderItem $item): void
     {
         $this->items->add($item);
