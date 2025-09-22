@@ -23,7 +23,8 @@ export default class extends Controller {
                 rowSum += count * pkgWeight;
             });
 
-            // Note: table-primary class is now handled server-side in Twig template
+            // Dynamically add/remove classes based on weight
+            this.updateRowClass(row, rowSum);
 
             // Update row total display
             rowTotalEl.textContent = `${rowSum.toFixed(2)} kg`;
@@ -32,5 +33,17 @@ export default class extends Controller {
 
         // Update the grand total
         this.grandTotalTarget.textContent = `${grandTotal.toFixed(2)} kg`;
+    }
+
+    updateRowClass(row, weight) {
+        const table = row.closest('table');
+        const isExtraTable = table.closest('.card.border-warning') !== null;
+        const className = isExtraTable ? 'table-warning' : 'table-primary';
+
+        if (weight > 0) {
+            row.classList.add(className);
+        } else {
+            row.classList.remove(className);
+        }
     }
 }
