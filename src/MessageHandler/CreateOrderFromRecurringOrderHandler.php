@@ -103,8 +103,10 @@ readonly final class CreateOrderFromRecurringOrderHandler
             ),
         );
 
-        $items = [];
+        // Build a map of products to merge quantities from regular and extra items
+        $productMap = [];
 
+        // Process regular recurring items
         foreach ($recurringOrder->items as $item) {
             $product = $products[$item->productId] ?? null;
 
@@ -131,28 +133,183 @@ readonly final class CreateOrderFromRecurringOrderHandler
                     continue;
                 }
 
-                // Create ProductInCart directly for turkey with calculated amount
-                // For turkey products, quantity represents number of pieces (turkeyAmount)
-                // The note will include the original requested kg and actual turkey type selected
-                $note = sprintf('%s%s%s%sPůvodní požadavek: %.1f kg, pokryje: %d ks',
-                    trim((string) $item->note),
-                    trim((string) $item->note) !== '' ? ' | ' : '',
-                    $item->quantitiesAsNote(),
-                    trim($item->note . $item->quantitiesAsNote()) !== '' ? ' | ' : '',
-                    $requestedKg,
-                    $turkeyAmount,
-                );
-
-                $items[] = new ProductInCart(
-                    quantity: $turkeyAmount,
-                    product: $turkeyProduct,
-                    slice: $item->isSliced,
-                    pack: $item->isPacked,
-                    note: $note,
-                );
+                $productKey = 'turkey_' . $turkeyProduct->id;
+                $productMap[$productKey] = [
+                    'product' => $turkeyProduct,
+                    'quantity' => $turkeyAmount,
+                    'slice' => $item->isSliced,
+                    'pack' => $item->isPacked,
+                    'turkey_kg_requested' => $requestedKg,
+                    'user_notes' => [trim((string) $item->note)],
+                ];
             } else {
-                $items[] = ProductInCart::createFromRecurringOrderItem($item, $product);
+                $productKey = 'product_' . $product->id;
+                $quantity = $item->calculateQuantityInKg();
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                // Merge package amounts
+                $packageAmounts = [];
+                foreach ($item->packages as $package) {
+                    $sizeKey = $package->sizeG;
+                    $packageAmounts[$sizeKey] = ($packageAmounts[$sizeKey] ?? 0) + $package->amount;
+                }
+
+                $productMap[$productKey] = [
+                    'product' => $product,
+                    'quantity' => $quantity,
+                    'slice' => $item->isSliced,
+                    'pack' => $item->isPacked,
+                    'package_amounts' => $packageAmounts,
+                    'other_amount' => $item->otherPackageSizeAmount,
+                    'user_notes' => [trim((string) $item->note)],
+                ];
             }
+        }
+
+        // Process extra items and merge with existing products
+        foreach ($recurringOrder->extraItems as $item) {
+            $product = $products[$item->productId] ?? null;
+
+            if ($product === null) {
+                continue;
+            }
+
+            // Special handling for turkey products
+            if ($product->isTurkey) {
+                $turkeyProduct = $this->selectAvailableTurkeyProduct($products);
+                if ($turkeyProduct === null) {
+                    // No turkey available for this week, skip this product
+                    continue;
+                }
+
+                // Calculate turkey amount based on requested kg weight
+                $requestedKg = $this->calculateRequestedExtraTurkeyWeight($item);
+                if ($requestedKg <= 0) {
+                    continue;
+                }
+
+                $turkeyAmount = $this->calculateTurkeyAmount($turkeyProduct, $requestedKg);
+                if ($turkeyAmount <= 0) {
+                    continue;
+                }
+
+                $productKey = 'turkey_' . $turkeyProduct->id;
+
+                if (isset($productMap[$productKey])) {
+                    // Merge with existing turkey product
+                    $productMap[$productKey]['quantity'] += $turkeyAmount;
+                    $productMap[$productKey]['turkey_kg_requested'] = ($productMap[$productKey]['turkey_kg_requested'] ?? 0) + $requestedKg;
+                    if (trim((string) $item->note) !== '') {
+                        $productMap[$productKey]['user_notes'][] = trim((string) $item->note);
+                    }
+                } else {
+                    // Create new turkey product entry
+                    $productMap[$productKey] = [
+                        'product' => $turkeyProduct,
+                        'quantity' => $turkeyAmount,
+                        'slice' => $item->isSliced,
+                        'pack' => $item->isPacked,
+                        'turkey_kg_requested' => $requestedKg,
+                        'user_notes' => [trim((string) $item->note)],
+                    ];
+                }
+            } else {
+                $productKey = 'product_' . $product->id;
+                $quantity = $item->calculateQuantityInKg();
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                // Merge package amounts
+                $packageAmounts = [];
+                foreach ($item->packages as $package) {
+                    $sizeKey = $package->sizeG;
+                    $packageAmounts[$sizeKey] = ($packageAmounts[$sizeKey] ?? 0) + $package->amount;
+                }
+
+                if (isset($productMap[$productKey])) {
+                    // Merge with existing product (quantity and package amounts, keep regular item's slice/pack preferences)
+                    $productMap[$productKey]['quantity'] += $quantity;
+                    $productMap[$productKey]['other_amount'] = ($productMap[$productKey]['other_amount'] ?? 0) + $item->otherPackageSizeAmount;
+
+                    // Merge package amounts
+                    foreach ($packageAmounts as $sizeKey => $amount) {
+                        $productMap[$productKey]['package_amounts'][$sizeKey] = ($productMap[$productKey]['package_amounts'][$sizeKey] ?? 0) + $amount;
+                    }
+
+                    if (trim((string) $item->note) !== '') {
+                        $productMap[$productKey]['user_notes'][] = trim((string) $item->note);
+                    }
+                } else {
+                    // Create new product entry
+                    $productMap[$productKey] = [
+                        'product' => $product,
+                        'quantity' => $quantity,
+                        'slice' => $item->isSliced,
+                        'pack' => $item->isPacked,
+                        'package_amounts' => $packageAmounts,
+                        'other_amount' => $item->otherPackageSizeAmount,
+                        'user_notes' => [trim((string) $item->note)],
+                    ];
+                }
+            }
+        }
+
+        // Convert product map to ProductInCart items
+        $items = [];
+        foreach ($productMap as $productData) {
+            $note = '';
+
+            // Build combined note from user notes
+            $userNotes = array_filter($productData['user_notes'], fn($note) => $note !== '');
+            if (!empty($userNotes)) {
+                $note = implode(' | ', $userNotes);
+            }
+
+            // Add package breakdown for non-turkey products
+            if (!$productData['product']->isTurkey && isset($productData['package_amounts'])) {
+                $packageParts = [];
+
+                // Add non-other package types
+                foreach ($productData['package_amounts'] as $sizeG => $amount) {
+                    if ($amount > 0) {
+                        $packageParts[] = sprintf('Balení %s kg: %dx', $sizeG/1000, $amount);
+                    }
+                }
+
+                // Only add "Jiné" if there are other package types OR if there are no other packages at all
+                $hasOtherAmount = ($productData['other_amount'] ?? 0) > 0;
+                $hasRegularPackages = !empty($packageParts);
+
+                if ($hasOtherAmount && $hasRegularPackages) {
+                    // Show "Jiné" only when there are multiple package types
+                    $packageParts[] = sprintf('Jiné: %s kg', $productData['other_amount'] ?? 0);
+                }
+
+                if (!empty($packageParts)) {
+                    $packageNote = implode(', ', $packageParts);
+                    $note = $note !== '' ? $note . ' | ' . $packageNote : $packageNote;
+                }
+            }
+
+            // Add turkey info
+            if ($productData['product']->isTurkey && isset($productData['turkey_kg_requested'])) {
+                $turkeyNote = sprintf('Původní požadavek: %.1f kg, pokryje: %d ks',
+                    $productData['turkey_kg_requested'],
+                    $productData['quantity']
+                );
+                $note = $note !== '' ? $note . ' | ' . $turkeyNote : $turkeyNote;
+            }
+
+            $items[] = new ProductInCart(
+                quantity: $productData['quantity'],
+                product: $productData['product'],
+                slice: $productData['slice'],
+                pack: $productData['pack'],
+                note: trim($note),
+            );
         }
 
         $items = ProductInCart::sortItemsByType($items);
@@ -173,6 +330,9 @@ readonly final class CreateOrderFromRecurringOrderHandler
         );
 
         $recurringOrder->updateLastOrdered($this->clock->now());
+
+        // Clear extra items after successful order creation (they are one-time only)
+        $recurringOrder->clearExtraItems();
 
         [$itemsTurkey, $itemsMeat, $itemsOther] = ProductTypesSorter::sort($items);
 
@@ -313,4 +473,24 @@ readonly final class CreateOrderFromRecurringOrderHandler
 
         return max(1, $piecesNeeded); // At least 1 piece
     }
+
+    /**
+     * Calculate requested turkey weight in kg from recurring order extra item
+     */
+    private function calculateRequestedExtraTurkeyWeight(\CeskaKruta\Web\Entity\RecurringOrderExtraItem $item): float
+    {
+        $totalKg = 0.0;
+
+        // Add weight from package amounts
+        foreach ($item->packages as $package) {
+            $kgPerPackage = $package->sizeG / 1000;
+            $totalKg += $kgPerPackage * $package->amount;
+        }
+
+        // Add weight from "other" amount - for turkey this represents kg directly
+        $totalKg += $item->otherPackageSizeAmount;
+
+        return $totalKg;
+    }
+
 }

@@ -745,7 +745,8 @@ main {
     display: none;
 }
 
-.table-primary .recurring-order-product-title {
+.table-primary .recurring-order-product-title,
+.table-warning .recurring-order-product-title {
     font-weight: bold;
 
     i {

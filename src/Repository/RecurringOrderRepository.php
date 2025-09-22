@@ -130,8 +130,8 @@ readonly final class RecurringOrderRepository
             $nextOrderDate = $this->getNextDateByDayOfWeek($order->dayOfWeek, $this->clock->now());
             $deadline = $nextOrderDate->modify("-$deadlineDaysBefore days");
 
+            $scheduledOrders[] = $order;
             if ($deadline->format('Y-m-d') === $timeForDeadline->format('Y-m-d')) {
-                $scheduledOrders[] = $order;
 
                 if (count($scheduledOrders) >= 5) {
                     break;

@@ -25,6 +25,10 @@ class RecurringOrder
     #[OneToMany(targetEntity: RecurringOrderItem::class, mappedBy: 'order', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
     public Collection $items;
 
+    /** @var Collection<int, RecurringOrderExtraItem>  */
+    #[OneToMany(targetEntity: RecurringOrderExtraItem::class, mappedBy: 'order', cascade: ['persist', 'remove'], fetch: 'EAGER', orphanRemoval: true)]
+    public Collection $extraItems;
+
     public function __construct(
         #[Id]
         #[Column(type: UuidType::NAME, unique: true)]
@@ -37,6 +41,7 @@ class RecurringOrder
         readonly public int $dayOfWeek,
     ) {
         $this->items = new ArrayCollection();
+        $this->extraItems = new ArrayCollection();
     }
 
     public function itemForProduct(int $productId): null|RecurringOrderItem
@@ -70,5 +75,40 @@ class RecurringOrder
     public function updateLastOrdered(DateTimeImmutable $now): void
     {
         $this->lastOrderedAt = $now;
+    }
+
+    public function extraItemForProduct(int $productId): null|RecurringOrderExtraItem
+    {
+        foreach ($this->extraItems as $item) {
+            if ($item->productId === $productId) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    public function isInExtraOrder(int $productId): bool
+    {
+        $item = $this->extraItemForProduct($productId);
+
+        return $item !== null && $item->calculateQuantityInKg() > 0;
+    }
+
+    public function addExtraItem(RecurringOrderExtraItem $item): void
+    {
+        $this->extraItems->add($item);
+    }
+
+    public function removeExtraItem(RecurringOrderExtraItem $item): void
+    {
+        $this->extraItems->removeElement($item);
+    }
+
+    public function clearExtraItems(): void
+    {
+        foreach ($this->extraItems as $item) {
+            $this->removeExtraItem($item);
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace CeskaKruta\Web\Controller;
 use CeskaKruta\Web\Exceptions\UnsupportedDeliveryToPostalCode;
 use CeskaKruta\Web\Message\DetectUserDeliveryPlace;
 use CeskaKruta\Web\Message\SaveRecurringOrder;
+use CeskaKruta\Web\Message\SaveRecurringOrderExtras;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Repository\RecurringOrderSkipRepository;
@@ -16,6 +17,7 @@ use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderingDeadline;
 use CeskaKruta\Web\Value\Product;
 use CeskaKruta\Web\Value\User;
+use CeskaKruta\Web\Value\Week;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,16 +88,33 @@ final class RecurringOrderController extends AbstractController
         $day = $request->query->get('day');
 
         if ($day !== null && $request->isMethod('POST')) {
+            // Handle regular recurring order items
             /** @var array<int, array{amount: array<string, string>, note: null|string, is_sliced?: bool, is_packed?: bool}> $items */
             $items = $request->request->all('item');
 
-            $this->bus->dispatch(
-                new SaveRecurringOrder(
-                    $loggedUser->id,
-                    (int) $day,
-                    $items,
-                ),
-            );
+            if (!empty($items)) {
+                $this->bus->dispatch(
+                    new SaveRecurringOrder(
+                        $loggedUser->id,
+                        (int) $day,
+                        $items,
+                    ),
+                );
+            }
+
+            // Handle extra items (one-time only)
+            /** @var array<int, array{amount: array<string, string>, note: null|string, is_sliced?: bool, is_packed?: bool}> $extraItems */
+            $extraItems = $request->request->all('extra_item');
+
+            if (!empty($extraItems)) {
+                $this->bus->dispatch(
+                    new SaveRecurringOrderExtras(
+                        $loggedUser->id,
+                        (int) $day,
+                        $extraItems,
+                    ),
+                );
+            }
 
             $this->addFlash('success', 'Uložili jsme vaši pravidelnou objednávku.');
 
@@ -120,13 +139,24 @@ final class RecurringOrderController extends AbstractController
 
         $nextDeadline = null;
         $nextOrderingDay = null;
+        $productsForExtras = [];
         if ($day !== null) {
             $nextDeadline = $this->orderingDeadline->nextDeadline((int) $day, $placeId);
             $nextOrderingDay = $this->orderingDeadline->nextOrderDay((int) $day, $placeId);
+
+            // Get products for extra items - allow all products, but check turkey availability
+            $week = new Week((int) $nextOrderingDay->format('W'), (int) $nextOrderingDay->format('Y'));
+            $allProducts = $this->getProducts->all($week);
+
+            $productsForExtras = array_filter($allProducts, function(Product $product): bool {
+                // Allow all products, but for turkeys check if they have weight (are available)
+                return !$product->isTurkey || $product->weightFrom !== null;
+            });
         }
 
         return $this->render('user_recurring_order.html.twig', [
             'products' => $products,
+            'products_for_extras' => $productsForExtras,
             'day' => $day,
             'orders_by_day' => $ordersByDay,
             'active_skips' => $activeSkips,
