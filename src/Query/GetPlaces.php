@@ -55,6 +55,7 @@ final class GetPlaces
                  *     map_url: null|string,
                  *     phone: null|string,
                  *     opening_hours: null|string,
+                 *     opening_hours_email: null|string,
                  * } $placeRow
                  */
 
@@ -77,6 +78,7 @@ final class GetPlaces
                     mapUrl: $placeRow['map_url'],
                     phone: $placeRow['phone'],
                     openingHours: $placeRow['opening_hours'],
+                    openingHoursEmail: $placeRow['opening_hours_email'],
                 );
             }
 

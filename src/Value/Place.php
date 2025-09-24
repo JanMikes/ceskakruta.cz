@@ -25,6 +25,7 @@ readonly final class Place
         public null|string $mapUrl,
         public null|string $phone,
         public null|string $openingHours,
+        public null|string $openingHoursEmail,
     ) {
     }
 }
