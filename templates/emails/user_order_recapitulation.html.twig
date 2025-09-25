@@ -36,7 +36,7 @@
 
                 <p>
                     <strong>Otevírací doba</strong><br>
-                    <span class="text-muted">{{ place.openingHoursEmail|nl2br }}</span>
+                    <span class="text-muted">{{ place.openingHoursEmail|nl2br|raw }}</span>
                 </p>
             {% else %}
                 <h3>
