@@ -96,7 +96,7 @@
                     <button type="button" class="btn btn-outline-warning btn-sm" data-action="click->toggle#toggle">
                         <i class="ci ci-add-circle me-1"></i>
                         Upravit jednorázové položky
-                        {% if orders_by_day[day] and orders_by_day[day].extraItems|length > 0 %}
+                        {% if orders_by_day[day] ?? false and orders_by_day[day].extraItems|length > 0 %}
                             <span class="badge bg-warning text-dark ms-2">{{ orders_by_day[day].extraItems|length }}</span>
                         {% endif %}
                     </button>
@@ -113,7 +113,7 @@
                                 <div class="table-responsive">
                                     <table class="wholesable-table table m-0" data-controller="weight-calculator">
                                         {% for product in products_for_extras %}
-                                            <tr data-controller="note-toggle" {% if orders_by_day[day] and orders_by_day[day].isInExtraOrder(product.id) %}class="table-warning"{% endif %}>
+                                            <tr data-controller="note-toggle" {% if orders_by_day[day] ?? false and orders_by_day[day].isInExtraOrder(product.id) %}class="table-warning"{% endif %}>
                                                 <td style="width: 80px;" class="p-1">
                                                     {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
                                                         <img src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" style="max-height: 50px;" alt="Product">
@@ -124,7 +124,7 @@
                                                 <td>
                                                     <span class="recurring-order-product-title">
                                                         {{ product.title }}
-                                                        {% if orders_by_day[day] and orders_by_day[day].isInExtraOrder(product.id) %}
+                                                        {% if orders_by_day[day] ?? false and orders_by_day[day].isInExtraOrder(product.id) %}
                                                             <i class="ms-1 ci ci-check-circle text-success"></i>
                                                         {% endif %}
                                                     </span>
@@ -227,7 +227,7 @@
                         <div class="table-responsive">
                             <table class="wholesable-table table m-0" data-controller="weight-calculator">
                                 {% for product in products %}
-                                    <tr data-controller="note-toggle" {% if orders_by_day[day] and orders_by_day[day].isInOrder(product.id) %}class="table-primary"{% endif %}>
+                                    <tr data-controller="note-toggle" {% if orders_by_day[day] ?? false and orders_by_day[day].isInOrder(product.id) %}class="table-primary"{% endif %}>
                                         <td style="width: 80px;" class="p-1">
                                             {% if asset_exists('img/produkty/' ~ product.id ~ '.jpg') %}
                                                 <img src="{{ asset('img/produkty/' ~ product.id ~ '.jpg') }}" style="max-height: 50px;" alt="Product">

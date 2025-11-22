@@ -8,6 +8,7 @@ use CeskaKruta\Web\Exceptions\UnsupportedDeliveryToPostalCode;
 use CeskaKruta\Web\Message\DetectUserDeliveryPlace;
 use CeskaKruta\Web\Message\SaveRecurringOrder;
 use CeskaKruta\Web\Message\SaveRecurringOrderExtras;
+use CeskaKruta\Web\Query\GetBannedProductIds;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Repository\RecurringOrderSkipRepository;
@@ -30,6 +31,7 @@ final class RecurringOrderController extends AbstractController
 {
     public function __construct(
         readonly private GetProducts $getProducts,
+        readonly private GetBannedProductIds $getBannedProductIds,
         readonly private RecurringOrderRepository $recurringOrderRepository,
         readonly private RecurringOrderSkipRepository $recurringOrderSkipRepository,
         readonly private MessageBusInterface $bus,
@@ -80,6 +82,9 @@ final class RecurringOrderController extends AbstractController
             // Include non-turkey products and only turkeyType 2 (exclude turkeyType 1)
             return !$product->isTurkey || ($product->turkeyType === 2 && $product->isHalf === false);
         });
+
+        $bannedProductIds = $this->getBannedProductIds->forUser($loggedUser->id);
+        $products = array_filter($products, static fn(Product $product): bool => !in_array($product->id, $bannedProductIds, true));
 
         $ordersByDay = $this->recurringOrderRepository->getForUserByDay($loggedUser->id);
         $activeSkips = $this->recurringOrderSkipRepository->getActiveSkipsForUser($loggedUser->id);
@@ -152,6 +157,7 @@ final class RecurringOrderController extends AbstractController
                 // Allow all products, but for turkeys check if they have weight (are available)
                 return !$product->isTurkey || $product->weightFrom !== null;
             });
+            $productsForExtras = array_filter($productsForExtras, static fn(Product $product): bool => !in_array($product->id, $bannedProductIds, true));
         }
 
         return $this->render('user_recurring_order.html.twig', [
