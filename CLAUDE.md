@@ -11,41 +11,34 @@ CeskaKruta.cz is a Symfony 7 e-commerce application for selling turkey meat prod
 
 ## Development Commands
 
+**All PHP commands must be run inside the Docker container using `docker compose exec web`.**
+
 ### PHP/Symfony Commands
 ```bash
 # Install dependencies
-composer install
+docker compose exec web composer install
 
 # Run PHPStan static analysis (max level)
-composer run-script phpstan
+docker compose exec web composer run-script phpstan
 # or directly:
-vendor/bin/phpstan --memory-limit=-1 analyse
+docker compose exec web vendor/bin/phpstan --memory-limit=-1 analyse
 
 # Symfony console commands
-bin/console cache:clear
-bin/console cache:warmup --env=dev
+docker compose exec web bin/console cache:clear
+docker compose exec web bin/console cache:warmup --env=dev
 
 # Database operations
-bin/console doctrine:migrations:migrate
-bin/console doctrine:schema:update --force
+docker compose exec web bin/console doctrine:migrations:migrate
+docker compose exec web bin/console doctrine:schema:update --force
 ```
 
 ### Frontend Asset Commands
+Frontend assets are automatically built by the `js-watch` service in docker-compose.
 ```bash
-# Install frontend dependencies
-npm install
-
-# Development build with file watching
-npm run watch
-
-# Development build
-npm run dev
-
-# Development server with hot reload
-npm run dev-server
-
-# Production build
-npm run build
+# Manual commands (if needed, run inside container)
+docker compose exec web npm install
+docker compose exec web npm run dev
+docker compose exec web npm run build
 ```
 
 ## Architecture Overview
@@ -80,7 +73,7 @@ npm run build
 ### Static Analysis
 ```bash
 # Run PHPStan (required before commits)
-composer run-script phpstan
+docker compose exec web composer run-script phpstan
 ```
 
 ### Environment Setup

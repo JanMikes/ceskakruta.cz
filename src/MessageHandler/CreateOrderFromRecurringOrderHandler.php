@@ -12,7 +12,7 @@ use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
-use CeskaKruta\Web\Services\CeskaKrutaShopDelivery;
+use CeskaKruta\Web\Services\WholesaleDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
@@ -44,6 +44,7 @@ readonly final class CreateOrderFromRecurringOrderHandler
         private UserService $userService,
         private CeskaKrutaDelivery $ceskaKrutaDelivery,
         private CoolBalikDelivery $coolBalikDelivery,
+        private WholesaleDelivery $wholesaleDelivery,
         private ClockInterface $clock,
     ) {
     }
@@ -60,7 +61,6 @@ readonly final class CreateOrderFromRecurringOrderHandler
         if ($user->hasFilledDeliveryAddress() === false) {
             return;
         }
-
 
         $dayOfWeek = $recurringOrder->dayOfWeek;
         $dateTo = $this->clock->now();
@@ -394,11 +394,16 @@ readonly final class CreateOrderFromRecurringOrderHandler
         $placeId = $user->preferredPlaceId;
         $deliveryPlacesIds = [
             CeskaKrutaDelivery::DELIVERY_PLACE_ID,
-            CeskaKrutaShopDelivery::DELIVERY_PLACE_ID,
             CoolBalikDelivery::DELIVERY_PLACE_ID,
         ];
 
-        if (in_array($placeId, $deliveryPlacesIds, true) === false) {
+        $place = null;
+
+        if ($placeId !== null) {
+            $place = $this->getPlaces->oneById($placeId);
+        }
+
+        if ($place?->allowOnlyWholesale !== true && in_array($placeId, $deliveryPlacesIds, true) === false) {
             if ($this->ceskaKrutaDelivery->canDeliverToPostalCode($user->deliveryZip)) {
                 $placeId = $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID;
             } elseif ($this->coolBalikDelivery->canDeliverToPostalCode($user->deliveryZip)) {

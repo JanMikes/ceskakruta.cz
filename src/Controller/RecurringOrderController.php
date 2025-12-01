@@ -9,11 +9,12 @@ use CeskaKruta\Web\Message\DetectUserDeliveryPlace;
 use CeskaKruta\Web\Message\SaveRecurringOrder;
 use CeskaKruta\Web\Message\SaveRecurringOrderExtras;
 use CeskaKruta\Web\Query\GetBannedProductIds;
+use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Repository\RecurringOrderSkipRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
-use CeskaKruta\Web\Services\CeskaKrutaShopDelivery;
+use CeskaKruta\Web\Services\WholesaleDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderingDeadline;
 use CeskaKruta\Web\Value\Product;
@@ -36,9 +37,10 @@ final class RecurringOrderController extends AbstractController
         readonly private RecurringOrderSkipRepository $recurringOrderSkipRepository,
         readonly private MessageBusInterface $bus,
         readonly private CeskaKrutaDelivery $ceskaKrutaDelivery,
-        readonly private CeskaKrutaShopDelivery $ceskaKrutaShopDelivery,
+        readonly private WholesaleDelivery $wholesaleDelivery,
         readonly private CoolBalikDelivery $coolBalikDelivery,
         readonly private OrderingDeadline $orderingDeadline,
+        readonly private GetPlaces $getPlaces,
     ) {
     }
 
@@ -47,7 +49,6 @@ final class RecurringOrderController extends AbstractController
     {
         $deliveryPlacesIds = [
             CeskaKrutaDelivery::DELIVERY_PLACE_ID,
-            CeskaKrutaShopDelivery::DELIVERY_PLACE_ID,
             CoolBalikDelivery::DELIVERY_PLACE_ID,
         ];
 
@@ -57,7 +58,20 @@ final class RecurringOrderController extends AbstractController
             return $this->redirectToRoute('edit_user_info');
         }
 
-        if (in_array($loggedUser->preferredPlaceId, $deliveryPlacesIds, true) === false) {
+        $placeId = $loggedUser->preferredPlaceId;
+
+        if ($placeId === null) {
+            $this->bus->dispatch(
+                new DetectUserDeliveryPlace($loggedUser->id),
+            );
+
+            return $this->redirectToRoute('user_recurring_order');
+        }
+
+
+        $place = $this->getPlaces->oneById($placeId);
+
+        if ($place->allowOnlyWholesale === false && in_array($placeId, $deliveryPlacesIds, true) === false) {
             try {
                 $this->bus->dispatch(
                     new DetectUserDeliveryPlace($loggedUser->id),
@@ -127,15 +141,14 @@ final class RecurringOrderController extends AbstractController
         }
 
         $allowedDays = [];
-        $placeId = $loggedUser->preferredPlaceId;
-
         $postalCode = $loggedUser->deliveryZip ?? '';
-        if ($placeId === CeskaKrutaDelivery::DELIVERY_PLACE_ID) {
-            $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
+
+        if ($place->allowOnlyWholesale === true) {
+            $allowedDays = $this->wholesaleDelivery->getAllowedDaysForWholesalePlace($place);
         }
 
-        if ($placeId === CeskaKrutaShopDelivery::DELIVERY_PLACE_ID) {
-            $allowedDays = $this->ceskaKrutaShopDelivery->getAllowedDaysForPostalCode($postalCode);
+        if ($placeId === CeskaKrutaDelivery::DELIVERY_PLACE_ID) {
+            $allowedDays = $this->ceskaKrutaDelivery->getAllowedDaysForPostalCode($postalCode);
         }
 
         if ($placeId === CoolBalikDelivery::DELIVERY_PLACE_ID) {
@@ -145,6 +158,7 @@ final class RecurringOrderController extends AbstractController
         $nextDeadline = null;
         $nextOrderingDay = null;
         $productsForExtras = [];
+
         if ($day !== null) {
             $nextDeadline = $this->orderingDeadline->nextDeadline((int) $day, $placeId);
             $nextOrderingDay = $this->orderingDeadline->nextOrderDay((int) $day, $placeId);

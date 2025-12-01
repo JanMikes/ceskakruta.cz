@@ -3,6 +3,8 @@
 /public/bundles/
 .phpunit.cache/
 
+.claude/settings.local.json
+
 .env.local
 .env.local.php
 .env.*.local

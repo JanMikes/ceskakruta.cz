@@ -6,13 +6,11 @@ namespace CeskaKruta\Web\Repository;
 
 use CeskaKruta\Web\Entity\RecurringOrder;
 use CeskaKruta\Web\Exceptions\RecurringOrderNotFound;
-use CeskaKruta\Web\Query\GetPlaces;
+use CeskaKruta\Web\Services\OrderingDeadline;
 use CeskaKruta\Web\Services\Security\UserProvider;
 use CeskaKruta\Web\Services\UserService;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
-use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\UuidInterface;
 
 readonly final class RecurringOrderRepository
@@ -20,10 +18,9 @@ readonly final class RecurringOrderRepository
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ClockInterface $clock,
-        private GetPlaces $getPlaces,
+        private OrderingDeadline $orderingDeadline,
         private UserService $userService,
         private UserProvider $userProvider,
-        private LoggerInterface $logger,
     ) {
     }
 
@@ -80,9 +77,10 @@ readonly final class RecurringOrderRepository
     public function getScheduledForOrdering(): array
     {
         $scheduledOrders = [];
-        $timeForDeadline = $this->clock->now()
-            ->modify('-1 day')
-            ->setTime(23, 59);
+        $now = $this->clock->now();
+
+        // Broad filter: orders not processed in the last week
+        $oneWeekAgo = $now->modify('-7 days');
 
         $users = [];
 
@@ -90,8 +88,8 @@ readonly final class RecurringOrderRepository
         $orders = $this->entityManager->createQueryBuilder()
             ->select('o')
             ->from(RecurringOrder::class, 'o')
-            ->where('o.lastOrderedAt IS NULL OR o.lastOrderedAt < :timeForDeadline')
-            ->setParameter('timeForDeadline', $timeForDeadline)
+            ->where('o.lastOrderedAt IS NULL OR o.lastOrderedAt < :oneWeekAgo')
+            ->setParameter('oneWeekAgo', $oneWeekAgo)
             ->orderBy('o.lastOrderedAt', 'ASC')
             ->getQuery()
             ->getResult();
@@ -105,32 +103,10 @@ readonly final class RecurringOrderRepository
             $user = $users[$order->userId];
             assert($user->preferredPlaceId !== null);
 
-            $place = $this->getPlaces->oneById($user->preferredPlaceId);
-            $allowDaysBefore = [
-                1 => $place->day1AllowedDaysBefore,
-                2 => $place->day2AllowedDaysBefore,
-                3 => $place->day3AllowedDaysBefore,
-                4 => $place->day4AllowedDaysBefore,
-                5 => $place->day5AllowedDaysBefore,
-                6 => $place->day6AllowedDaysBefore,
-                7 => $place->day7AllowedDaysBefore,
-            ];
+            $deadline = $this->orderingDeadline->deadlineForCurrentPeriod($order->dayOfWeek, $user->preferredPlaceId);
 
-
-            $deadlineDaysBefore = $allowDaysBefore[$order->dayOfWeek];
-
-            if (!is_int($deadlineDaysBefore) || $deadlineDaysBefore < 0) {
-                $this->logger->error('Invalid deadline for recurring order', [
-                    'recurring_order_id' => $order->id,
-                ]);
-
-                continue;
-            }
-
-            $nextOrderDate = $this->getNextDateByDayOfWeek($order->dayOfWeek, $this->clock->now());
-            $deadline = $nextOrderDate->modify("-$deadlineDaysBefore days");
-
-            if ($deadline->format('Y-m-d') === $timeForDeadline->format('Y-m-d')) {
+            // Order is due if: deadline has passed AND order wasn't processed after this deadline
+            if ($now > $deadline && ($order->lastOrderedAt === null || $order->lastOrderedAt < $deadline)) {
                 $scheduledOrders[] = $order;
 
                 if (count($scheduledOrders) >= 5) {
@@ -140,18 +116,5 @@ readonly final class RecurringOrderRepository
         }
 
         return $scheduledOrders;
-    }
-
-
-    private function getNextDateByDayOfWeek(int $dayOfWeek, DateTimeImmutable $from): DateTimeImmutable
-    {
-        $currentDow = (int) $from->format('N');
-        $daysToAdd = ($dayOfWeek - $currentDow + 7) % 7;
-
-        if ($daysToAdd === 0) {
-            $daysToAdd = 7;
-        }
-
-        return $from->modify(sprintf('+%d days', $daysToAdd));
     }
 }
