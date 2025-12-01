@@ -12,7 +12,6 @@ use CeskaKruta\Web\Query\GetPlaces;
 use CeskaKruta\Web\Query\GetProducts;
 use CeskaKruta\Web\Repository\RecurringOrderRepository;
 use CeskaKruta\Web\Services\CeskaKrutaDelivery;
-use CeskaKruta\Web\Services\WholesaleDelivery;
 use CeskaKruta\Web\Services\CoolBalikDelivery;
 use CeskaKruta\Web\Services\OrderPriceCalculator;
 use CeskaKruta\Web\Services\OrderService;
@@ -44,7 +43,6 @@ readonly final class CreateOrderFromRecurringOrderHandler
         private UserService $userService,
         private CeskaKrutaDelivery $ceskaKrutaDelivery,
         private CoolBalikDelivery $coolBalikDelivery,
-        private WholesaleDelivery $wholesaleDelivery,
         private ClockInterface $clock,
     ) {
     }
