@@ -127,7 +127,13 @@ readonly final class CartService
         $placeForcedPack = $place->forcePacking ?? false;
 
         foreach ($this->storage->getItems() as $key => $item) {
-            $product = $products[$item->productId];
+            $product = $products[$item->productId] ?? null;
+
+            // The product might be inactive already
+            if ($product === null) {
+                $this->storage->removeItem($key);
+                continue;
+            }
 
             // check calendar, if any of products is not available then remove them
             if ($product->isTurkey === true && ($calendar[$week->year][$week->number][$product->turkeyType] ?? null) === null) {
