@@ -79,17 +79,12 @@ readonly final class RecurringOrderRepository
         $scheduledOrders = [];
         $now = $this->clock->now();
 
-        // Broad filter: orders not processed in the last week
-        $oneWeekAgo = $now->modify('-7 days');
-
         $users = [];
 
         /** @var list<RecurringOrder> $orders */
         $orders = $this->entityManager->createQueryBuilder()
             ->select('o')
             ->from(RecurringOrder::class, 'o')
-            ->where('o.lastOrderedAt IS NULL OR o.lastOrderedAt < :oneWeekAgo')
-            ->setParameter('oneWeekAgo', $oneWeekAgo)
             ->orderBy('o.lastOrderedAt', 'ASC')
             ->getQuery()
             ->getResult();
@@ -105,8 +100,9 @@ readonly final class RecurringOrderRepository
 
             $deadline = $this->orderingDeadline->deadlineForCurrentPeriod($order->dayOfWeek, $user->preferredPlaceId);
 
-            // Order is due if: deadline has passed AND order wasn't processed after this deadline
-            if ($now > $deadline && ($order->lastOrderedAt === null || $order->lastOrderedAt < $deadline)) {
+            // Order is due if: deadline has passed (within 24h window) AND order wasn't processed after this deadline
+            $deadlinePlus24h = $deadline->modify('+24 hours');
+            if ($now > $deadline && $now < $deadlinePlus24h && ($order->lastOrderedAt === null || $order->lastOrderedAt < $deadline)) {
                 $scheduledOrders[] = $order;
 
                 if (count($scheduledOrders) >= 5) {
