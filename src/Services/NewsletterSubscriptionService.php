@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Services;
 
-use CeskaKruta\Web\Message\RegisterUser;
-use CeskaKruta\Web\Services\Security\PasswordHasher;
 use Doctrine\DBAL\Connection;
 
 readonly final class NewsletterSubscriptionService
@@ -34,6 +32,20 @@ readonly final class NewsletterSubscriptionService
         $this->connection->insert('newsletter', [
             'email' => $email,
             'ins_dt' => $now->format('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public function isUnsubscribeHashValid(string $email, string $hash): bool
+    {
+        return md5('unsubscribe' . $email . 'email') === $hash;
+    }
+
+    public function unsubscribe(string $email): int
+    {
+        return (int) $this->connection->update('newsletter', [
+            'del_flag' => 1,
+        ], [
+            'email' => $email,
         ]);
     }
 }
