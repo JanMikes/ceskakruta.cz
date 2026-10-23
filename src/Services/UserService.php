@@ -72,7 +72,7 @@ readonly final class UserService
                 'delivery_street' => $message->deliveryStreet,
                 'delivery_city' => $message->deliveryCity,
                 'delivery_zip' => $message->deliveryZip,
-                'company_invoicing' => $message->companyInvoicing,
+                'company_invoicing' => (int) $message->companyInvoicing,
                 'invoicing_street' => $message->invoicingStreet,
                 'invoicing_city' => $message->invoicingCity,
                 'invoicing_zip' => $message->invoicingZip,
