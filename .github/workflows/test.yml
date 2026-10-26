@@ -25,3 +25,40 @@ jobs:
 
         -   run: bin/console cache:warmup --env=dev
         -   run: composer run-script phpstan
+
+  phpunit:
+      runs-on: ubuntu-latest
+      services:
+          mariadb:
+              # Same major/minor as production
+              image: mariadb:10.11
+              env:
+                  MARIADB_ROOT_PASSWORD: root
+              ports:
+                  - 3306:3306
+              options: >-
+                  --health-cmd="healthcheck.sh --connect --innodb_initialized"
+                  --health-interval=5s
+                  --health-timeout=5s
+                  --health-retries=20
+      env:
+          # Overrides .env.test (real env vars take precedence over dotenv files)
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/ceskakruta_test?serverVersion=10.11.19-MariaDB"
+      steps:
+        -   uses: actions/checkout@v4
+        -   uses: shivammathur/setup-php@v2
+            with:
+              php-version: 8.2
+              coverage: none # default is xdebug
+              extensions: mbstring, uuid, pdo_mysql, intl
+        -   uses: actions/cache@v4
+            with:
+                path: vendor
+                key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                restore-keys: |
+                    ${{ runner.os }}-composer-
+
+        -   run: composer install --no-scripts --no-progress
+
+        # Test database is (re)created from tests/database/*.sql by tests/bootstrap.php
+        -   run: composer run-script test

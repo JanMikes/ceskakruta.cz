@@ -48,6 +48,11 @@ jobs:
                         **/.github/**
                         **/assets/**
                         **/var/**
+                        **/tests/**
+                        **/docs/**
+                        .env.test
+                        phpunit.dist.xml
+                        bin/phpunit
                         .env.local
 
             -   name: Clear cache

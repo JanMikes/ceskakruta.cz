@@ -1,5 +1,5 @@
 volumes:
-    mariadb-data:
+    mariadb-10-11-data:
     redis-data:
     mailpit-data:
 
@@ -17,22 +17,22 @@ services:
         depends_on:
             - mariadb
         ports:
-            - "8080:8080"
+            - "${WEB_PORT:-8080}:8080"
         environment:
             XDEBUG_CONFIG: "client_host=host.docker.internal"
             XDEBUG_MODE: debug
             PHP_IDE_CONFIG: "serverName=ceskakruta"
 
     mariadb:
-        image: mariadb:10.1
+        image: mariadb:10.11
         restart: unless-stopped
         environment:
           MYSQL_ROOT_PASSWORD: "root"
           MYSQL_DATABASE: "ceskakruta"
         volumes:
-          - mariadb-data:/var/lib/mysql
+          - mariadb-10-11-data:/var/lib/mysql
         ports:
-          - 3306:3306
+          - "${DB_PORT:-3306}:3306"
 
     js-watch:
         image: ceskakrutacz
@@ -46,7 +46,7 @@ services:
     adminer:
         image: adminer:4.8.0
         ports:
-            - "8000:8080"
+            - "${ADMINER_PORT:-8000}:8080"
         environment:
             ADMINER_DEFAULT_SERVER: mariadb
         depends_on:
@@ -55,8 +55,8 @@ services:
     mailer:
         image: axllent/mailpit
         ports:
-            - "1025:1025"
-            - "8025:8025"
+            - "${MAILER_SMTP_PORT:-1025}:1025"
+            - "${MAILER_UI_PORT:-8025}:8025"
         environment:
             MP_SMTP_AUTH_ACCEPT_ANY: 1
             MP_SMTP_AUTH_ALLOW_INSECURE: 1

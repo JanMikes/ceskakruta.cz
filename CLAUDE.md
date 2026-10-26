@@ -70,6 +70,14 @@ docker compose exec web npm run build
 
 ## Testing and Quality
 
+### Tests
+```bash
+# PHPUnit; tests/bootstrap.php recreates the `ceskakruta_test` database from tests/database/schema.sql + fixtures.sql
+docker compose exec web composer run-script test
+```
+- `tests/database/schema.sql` is the production schema (DB is shared with the old Nette app — no schema changes)
+- Extend `tests/Support/IntegrationTestCase` / `tests/Support/WebTestCase`; each test runs in a rolled-back transaction (DAMA)
+
 ### Static Analysis
 ```bash
 # Run PHPStan (required before commits)
@@ -78,6 +86,9 @@ docker compose exec web composer run-script phpstan
 
 ### Environment Setup
 - Uses Docker for development (see `docker-compose.yml`)
+- Host ports are configurable when defaults are taken by another project:
+  `WEB_PORT` (8080), `DB_PORT` (3306), `ADMINER_PORT` (8000), `MAILER_SMTP_PORT` (1025), `MAILER_UI_PORT` (8025),
+  e.g. `WEB_PORT=8180 ADMINER_PORT=8100 docker compose up -d`. Containers always talk to each other on the internal ports.
 - MariaDB database on port 3306
 - Mailer service for development on port 1025
 

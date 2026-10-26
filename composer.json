@@ -63,9 +63,12 @@
         "twig/twig": "^3.0"
     },
     "require-dev": {
+        "dama/doctrine-test-bundle": "^8.2",
         "phpstan/phpstan": "^1.2",
         "phpstan/phpstan-doctrine": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.4",
         "phpstan/phpstan-symfony": "^1.0",
+        "phpunit/phpunit": "^11.5",
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "^7.0",
         "symfony/css-selector": "^7.0",
@@ -77,8 +80,14 @@
             "CeskaKruta\\Web\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "CeskaKruta\\Web\\Tests\\": "tests"
+        }
+    },
     "scripts": {
         "phpstan": "vendor/bin/phpstan --memory-limit=-1 analyse",
+        "test": "bin/phpunit",
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
