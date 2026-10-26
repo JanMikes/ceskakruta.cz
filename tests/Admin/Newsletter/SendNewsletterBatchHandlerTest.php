@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Tests\Admin\Newsletter;
 
 use CeskaKruta\Web\Tests\Support\AdminWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -213,5 +215,77 @@ final class SendNewsletterBatchHandlerTest extends AdminWebTestCase
         $this->client->request('GET', $path);
         self::assertResponseRedirects();
         self::assertSame(1, $this->fetchInt('SELECT `del_flag` FROM `newsletter` WHERE id = :id', ['id' => $subscriber]));
+    }
+
+    /**
+     * PLAN §6, Phase 1 review 6: a deleted / inactive latest actuality is not enqueued.
+     */
+    #[DataProvider('provideNotPublishedActuality')]
+    public function testDoesNotFillDeletedOrInactiveLatestActuality(int $active, int $deleted): void
+    {
+        $this->isolateNewsletterQueue();
+
+        $this->insertActuality('Starší aktualita', '2025-05-01 12:00:00');
+        $latest = $this->insert('actuality', [
+            'date' => '2025-06-01',
+            'name' => 'Nezveřejněná',
+            'ins_dt' => '2025-06-01 12:00:00',
+            'active_flag' => $active,
+            'del_flag' => $deleted,
+        ]);
+        $this->insertSubscriber('waiting@example.test', '2025-01-01 10:00:00');
+
+        self::assertSame(0, $this->runNewsletterCron()['queued']);
+        self::assertSame(0, $this->fetchInt('SELECT COUNT(*) FROM actuality_newsletter WHERE actuality_id = :id', ['id' => $latest]));
+    }
+
+    /**
+     * @return iterable<string, array{int, int}>
+     */
+    public static function provideNotPublishedActuality(): iterable
+    {
+        yield 'inactive' => [0, 0];
+        yield 'deleted' => [1, 1];
+    }
+
+    /**
+     * PLAN §6, Phase 1 review 5: oldest queue rows first.
+     */
+    public function testSendsOldestQueueRowsFirst(): void
+    {
+        $this->isolateNewsletterQueue();
+
+        $latest = $this->insertActuality('Pořadí');
+
+        $ids = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $ids[] = $this->insertQueueRow($latest, sprintf('order-%02d@example.test', $i));
+        }
+
+        self::assertSame(array_slice($ids, 0, 10), $this->runNewsletterCron()['sent']);
+        self::assertSame(array_slice($ids, 10), $this->runNewsletterCron()['sent']);
+    }
+
+    /**
+     * PLAN §6, Phase 1 review 4: an invalid e-mail is skipped, marked as processed and does not block the queue.
+     */
+    public function testInvalidEmailIsSkippedAndMarkedProcessed(): void
+    {
+        $this->isolateNewsletterQueue();
+
+        $latest = $this->insertActuality('Neplatný e-mail');
+        $invalid = $this->insertQueueRow($latest, 'not an e-mail');
+        $valid = $this->insertQueueRow($latest, 'valid@example.test');
+
+        $result = $this->runNewsletterCron();
+
+        self::assertSame([$valid], $result['sent']);
+        self::assertSame(['valid@example.test'], array_map(fn (Email $email): string => $this->recipientsOf($email)[0], $this->sentNewsletterEmails()));
+
+        $row = $this->fetchRow('actuality_newsletter', $invalid);
+        self::assertEquals(1, $row['is_sent_flag']);
+        self::assertSame('cron:invalid-email', $row['upd_process']);
+
+        self::assertSame([], $this->runNewsletterCron()['sent']);
     }
 }

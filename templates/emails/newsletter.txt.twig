@@ -1,0 +1,8 @@
+{# Plain text alternative, the old Nette mailer generated one from the HTML as well #}
+{{ name }}
+
+{{ text|striptags|replace({'&nbsp;': ' '})|trim }}
+
+--
+Tento e-mail Vám byl zaslán na základě Vašeho odběru novinek na portále Česká Krůta ({{ web_url }}).
+Nechcete-li již nadále odebírat novinky, otevřete tento odkaz: {{ unsubscribe_link }}

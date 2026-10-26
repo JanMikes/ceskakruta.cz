@@ -1,0 +1,21 @@
+{# Old app templates/emails/newsletter.latte, inline styles of its TemplateFactory #}
+<html lang="cs">
+<body style="color: #333;font-family: Arial, Tahoma, Sans-serif;background: #ebebeb;font-size: 14px;">
+
+<div style="width: 600px;margin: 15px auto;border: 1px solid #dd0d19;padding: 15px;background: #fff;text-align: center;">
+    <img src="{{ web_url }}/img/logo.png" alt="Logo Česká Krůta">
+
+    <h1 style="color: #dd0d19;font-size: 24px;font-weight: normal;font-family: Arial, Tahoma, Helvetica, Sans-serif;text-align: center;">{{ name }}</h1>
+
+    <div style="color: #666;font-size: 13px;font-family: Arial, Tahoma, Helvetica, Sans-serif;padding: 15px 0;text-align: left;">
+        {{ text|raw }}
+    </div>
+</div>
+
+<div style="padding: 15px 0;color: #999;font-size: 10px;text-align: center;width: 600px;margin: 15px auto;font-family: Arial, Tahoma, Helvetica, Sans-serif;">
+    Tento e-mail Vám byl zaslán na základě Vašeho odběru novinek na portále <a style="font-size: 10px;text-decoration: underline;color: #888;" href="{{ web_url }}">Česká Krůta</a><br>
+    Nechcete-li již nadále odebírat novinky, <a style="font-size: 10px;text-decoration: underline;color: #888;" href="{{ unsubscribe_link }}">klikněte na tento odkaz</a> nebo zadejte do prohlížeče tuto adresu:<br><em>{{ unsubscribe_link }}</em>
+</div>
+
+</body>
+</html>

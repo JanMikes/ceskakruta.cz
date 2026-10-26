@@ -1,0 +1,40 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+
+{% block title %}Aktuality{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Aktuality</h1>
+        {{ grid.activate_all('actuality', inactive_count) }}
+        <a class="btn btn-primary btn-sm" href="{{ path('admin_actuality_create') }}">Přidat aktualitu</a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Nadpis</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for actuality in actualities %}
+                        <tr id="item-{{ actuality.id }}" class="{{ actuality.active ? '' : 'table-secondary text-muted' }}">
+                            <td class="text-nowrap">{{ actuality.date ? actuality.date|date('d.m.Y', false) }}</td>
+                            <td>{{ actuality.name }}</td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_actuality_edit', {id: actuality.id}) }}">Upravit</a>
+                                {{ grid.row_actions('actuality', {id: actuality.id, active: actuality.active}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-muted">Žádné aktuality.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
