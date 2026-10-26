@@ -1,0 +1,40 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+
+{% block title %}Prodejci{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Prodejci</h1>
+        {{ grid.activate_all('vendor', inactive_count) }}
+        <a class="btn btn-primary btn-sm" href="{{ path('admin_vendor_create') }}">Přidat prodejce</a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Název prodejce</th>
+                        <th>Město</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vendor in vendors %}
+                        <tr id="item-{{ vendor.id }}" class="{{ vendor.active ? '' : 'table-secondary text-muted' }}">
+                            <td>{{ vendor.name }}</td>
+                            <td>{{ vendor.city }}</td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_vendor_edit', {id: vendor.id}) }}">Upravit</a>
+                                {{ grid.row_actions('vendor', {id: vendor.id, active: vendor.active}, {first: loop.first, last: loop.last}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-muted">Žádní prodejci.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

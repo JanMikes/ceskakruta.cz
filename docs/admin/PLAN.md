@@ -278,6 +278,17 @@ Texty · Prodejci · Emaily · Prodejny · Uživatelé · Objednávky · [user n
 - Templates: `templates/admin/**`, own layout `templates/admin/base.html.twig`; separate Encore entry `admin` (Bootstrap 5, Stimulus).
 - Domain exceptions in `src/Exceptions/` (e.g. `RecordNotFound`), controllers catch `HandlerFailedException` like `EditUserInfoController`.
 
+**Section recipe** (reference implementation: Prodejci / vendor, Phase 4):
+- Read model `Value/Admin/AdminVendor` + query `Query/Admin/GetAdminVendors` (`all()`, `oneById()` throws `Exceptions\RecordNotFound`).
+- `FormData/Admin/VendorFormData` (constraints, `fromVendor()`) + `FormType/Admin/VendorFormType` (`getBlockPrefix()` = table, field = column).
+- Commands `Message/Admin/Vendor/{CreateVendor,EditVendor}` (`fromFormData()`, `columns()`), handlers write through
+  `Repository/Admin/AdminRecordRepository` (audit columns, `orderable: true` → `order = id*10`); create handler returns the new id,
+  controller reads it via Messenger `HandleTrait`.
+- Controllers `Controller/Admin/Vendor/{VendorList,VendorCreate,VendorEdit}Controller` — edit: unknown id → redirect to list,
+  `_continue` button → back to the form; list passes `CountInactiveRecords` for "Aktivovat vše".
+- Templates `templates/admin/vendor/{list,form}.html.twig`: grid macros `admin/_grid.html.twig`, buttons `admin/_form_buttons.html.twig`.
+- Rich text fields use `FormType/Admin/WysiwygType` (textarea + Stimulus `wysiwyg`).
+
 ### 3.2 Security
 - **Separate `admin` firewall** (`^/admin`) with its own `form_login` (`/admin/login`), `logout` (`/admin/logout`),
   `remember_me` (14 days, checkbox = old "Trvalé přihlášení") and a `UserChecker` that rejects non-admins at login with a clear message.

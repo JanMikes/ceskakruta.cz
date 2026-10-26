@@ -1,0 +1,28 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = vendor ? 'Upravit prodejce' : 'Přidat prodejce' %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }}{% if vendor and vendor.name %} <small class="text-muted">{{ vendor.name }}</small>{% endif %}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6">{{ form_row(form.name) }}</div>
+                    <div class="col-md-6">{{ form_row(form.place) }}</div>
+                    <div class="col-md-6">{{ form_row(form.address) }}</div>
+                    <div class="col-md-4">{{ form_row(form.city) }}</div>
+                    <div class="col-md-2">{{ form_row(form.zip) }}</div>
+                    <div class="col-md-4">{{ form_row(form.email) }}</div>
+                    <div class="col-md-4">{{ form_row(form.web) }}</div>
+                    <div class="col-md-4">{{ form_row(form.phone) }}</div>
+                </div>
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: vendor is not null, back_url: path('admin_vendors')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
