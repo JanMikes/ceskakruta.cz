@@ -1,0 +1,38 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+
+{% block title %}Emaily{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Emaily</h1>
+        <span class="text-muted small">Celkem {{ emails|length }}</span>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Přidáno</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for email in emails %}
+                        <tr id="item-{{ email.id }}">
+                            <td>{{ email.email }}</td>
+                            <td class="text-nowrap">{{ email.insertedAt|date('d.m.Y H:i:s', false) }}</td>
+                            <td class="text-end text-nowrap">
+                                {{ grid.row_actions('newsletter', {id: email.id}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-muted">Prozatím nebyly přidány žádné záznamy.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

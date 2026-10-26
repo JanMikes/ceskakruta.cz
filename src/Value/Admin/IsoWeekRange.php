@@ -13,6 +13,9 @@ final class IsoWeekRange
 {
     public static function format(int $week, int $year): string
     {
-        throw new \LogicException('Not implemented yet');
+        $monday = (new \DateTimeImmutable('today'))->setISODate($year, $week, 1);
+        $sunday = $monday->setISODate($year, $week, 7);
+
+        return sprintf('%d/%d (%s - %s)', $week, $year, $monday->format('d.m.'), $sunday->format('d.m. Y'));
     }
 }

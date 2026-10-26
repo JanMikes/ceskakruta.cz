@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = row ? 'Upravit položku tabulky chlazených krůt' : 'Přidat položku tabulky chlazených krůt' %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }}{% if row %} <small class="text-muted">{{ row.weekLabel }}</small>{% endif %}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6">{{ form_row(form.product_tp_id) }}</div>
+                    <div class="col-md-3">{{ form_row(form.week_number) }}</div>
+                    <div class="col-md-3">{{ form_row(form.year) }}</div>
+                    <div class="col-md-3">{{ form_row(form.weight_from) }}</div>
+                    <div class="col-md-3">{{ form_row(form.weight_to) }}</div>
+                </div>
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: row is not null, back_url: path('admin_calendar_cold')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = row ? 'Upravit položku tabulky rozkrmených krůťat' : 'Přidat položku tabulky rozkrmených krůťat' %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }}{% if row %} <small class="text-muted">{{ row.weekLabel }}</small>{% endif %}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-3">{{ form_row(form.week_number) }}</div>
+                    <div class="col-md-3">{{ form_row(form.year) }}</div>
+                    <div class="col-md-3">{{ form_row(form.week_age) }}</div>
+                    <div class="col-md-3 pt-md-4">
+                        {{ form_row(form.farma_doubrava) }}
+                        {{ form_row(form.farma_rychvald) }}
+                    </div>
+                    <div class="col-md-3">{{ form_row(form.weight) }}</div>
+                    <div class="col-md-3">{{ form_row(form.price_mix) }}</div>
+                    <div class="col-md-3">{{ form_row(form.price_man) }}</div>
+                    <div class="col-md-3">{{ form_row(form.price_woman) }}</div>
+                    <div class="col-md-6">{{ form_row(form.note) }}</div>
+                </div>
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: row is not null, back_url: path('admin_calendar_dead')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
