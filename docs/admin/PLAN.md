@@ -686,14 +686,14 @@ Each phase: write/enable its tests (red) → implement → green → PHPStan →
 | 1 ✅ | **TODO suite** | write every test from §4.4 (red) incl. route inventory provider — done 2026-10-26: 802 tests, all red for the right reason (404 / skeleton `LogicException`) except infrastructure + the `.htaccess` front-controller guard; Pohoda/Boxxi golden files rendered by the old code (`tests/fixtures/pohoda/_renderer/`) |
 | 2 ✅ | **Shell & security** | admin firewall, UserChecker, identifier fix, remember-me, login/logout, layout + nav, dashboard, change password, `admin` Encore entry; `.htaccess` 301 → 302 — done 2026-10-26; `ADMIN_REMEMBERME` is scoped to `path=/admin`; backlink test stays red until `/admin/objednavky` exists (Phase 9) |
 | 3 ✅ | **Generic grid** | `AdminTable` enum, 5 generic commands, CSRF POST controller, Twig macros for buttons, reorder — done 2026-10-26: `Value\Admin\Grid\{AdminTable,GridAction}` hold the rules, Twig `admin_grid_allows()` asks the same enum, macros in `templates/admin/_grid.html.twig`; Turbo Drive off in admin (keeps `#item-{id}` anchors); list-driven grid tests go green with the section pages |
-| 4 | **Simple CRUD** | Tiptap `wysiwyg` controller + dry-run normalization report → Content → Calendars (dead, cold, alive) → Vendors → Newsletter emails |
-| 5 | **Actuality + newsletter** | actuality CRUD, enqueue, `SendNewsletterBatch`, `/cron/newsletter-send` + `CRON_TOKEN`, email template |
-| 6 | **Catalogue** | Products (type rules, `packages_size`) → uploads dir (§3.9) → Recipes (upload) → Sortiment |
-| 7 | **Places** | closed days, place form with 7 days, day hint controller, price copy |
-| 8 | **Users** | list, wholesale toggle, edit (+ `is_admin`), banned products |
-| 9 | **Orders – read** | list + filters + pagination, detail, CSV export (filtered) |
-| 10 | **Orders – Pohoda** | golden files from old app, dates, codes, XML, client, single + bulk send |
-| 11 | **Orders – Boxxi** | calculator, page + form, payload, send |
+| 4 ✅ | **Simple CRUD** | Tiptap `wysiwyg` controller + dry-run normalization report → Content → Calendars (dead, cold, alive) → Vendors → Newsletter emails |
+| 5 ✅ | **Actuality + newsletter** | actuality CRUD, enqueue, `SendNewsletterBatch`, `/cron/send-email` + `CRON_TOKEN`, email template |
+| 6 ✅ | **Catalogue** | Products (type rules, `packages_size`) → uploads dir (§3.9) → Recipes (upload) → Sortiment |
+| 7 ✅ | **Places** | closed days, place form with 7 days, day hint controller, price copy |
+| 8 ✅ | **Users** | list, wholesale toggle, edit (+ `is_admin`), banned products |
+| 9 ✅ | **Orders – read** | list + filters + pagination, detail, CSV export (filtered) |
+| 10 ✅ | **Orders – Pohoda** | golden files from old app, dates, codes, XML, client, single + bulk send |
+| 11 ✅ | **Orders – Boxxi** | calculator, page + form, payload, send |
 | 12 | **Go-live & switch-off** | (a) secrets in prod `.env.local` (§3.11); (b) manual FTP copy old `www/upload/recipes/` → new `web/public/upload/recipes/`, recipe templates → `asset()`; (c) remove `/admin` redirect from `public/.htaccess`; (d) newsletter cutover gap-first (§3.8): disable old trigger → lily line; (e) parallel run, old admin used read-only; (f) old.ceskakruta.cz → 301 to ceskakruta.cz, old files kept |
 | later | **After old app is off** | §8 items that need schema/hash changes |
 
@@ -738,7 +738,20 @@ Decided:
 
 - **Q13** newsletter trigger = VPS crontab `*/10` curl to `https://old.ceskakruta.cz/cron/send-email` (§1.2).
 
-Open: none blocking. (Note for later: the VPS has a working crontab, so a CLI cron may be possible there after all.)
+- **Implementation notes (2026-10-26, Phases 4–11):**
+  - Stored datetimes are printed with `|date(format, false)` (no Twig timezone shift).
+  - Tiptap 3.31.4, setup shared with the dry-run `tools/wysiwyg-normalization-report.mjs` (h1–h4 supported); local run:
+    298 rows, 0 flagged. Untouched / raw-mode fields are saved byte-for-byte.
+  - Uploads: container parameter `uploads_dir` = `public/upload` (no env var), excluded from git + FTP deploy.
+  - Newsletter: `phpmail://` passes `-f <sender>` (old Nette did not → bounce address changes; verify with the real test send).
+  - Boxxi send failure rolls back the form values too; form re-rendered with the entered values + `.alert-danger`.
+  - Pohoda: only HTTP / transport errors are failures (like the old app); `state="error"` replies are not checked.
+  - Enabled place day requires "days before"; changing your own e-mail logs you out (same as old app).
+  - Empty item weight shown as "–" (en dash) in order detail / Boxxi.
+
+Open:
+- **Timezone**: old app writes datetimes in Europe/Prague, the Symfony app (shop + admin) in PHP's default
+  (`.docker/php.ini` = UTC). Check production `date.timezone`; if not Europe/Prague, set it explicitly in the app. (Note for later: the VPS has a working crontab, so a CLI cron may be possible there after all.)
 
 ---
 
