@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp:responsePack xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd" xmlns:rdc="http://www.stormware.cz/schema/version_2/documentresponse.xsd" xmlns:ord="http://www.stormware.cz/schema/version_2/order.xsd" version="2.0" id="test001" state="ok" ico="26866935">
+  <rsp:responsePackItem version="2.0" id="WEB0000" state="ok">
+    <ord:orderResponse version="2.0" state="ok">
+      <rdc:producedDetails>
+        <rdc:id>9001</rdc:id>
+        <rdc:number>WEB0000</rdc:number>
+      </rdc:producedDetails>
+    </ord:orderResponse>
+  </rsp:responsePackItem>
+</rsp:responsePack>

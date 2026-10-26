@@ -490,8 +490,13 @@ and reports rows that lose images, links, headings, lists or text; anything flag
 ### 4.3 How the "TODO via failing tests" works
 - Phase 1 writes **all** test classes below with real assertions (no `markTestIncomplete`, which would show as "incomplete" rather than fail).
   The suite is red; every phase turns its part green.
-- Each section's tests carry `#[Group('admin-<section>')]`; CI runs the groups that are done (so `main` stays green and the
-  FTP release keeps working), locally `vendor/bin/phpunit` shows exactly what is left.
+- **No exclusion groups (decided)**: the whole suite runs everywhere, CI is red until the last phase. Work happens on branch
+  `feature/admin`, which is merged into `main` only when everything is green — `main` (and therefore the FTP release) is not affected.
+  Hotfixes for the live site go to `main` directly as before.
+- Tests are **black-box** where possible (HTTP + DB), so the implementation stays free. Only pure logic (Pohoda dates/codes/XML,
+  Boxxi weights, packages size, weekday hint, ISO week range, `mail()` transport) is unit tested; those classes exist from Phase 1 as
+  **skeletons** with final signatures that throw `\LogicException('Not implemented yet')` (keeps PHPStan green while tests are red).
+- Handler-level tests from §4.4 are written as functional tests through the HTTP endpoint when that covers the same behaviour.
 
 ### 4.4 Test list (the TODO list)
 
@@ -589,6 +594,75 @@ and reports rows that lose images, links, headings, lists or text; anything flag
 - [ ] `AdminRedirectTest::testHtaccessNoLongerRedirectsAdminToOldDomain` (asserts `public/.htaccess` content)
 - [ ] `DeployConfigTest::testUploadsDirIsExcludedFromFtpDeployAndGit` (asserts `release.yml` exclude + `.gitignore`)
 
+### 4.6 UI / test contract
+The tests (Phase 1) and the implementation (Phases 2–12) both follow these rules; changing one means changing the tests.
+
+**Test infrastructure**
+- Functional tests extend `Tests\Support\AdminWebTestCase` (`$this->client`, `loginAsAdmin()`, `loginAsCustomer()`, `insert()`,
+  `fetchRow()`, `fetchInt()`, `assertFlash()`, `assertRedirectsTo()`, `listedIds()`, `assertListedInOrder()`, `gridActionForm()`,
+  `assertNoGridAction()`); unit tests extend PHPUnit `TestCase`, kernel tests `Tests\Support\IntegrationTestCase`.
+- HTTP: every client in the test env uses `Tests\Support\HttpMock` (`framework.http_client.mock_response_factory`) — queue responses
+  with `HttpMock::queue(new MockResponse(...))`, inspect `HttpMock::requests()`; an unexpected request throws.
+- Mail: `MAILER_*_DSN=null://null` in test, assert with Symfony's `MailerAssertionsTrait` (`assertEmailCount`, `getMailerMessages`).
+- Fixtures: `tests/database/fixtures.sql` = shared base (users 1 admin / 2 customer / 3 wholesale, places 1/7/21/22/30, products,
+  one row per admin table with id 1, orders 1 shop + 2 CoolBalík). Per-section rows in `tests/database/fixtures/NN-section.sql`
+  with their own **id range** to avoid collisions: newsletter/actuality 1000–1999, calendars/content/vendors/sortiment 2000–2999,
+  products/recipes 3000–3999, places/users 4000–4999, orders 5000–5999, security/grid/shell 6000–6999 and order values ≥ 100000. Lists contain rows of other sections →
+  assert relative order (`assertListedInOrder`) and presence/absence of own rows, never the full list.
+- Test env values (`.env.test`): `CRON_TOKEN=test-cron-token`, `POHODA_URL=http://pohoda.test/xml`, `POHODA_AUTHORIZATION=test-pohoda-auth`,
+  `MAILER_NEWSLETTER_DSN=null://null`. Uploads go to the container parameter `uploads_dir` (test: `%kernel.project_dir%/var/test-uploads`).
+- Parallel runs: `docker compose exec -e DATABASE_URL='mysql://root:root@mariadb:3306/<name>_test?serverVersion=10.11.19-MariaDB' web bin/phpunit …`.
+
+**Security**
+- Login `/admin/login`: fields `_username`, `_password`, `_remember_me`, `_csrf_token`; button **"Přihlásit"**.
+  Invalid credentials → `.alert-danger` "Byly zadány neplatné přihlašovací údaje!"; non-admin → `.alert-danger`
+  "Do administrace mají přístup pouze administrátoři.". Remember-me cookie `ADMIN_REMEMBERME` (14 days). Firewall name `admin`.
+- Logout: `GET /admin/logout` → redirect `/admin/login`. Anonymous on any admin page → redirect `/admin/login`; logged-in non-admin → 403.
+- Every mutation is a POST with hidden `_token` (CSRF id `admin-action`, forms: Symfony form CSRF); wrong/missing token → 403,
+  GET on a POST-only route → 405.
+
+**Layout & pages**
+- Every page has one `<h1>`. List pages: the h1 is the navigation label (§2.18), e.g. "Aktuality", "Maso a výrobky", "Objednávky".
+  Dashboard h1 "Přehled", change password h1 "Změna hesla".
+- Navigation (`nav`) has links with the exact labels and order of §2.18; sortiment categories in a dropdown linking to
+  `/admin/sortiment/{categoryId}`; the logged admin's name links to `/admin/zmena-hesla`; "Odhlásit" links to `/admin/logout`.
+- Flash messages: Bootstrap alerts `.alert-success` / `.alert-danger`, texts as in §2 (Czech, same as the old admin).
+
+**Lists**
+- Each row has `id="item-{id}"`; DOM order = sort order. Exception: the closed days list on the places page uses
+  `id="closed-day-{id}"` (two lists on one page), its grid redirects use the `#closed-day-{id}` anchor. Edit links point to the edit route (`/admin/<section>/{id}`).
+- Generic grid actions (§3.3): `<form method="post" action="/admin/record/{table}/{id}/{action}">`, `{action}` ∈
+  `activate|deactivate|delete|move-up|move-down`, hidden `_token` + `_target` (URL to return to). `{table}` = DB table name
+  (`actuality, calendar_dead, calendar_cold, calendar_alive, product, recipe, sortiment, vendor, newsletter, place, place_closed_day`).
+  Only allowed actions are rendered (hidden action = no form); a forbidden action posted anyway → 403, DB unchanged. Unknown table → 404.
+- Activate all: `<form method="post" action="/admin/record/{table}/activate-all">` (+ hidden `scope` = product id / category id for
+  recipes / sortiment), its button has `disabled` when the list has no inactive row.
+- Action result: redirect to `_target` + `#item-{id}` (activate-all: `_target` only) with flash
+  "Záznam úspěšně aktivován" / "Záznam úspěšně deaktivován" / "Záznam úspěšně smazán" / "Pořadí bylo úspěšně změněno!" /
+  "Záznamy úspěšně aktivovány" (texts of the old `TRecordHandlers`). Move without a neighbour (first row up / last row down) = no change.
+  Reorder ignores deleted rows (old `Entity::findAll`) and, within a scope, rows of other scopes.
+
+**Forms**
+- Symfony forms, form name = DB table name (`actuality`, `calendar_dead`, `calendar_cold`, `calendar_alive`, `product`, `recipe`,
+  `sortiment`, `content`, `vendor`, `place`, `place_closed_day`, `user`, `boxxi`), field name = DB column name, so fields are
+  `actuality[name]`, `place[allow_order_day_3_time]`, … Exceptions: `change_password[old_password]`, `change_password[new_password][first|second]`
+  (RepeatedType), `banned_products[products][]` (checkbox per product id), `product[packages_size]` (text "500, 1000"),
+  `recipe[image]` (file), `place[enable_day_N]` + `place[prices_from_place_id]`.
+- Dates `YYYY-MM-DD` (`single_text`), times `HH:MM`, checkboxes standard (value `1`, unchecked = absent).
+- Buttons: **"Uložit"** (create + edit) and **"Uložit a pokračovat v editaci"** (edit only).
+- Success: flash "Záznam byl úspěšně uložen!", redirect to the list URL + `#item-{id}`; "save and continue" → redirect to the edit URL.
+- Invalid: HTTP **422**, the form re-rendered with errors in `.invalid-feedback` (Bootstrap 5 theme), DB unchanged.
+- Edit of an unknown id → redirect (302) to the list.
+- Audit: insert sets `ins_dt`, `ins_process = 'admin'`, `ins_user_id = '<admin id>'`; update sets `upd_process = 'admin'`, `upd_user_id = '<admin id>'`.
+  Booleans stored as `0/1`.
+
+**Other endpoints**
+- Wholesale toggle: `POST /admin/uzivatele/{id}/velkoobchod`, fields `allow` (`0|1`) + `_token`.
+- Pohoda: `POST /admin/objednavky/{id}/pohoda` (`_token`), bulk `POST /admin/objednavky/pohoda` with `orders[]` (ids) + `_token`;
+  the list page renders both forms (bulk = one form around the checkboxes, button "Označené poslat do Pohody").
+- Boxxi: `GET+POST /admin/objednavky/{id}/boxxi`, form `boxxi[weight|cool_balik_price|cool_balik_box_count|date]`, button "Uložit a propsat".
+- Newsletter cron: `GET /cron/send-email?token=…` → JSON `{"queued": int, "sent": list<int>}`; wrong/missing token → 403.
+
 ---
 
 ## 5. Phases
@@ -598,7 +672,7 @@ Each phase: write/enable its tests (red) → implement → green → PHPStan →
 | # | Phase | Contents |
 |---|---|---|
 | 0 ✅ | **Test infrastructure** | §4.1; one trivial green test proving kernel + DB + DAMA work; `phpunit` job in CI — done 2026-10-26 (see §4.5) |
-| 1 | **TODO suite** | write every test from §4.4 (red) incl. route inventory provider |
+| 1 ✅ | **TODO suite** | write every test from §4.4 (red) incl. route inventory provider — done 2026-10-26: 802 tests, all red for the right reason (404 / skeleton `LogicException`) except infrastructure + the `.htaccess` front-controller guard; Pohoda/Boxxi golden files rendered by the old code (`tests/fixtures/pohoda/_renderer/`) |
 | 2 | **Shell & security** | admin firewall, UserChecker, identifier fix, remember-me, login/logout, layout + nav, dashboard, change password, `admin` Encore entry; `.htaccess` 301 → 302 |
 | 3 | **Generic grid** | `AdminTable` enum, 5 generic commands, CSRF POST controller, Twig macros for buttons, reorder |
 | 4 | **Simple CRUD** | Tiptap `wysiwyg` controller + dry-run normalization report → Content → Calendars (dead, cold, alive) → Vendors → Newsletter emails |
@@ -620,6 +694,7 @@ they carry the external integrations and the highest risk. If order processing i
 ## 6. Decisions & open questions
 
 Decided:
+- **packages_size** written compact (`json_encode`, `[500,1000]`); reader accepts existing hand-written `[500, 1000]` rows (frontend only `json_decode`s).
 - **Q1** port `calendar_alive`, `sortiment`, `vendor` (customer may be asked later whether to drop them).
 - **Q2** place `address_1..3` / `map_url` / `phone` out of scope.
 - **Q3** keep "Převzít ceny z prodejny" on place create; make `packages_size` editable.

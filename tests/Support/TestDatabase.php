@@ -12,6 +12,7 @@ final class TestDatabase
 {
     private const SCHEMA_FILE = __DIR__ . '/../database/schema.sql';
     private const FIXTURES_FILE = __DIR__ . '/../database/fixtures.sql';
+    private const FIXTURES_DIR = __DIR__ . '/../database/fixtures';
 
     public static function recreate(string $databaseUrl): void
     {
@@ -41,6 +42,11 @@ final class TestDatabase
 
         self::executeFile($pdo, self::SCHEMA_FILE);
         self::executeFile($pdo, self::FIXTURES_FILE);
+
+        // Per-section fixtures (each section has its own id range, see PLAN §4.6)
+        foreach (glob(self::FIXTURES_DIR . '/*.sql') ?: [] as $file) {
+            self::executeFile($pdo, $file);
+        }
     }
 
     /**

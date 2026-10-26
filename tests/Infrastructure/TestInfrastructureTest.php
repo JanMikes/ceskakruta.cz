@@ -14,7 +14,8 @@ final class TestInfrastructureTest extends IntegrationTestCase
     {
         $connection = $this->connection();
 
-        self::assertSame('ceskakruta_test', $connection->getDatabase());
+        // Default ceskakruta_test; parallel runs may override DATABASE_URL with another *_test database
+        self::assertStringEndsWith('_test', (string) $connection->getDatabase());
         self::assertStringStartsWith('10.11.', $this->fetchString('SELECT VERSION()'));
         self::assertStringContainsString('STRICT_TRANS_TABLES', $this->fetchString('SELECT @@SESSION.sql_mode'));
     }

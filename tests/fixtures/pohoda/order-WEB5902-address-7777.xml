@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:ord="http://www.stormware.cz/schema/version_2/order.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Objednávky">
+    <dat:dataPackItem id="WEB5902" version="2.0">
+        <ord:order version="2.0">
+            <!-- prijata objednavka s polozkama -->
+            <ord:orderHeader>
+                    <ord:priceLevel>
+                        <typ:ids>ROZVOZ</typ:ids>
+                    </ord:priceLevel>
+                <ord:centre>
+                    <typ:ids>200</typ:ids>
+                </ord:centre>
+                <ord:note>Objednáno na: 19.06.2024, Poznámka z formuláře: </ord:note>
+                <ord:orderType>receivedOrder</ord:orderType>
+                <ord:numberOrder>WEB5902</ord:numberOrder>
+                <ord:number>
+                    <typ:numberRequested checkDuplicity="true">WEB5902</typ:numberRequested>
+                </ord:number>
+                <ord:date>2024-06-12</ord:date>
+                <ord:dateFrom>2024-06-17</ord:dateFrom>
+                <ord:dateTo>2024-06-19</ord:dateTo>
+                <ord:dateDelivery>2024-06-19</ord:dateDelivery>
+                <ord:text>Rozvoz domů Přerov</ord:text>
+                <ord:partnerIdentity>
+                        <typ:id>7777</typ:id>
+                    <typ:address>
+                        <typ:company>Petr Svoboda</typ:company>
+                        <typ:name>Petr Svoboda</typ:name>
+                        <typ:city>Přerov</typ:city>
+                        <typ:street>Hlavní 12</typ:street>
+                        <typ:zip>75002</typ:zip>
+                        <typ:phone>+420600300400</typ:phone>
+                        <typ:email>petr.svoboda@example.test</typ:email>
+                        <typ:ico></typ:ico>
+                        <typ:dic></typ:dic>
+                    </typ:address>
+                </ord:partnerIdentity>
+                <ord:paymentType>
+                    <typ:ids>Hotově</typ:ids>
+                </ord:paymentType>
+                <ord:carrier>
+                    <typ:ids>ceskakruta</typ:ids>
+                </ord:carrier>
+            </ord:orderHeader>
+            <ord:orderDetail>
+                <!-- textova polozka -->
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>100100</ord:code>
+                        <ord:text>Krůtí prsa</ord:text>
+                        <ord:quantity>4</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>289</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>100100</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>600002</ord:code>
+                        <ord:text>Krůta - půlka bez drobů</ord:text>
+                        <ord:quantity>1</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>127</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>600002</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+            </ord:orderDetail>
+            <ord:orderSummary>
+                <ord:roundingDocument>math2one</ord:roundingDocument>
+            </ord:orderSummary>
+        </ord:order>
+    </dat:dataPackItem>
+</dat:dataPack>

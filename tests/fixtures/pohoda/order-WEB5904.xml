@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:ord="http://www.stormware.cz/schema/version_2/order.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Objednávky">
+    <dat:dataPackItem id="WEB5904" version="2.0">
+        <ord:order version="2.0">
+            <!-- prijata objednavka s polozkama -->
+            <ord:orderHeader>
+                <ord:centre>
+                    <typ:ids>200</typ:ids>
+                </ord:centre>
+                <ord:note>Sleva -10%. Objednáno na: 18.06.2024, Poznámka z formuláře: Děkuji</ord:note>
+                <ord:orderType>receivedOrder</ord:orderType>
+                <ord:numberOrder>WEB5904</ord:numberOrder>
+                <ord:number>
+                    <typ:numberRequested checkDuplicity="true">WEB5904</typ:numberRequested>
+                </ord:number>
+                <ord:date>2024-06-11</ord:date>
+                <ord:dateFrom>2024-06-14</ord:dateFrom>
+                <ord:dateTo>2024-06-18</ord:dateTo>
+                <ord:dateDelivery>2024-06-18</ord:dateDelivery>
+                <ord:text>Rychvald - Prodejna</ord:text>
+                <ord:partnerIdentity>
+                    <typ:address>
+                        <typ:company>Eva Malá</typ:company>
+                        <typ:name>Eva Malá</typ:name>
+                        <typ:city></typ:city>
+                        <typ:street></typ:street>
+                        <typ:zip></typ:zip>
+                        <typ:phone>+420600700800</typ:phone>
+                        <typ:email>eva.mala@example.test</typ:email>
+                        <typ:ico></typ:ico>
+                        <typ:dic></typ:dic>
+                    </typ:address>
+                </ord:partnerIdentity>
+                <ord:paymentType>
+                    <typ:ids>Hotově</typ:ids>
+                </ord:paymentType>
+                <ord:carrier>
+                    <typ:ids>prodejny</typ:ids>
+                </ord:carrier>
+            </ord:orderHeader>
+            <ord:orderDetail>
+                <!-- textova polozka -->
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>100100</ord:code>
+                        <ord:text>Krůtí prsa</ord:text>
+                        <ord:quantity>2</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>289</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>100100</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+            </ord:orderDetail>
+            <ord:orderSummary>
+                <ord:roundingDocument>math2one</ord:roundingDocument>
+            </ord:orderSummary>
+        </ord:order>
+    </dat:dataPackItem>
+</dat:dataPack>

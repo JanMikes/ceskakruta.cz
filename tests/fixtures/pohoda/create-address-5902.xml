@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:adb="http://www.stormware.cz/schema/version_2/addressbook.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Adresy">
+    <dat:dataPackItem id="WEB5902" version="2.0">
+        <adb:addressbook version="2.0">
+            <adb:addressbookHeader>
+                <adb:identity>
+                    <typ:address>
+                        <typ:company>Petr Svoboda</typ:company>
+                        <typ:name>Petr Svoboda</typ:name>
+                        <typ:city>Přerov</typ:city>
+                        <typ:street>Hlavní 12</typ:street>
+                        <typ:zip>75002</typ:zip>
+                    </typ:address>
+                </adb:identity>
+                <adb:phone>+420600300400</adb:phone>
+                <adb:email>petr.svoboda@example.test</adb:email>
+            </adb:addressbookHeader>
+        </adb:addressbook>
+    </dat:dataPackItem>
+</dat:dataPack>

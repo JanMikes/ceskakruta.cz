@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:ord="http://www.stormware.cz/schema/version_2/order.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Objednávky">
+    <dat:dataPackItem id="WEB5901" version="2.0">
+        <ord:order version="2.0">
+            <!-- prijata objednavka s polozkama -->
+            <ord:orderHeader>
+                <ord:centre>
+                    <typ:ids>200</typ:ids>
+                </ord:centre>
+                <ord:note>Objednáno na: 14.06.2024, Poznámka z formuláře: Vyzvednu odpoledne</ord:note>
+                <ord:orderType>receivedOrder</ord:orderType>
+                <ord:numberOrder>WEB5901</ord:numberOrder>
+                <ord:number>
+                    <typ:numberRequested checkDuplicity="true">WEB5901</typ:numberRequested>
+                </ord:number>
+                <ord:date>2024-06-10</ord:date>
+                <ord:dateFrom>2024-06-11</ord:dateFrom>
+                <ord:dateTo>2024-06-14</ord:dateTo>
+                <ord:dateDelivery>2024-06-14</ord:dateDelivery>
+                <ord:text>Rychvald - Prodejna</ord:text>
+                <ord:partnerIdentity>
+                    <typ:address>
+                        <typ:company>Jana Nováková</typ:company>
+                        <typ:name>Jana Nováková</typ:name>
+                        <typ:city></typ:city>
+                        <typ:street></typ:street>
+                        <typ:zip></typ:zip>
+                        <typ:phone>+420600100200</typ:phone>
+                        <typ:email>jana.novakova@example.test</typ:email>
+                        <typ:ico></typ:ico>
+                        <typ:dic></typ:dic>
+                    </typ:address>
+                </ord:partnerIdentity>
+                <ord:paymentType>
+                    <typ:ids>Hotově</typ:ids>
+                </ord:paymentType>
+                <ord:carrier>
+                    <typ:ids>prodejny</typ:ids>
+                </ord:carrier>
+            </ord:orderHeader>
+            <ord:orderDetail>
+                <!-- textova polozka -->
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>100100</ord:code>
+                        <ord:text>Krůtí prsa</ord:text>
+                        <ord:quantity>2</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>289</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>100100</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>200100</ord:code>
+                        <ord:text>Krůtí šunka</ord:text>
+                        <ord:quantity>3</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>89</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>200100</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+            </ord:orderDetail>
+            <ord:orderSummary>
+                <ord:roundingDocument>math2one</ord:roundingDocument>
+            </ord:orderSummary>
+        </ord:order>
+    </dat:dataPackItem>
+</dat:dataPack>

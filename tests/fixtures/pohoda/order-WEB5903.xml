@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:ord="http://www.stormware.cz/schema/version_2/order.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Objednávky">
+    <dat:dataPackItem id="WEB5903" version="2.0">
+        <ord:order version="2.0">
+            <!-- prijata objednavka s polozkama -->
+            <ord:orderHeader>
+                    <ord:priceLevel>
+                        <typ:ids>BALÍK</typ:ids>
+                    </ord:priceLevel>
+                <ord:centre>
+                    <typ:ids>200</typ:ids>
+                </ord:centre>
+                <ord:note>Objednáno na: 21.06.2024, Poznámka z formuláře: Doručit po 16. hodině</ord:note>
+                <ord:orderType>receivedOrder</ord:orderType>
+                <ord:numberOrder>WEB5903</ord:numberOrder>
+                <ord:number>
+                    <typ:numberRequested checkDuplicity="true">WEB5903</typ:numberRequested>
+                </ord:number>
+                <ord:date>2024-06-14</ord:date>
+                <ord:dateFrom>2024-06-17</ord:dateFrom>
+                <ord:dateTo>2024-06-20</ord:dateTo>
+                <ord:dateDelivery>2024-06-21</ord:dateDelivery>
+                <ord:text>Rozvoz CoolBalík</ord:text>
+                <ord:partnerIdentity>
+                        <typ:id>1234</typ:id>
+                    <typ:address>
+                        <typ:company>Marie Dvořáková</typ:company>
+                        <typ:name>Marie Dvořáková</typ:name>
+                        <typ:city>Olomouc</typ:city>
+                        <typ:street>Školní 7</typ:street>
+                        <typ:zip>77900</typ:zip>
+                        <typ:phone>+420600500600</typ:phone>
+                        <typ:email>marie.dvorakova@example.test</typ:email>
+                        <typ:ico></typ:ico>
+                        <typ:dic></typ:dic>
+                    </typ:address>
+                </ord:partnerIdentity>
+                <ord:paymentType>
+                    <typ:ids>Plat.kartou</typ:ids>
+                </ord:paymentType>
+                <ord:carrier>
+                    <typ:ids>coolbalik</typ:ids>
+                </ord:carrier>
+            </ord:orderHeader>
+            <ord:orderDetail>
+                <!-- textova polozka -->
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>200100</ord:code>
+                        <ord:text>Krůtí šunka</ord:text>
+                        <ord:quantity>1</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>89</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>200100</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>100100</ord:code>
+                        <ord:text>Krůtí prsa</ord:text>
+                        <ord:quantity>2</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>289</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>100100</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+            </ord:orderDetail>
+            <ord:orderSummary>
+                <ord:roundingDocument>math2one</ord:roundingDocument>
+            </ord:orderSummary>
+        </ord:order>
+    </dat:dataPackItem>
+</dat:dataPack>

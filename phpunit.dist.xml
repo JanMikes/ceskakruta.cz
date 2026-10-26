@@ -13,6 +13,8 @@
     <php>
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
+        <!-- Failure messages of response assertions contain the whole HTML page; a red suite needs more than 256M -->
+        <ini name="memory_limit" value="1G" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>

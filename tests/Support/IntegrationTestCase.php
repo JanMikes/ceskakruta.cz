@@ -11,6 +11,13 @@ abstract class IntegrationTestCase extends KernelTestCase
 {
     use RestoresExceptionHandler;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        HttpMock::reset();
+    }
+
     protected function connection(): Connection
     {
         return self::getContainer()->get(Connection::class);

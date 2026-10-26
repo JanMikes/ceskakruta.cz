@@ -1,0 +1,18 @@
+[
+ {
+  "name": "shipment-5903",
+  "order_id": 5903,
+  "date": "2024-06-20",
+  "weight": "12.5",
+  "cool_balik_price": "1700",
+  "cool_balik_box_count": "1"
+ },
+ {
+  "name": "shipment-5905-integer-weight",
+  "order_id": 5905,
+  "date": "2024-06-25",
+  "weight": "22",
+  "cool_balik_price": "4487",
+  "cool_balik_box_count": "2"
+ }
+]

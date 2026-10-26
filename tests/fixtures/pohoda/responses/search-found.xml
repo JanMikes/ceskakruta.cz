@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp:responsePack xmlns:rsp="http://www.stormware.cz/schema/version_2/response.xsd" xmlns:lAdb="http://www.stormware.cz/schema/version_2/list_addBook.xsd" xmlns:adb="http://www.stormware.cz/schema/version_2/addressbook.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" version="2.0" id="test001" state="ok" programVersion="13900.10 (1.3.2024)" ico="26866935" key="00000000-0000-0000-0000-000000000000">
+  <rsp:responsePackItem version="2.0" id="WEB0000" state="ok">
+    <lAdb:listAddressBook version="2.0" dateTimeStamp="2024-06-15T09:00:00" dateValidFrom="2024-06-15" state="ok">
+      <lAdb:addressbook version="2.0">
+        <adb:addressbookHeader>
+          <adb:id>1234</adb:id>
+          <adb:identity>
+            <typ:address>
+              <typ:company>Testovací adresa</typ:company>
+            </typ:address>
+          </adb:identity>
+        </adb:addressbookHeader>
+      </lAdb:addressbook>
+    </lAdb:listAddressBook>
+  </rsp:responsePackItem>
+</rsp:responsePack>

@@ -51,3 +51,49 @@ INSERT INTO `user` (`id`, `name`, `email`, `password`, `preferred_place_id`, `ph
 (1, 'Admin Testovací', 'admin@example.test', MD5(CONCAT('test1', 'admin-password', 'test2')), NULL, '+420111111111', 0, 1, 0, 0, '2024-01-01 10:00:00', 1, 0),
 (2, 'Zákazník Testovací', 'customer@example.test', MD5(CONCAT('test1', 'customer-password', 'test2')), 1, '+420222222222', 0, 0, 0, 0, '2024-01-02 10:00:00', 1, 0),
 (3, 'Velkoobchod Testovací', 'wholesale@example.test', MD5(CONCAT('test1', 'wholesale-password', 'test2')), 22, '+420333333333', 1, 0, 1, 0, '2024-01-03 10:00:00', 1, 0);
+
+-- One row per admin table, used by the admin smoke / access tests (edit pages of these ids must load).
+-- Section tests add their own rows in tests/database/fixtures/*.sql (id ranges: PLAN §4.6).
+INSERT INTO `actuality` (`id`, `date`, `name`, `text`, `text_full`, `ins_dt`, `active_flag`, `del_flag`) VALUES
+(1, '2024-05-01', 'Otevíráme novou prodejnu', '<p>Text do emailu</p>', '<p>Text na web</p>', '2024-05-01 08:00:00', 1, 0);
+
+INSERT INTO `newsletter` (`id`, `email`, `ins_dt`, `active_flag`, `del_flag`) VALUES
+(1, 'subscriber@example.test', '2024-01-01 08:00:00', 1, 0);
+
+INSERT INTO `calendar_dead` (`id`, `farma_doubrava`, `farma_rychvald`, `week_number`, `year`, `week_age`, `price_mix`, `weight`, `price_man`, `price_woman`, `note`, `ins_dt`) VALUES
+(1, 1, 0, 10, 2024, 6, '120', '3-4 kg', '130', '110', 'Poznámka', '2024-01-01 08:00:00');
+
+INSERT INTO `calendar_cold` (`id`, `product_tp_id`, `week_number`, `year`, `weight_from`, `weight_to`, `ins_dt`) VALUES
+(1, 1, 10, 2024, 6, 8, '2024-01-01 08:00:00');
+
+INSERT INTO `calendar_alive` (`id`, `product_tp_id`, `farma_rychvald`, `farma_doubrava`, `week_number`, `year`, `weight_from`, `weight_to`, `ins_dt`) VALUES
+(1, 2, 1, 0, 12, 2024, 10, 12, '2024-01-01 08:00:00');
+
+INSERT INTO `recipe` (`id`, `product_id`, `photo_id`, `name`, `text`, `ins_dt`) VALUES
+(1, 100, NULL, 'Krůtí řízek', '<p>Postup</p>', '2024-01-01 08:00:00');
+
+-- Sortiment ids 1 and 2 can not be deleted (old admin rule)
+INSERT INTO `sortiment` (`id`, `category_id`, `order`, `name`, `text`, `ins_dt`) VALUES
+(1, 1, 30, 'Hladká mouka', '<p>Mouka</p>', '2024-01-01 08:00:00'),
+(2, 1, 20, 'Polohrubá mouka', '<p>Mouka</p>', '2024-01-01 08:00:00'),
+(3, 1, 10, 'Hrubá mouka', '<p>Mouka</p>', '2024-01-01 08:00:00');
+
+INSERT INTO `content` (`id`, `order`, `code`, `name`, `text`, `ins_dt`) VALUES
+(1, 10, 'test_section', 'Testovací sekce', '<p>Obsah sekce</p>', '2024-01-01 08:00:00');
+
+INSERT INTO `vendor` (`id`, `order`, `place`, `name`, `address`, `city`, `zip`, `email`, `web`, `phone`, `ins_dt`) VALUES
+(1, 10, 'Ostrava', 'Řeznictví U Krůty', 'Hlavní 1', 'Ostrava', '70000', 'vendor@example.test', 'https://vendor.example.test', '+420444444444', '2024-01-01 08:00:00');
+
+INSERT INTO `place_closed_day` (`id`, `place_id`, `date`, `ins_dt`) VALUES
+(1, 1, '2099-12-24', '2024-01-01 08:00:00');
+
+-- Orders: 1 = shop pickup (place 1), 2 = CoolBalík (place 21) with a whole turkey
+INSERT INTO `order` (`id`, `user_id`, `place_id`, `date`, `email`, `phone`, `name`, `pay_by_card`, `delivery_street`, `delivery_city`, `delivery_postal_code`,
+    `note`, `price_total`, `source`, `ins_dt`) VALUES
+(1, 2, 1, '2024-06-14', 'customer@example.test', '+420222222222', 'Zákazník Testovací', 0, NULL, NULL, NULL, '', 578, NULL, '2024-06-10 09:00:00'),
+(2, 2, 21, '2024-06-18', 'customer@example.test', '+420222222222', 'Zákazník Testovací', 1, 'Dlouhá 5', 'Přerov', '75002', 'Zvonit 2x', 1607, 'web', '2024-06-11 09:00:00');
+
+INSERT INTO `order_item` (`id`, `order_id`, `product_id`, `product_tp_id`, `is_sliced`, `is_packed`, `amount`, `price_per_unit`, `price_packing`, `price_total`, `weight_from`, `weight_to`, `ins_dt`) VALUES
+(1, 1, 100, NULL, 0, 0, 2, 289, 0, 578, NULL, NULL, '2024-06-10 09:00:00'),
+(2, 2, 1, 1, 0, 0, 1, 123, 0, 1029, 8, 9, '2024-06-11 09:00:00'),
+(3, 2, 100, NULL, 1, 1, 2, 289, 0, 578, NULL, NULL, '2024-06-11 09:00:00');

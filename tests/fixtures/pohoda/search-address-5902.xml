@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd"
+              xmlns:lAdb="http://www.stormware.cz/schema/version_2/list_addBook.xsd"
+              xmlns:ftr="http://www.stormware.cz/schema/version_2/filter.xsd"
+              xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935"
+              application="CeskaKruta.cz" version="2.0" note="Filtr Adresy">
+    <dat:dataPackItem id="WEB5902" version="2.0">
+        <lAdb:listAddressBookRequest version="2.0" addressBookVersion="2.0">
+            <lAdb:requestAddressBook>
+                <ftr:filter>
+                    <ftr:company>Petr Svoboda</ftr:company>
+                    <ftr:name>Petr Svoboda</ftr:name>
+                    <ftr:city>Přerov</ftr:city>
+                    <ftr:street>Hlavní 12</ftr:street>
+                    <ftr:zip>75002</ftr:zip>
+                </ftr:filter>
+            </lAdb:requestAddressBook>
+        </lAdb:listAddressBookRequest>
+    </dat:dataPackItem>
+</dat:dataPack>
