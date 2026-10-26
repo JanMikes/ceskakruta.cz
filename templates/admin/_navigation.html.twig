@@ -1,0 +1,69 @@
+{# Order and labels of the old admin navbar (docs/admin/PLAN.md §2.18) #}
+{% set current_path = app.request.pathInfo %}
+{% set sections_before_sortiment = {
+    'Aktuality': '/admin/aktuality',
+    'Rozkrmená krůťata': '/admin/rozkrmena-krutata',
+    'Chlazené krůty': '/admin/chlazene-kruty',
+    'Živé krůty': '/admin/zive-kruty',
+    'Maso a výrobky': '/admin/produkty',
+} %}
+{% set sections_after_sortiment = {
+    'Texty': '/admin/texty',
+    'Prodejci': '/admin/prodejci',
+    'Emaily': '/admin/emaily',
+    'Prodejny': '/admin/prodejny',
+    'Uživatelé': '/admin/uzivatele',
+    'Objednávky': '/admin/objednavky',
+} %}
+
+{% macro section_link(label, url, current_path) %}
+    {% set active = current_path == url or current_path starts with url ~ '/' %}
+    <li class="nav-item">
+        <a class="nav-link{{ active ? ' active' }}" href="{{ url }}"{% if active %} aria-current="page"{% endif %}>{{ label }}</a>
+    </li>
+{% endmacro %}
+
+<nav class="navbar navbar-expand-xl navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path('admin_dashboard') }}">Česká Krůta</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admin-navigation" aria-controls="admin-navigation" aria-expanded="false" aria-label="Zobrazit menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="admin-navigation">
+            <ul class="navbar-nav me-auto">
+                {% for label, url in sections_before_sortiment %}
+                    {{ _self.section_link(label, url, current_path) }}
+                {% endfor %}
+
+                <li class="nav-item dropdown">
+                    <button class="nav-link dropdown-toggle{{ current_path starts with '/admin/sortiment' ? ' active' }}" type="button" data-bs-toggle="dropdown" aria-expanded="false">Doplňkový sortiment</button>
+                    <ul class="dropdown-menu">
+                        {% for category in admin_sortiment_categories() %}
+                            {% set category_url = '/admin/sortiment/' ~ category.id %}
+                            <li>
+                                <a class="dropdown-item{{ current_path == category_url or current_path starts with category_url ~ '/' ? ' active' }}{{ category.active ? '' : ' text-muted' }}" href="{{ category_url }}">{{ category.name }}</a>
+                            </li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item{{ current_path == '/admin/sortiment' ? ' active' }}" href="/admin/sortiment">Správa kategorií</a></li>
+                    </ul>
+                </li>
+
+                {% for label, url in sections_after_sortiment %}
+                    {{ _self.section_link(label, url, current_path) }}
+                {% endfor %}
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link{{ current_path == path('admin_change_password') ? ' active' }}" href="{{ path('admin_change_password') }}" title="Změnit heslo">{{ app.user.name ?? app.user.email }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('admin_logout') }}">Odhlásit</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

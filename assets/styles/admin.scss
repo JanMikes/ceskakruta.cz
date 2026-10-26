@@ -1,0 +1,16 @@
+// Administration: plain Bootstrap 5, independent from the shop theme (Cartzilla)
+$primary: #E22228; // brand colour of the shop
+$enable-shadows: false;
+
+@import 'bootstrap/scss/bootstrap';
+
+body.admin {
+    background-color: $gray-100;
+}
+
+.admin-login {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

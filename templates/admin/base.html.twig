@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %} | Administrace Česká Krůta</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="turbo-prefetch" content="false">
+
+        {{ encore_entry_link_tags('admin') }}
+        {{ encore_entry_script_tags('admin') }}
+    </head>
+    <body class="admin">
+        {% block navigation %}
+            {{ include('admin/_navigation.html.twig') }}
+        {% endblock %}
+
+        <main class="{% block main_class %}container-fluid py-4{% endblock %}">
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavřít"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </body>
+</html>

@@ -9,4 +9,7 @@ return static function (RoutingConfigurator $routingConfigurator): void {
 
     $routingConfigurator->add('logout', '/logout')
         ->methods(['GET']);
+
+    $routingConfigurator->add('admin_logout', '/admin/logout')
+        ->methods(['GET']);
 };

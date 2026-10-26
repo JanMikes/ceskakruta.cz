@@ -45,7 +45,8 @@ readonly final class User implements UserInterface, PasswordAuthenticatedUserInt
 
     public function getUserIdentifier(): string
     {
-        return (string) $this->id;
+        // Must match what UserProvider::loadUserByIdentifier() looks up (remember-me reloads the user by it)
+        return $this->email;
     }
 
     public function getPassword(): string

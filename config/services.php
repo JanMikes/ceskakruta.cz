@@ -30,7 +30,7 @@ return static function(ContainerConfigurator $configurator): void
         ->tag('monolog.processor');
 
     // Controllers
-    $services->load('CeskaKruta\\Web\\Controller\\', __DIR__ . '/../src/Controller/{*Controller.php}');
+    $services->load('CeskaKruta\\Web\\Controller\\', __DIR__ . '/../src/Controller/**/{*Controller.php}');
 
     // Message handlers
     $services->load('CeskaKruta\\Web\\MessageHandler\\', __DIR__ . '/../src/MessageHandler/**/{*.php}');

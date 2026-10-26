@@ -89,8 +89,10 @@ final class AdminLoginTest extends AdminWebTestCase
         $this->submitLogin(self::ADMIN_EMAIL, self::ADMIN_PASSWORD, rememberMe: true);
         self::assertResponseRedirects();
 
-        $rememberMe = $this->client->getCookieJar()->get('ADMIN_REMEMBERME');
+        // Scoped to /admin, the shop never receives it
+        $rememberMe = $this->client->getCookieJar()->get('ADMIN_REMEMBERME', '/admin');
         self::assertInstanceOf(Cookie::class, $rememberMe);
+        self::assertSame('/admin', $rememberMe->getPath());
 
         // 14 days, like the old "Trvalé přihlášení"
         $expiresIn = (int) $rememberMe->getExpiresTime() - time();
@@ -112,7 +114,7 @@ final class AdminLoginTest extends AdminWebTestCase
         $this->submitLogin(self::ADMIN_EMAIL, self::ADMIN_PASSWORD);
         $this->assertRedirectsTo('/admin');
 
-        self::assertNull($this->client->getCookieJar()->get('ADMIN_REMEMBERME'));
+        self::assertNull($this->client->getCookieJar()->get('ADMIN_REMEMBERME', '/admin'));
     }
 
     private function submitLogin(string $email, string $password, bool $rememberMe = false): void

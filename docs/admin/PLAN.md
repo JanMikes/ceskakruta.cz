@@ -673,7 +673,7 @@ Each phase: write/enable its tests (red) → implement → green → PHPStan →
 |---|---|---|
 | 0 ✅ | **Test infrastructure** | §4.1; one trivial green test proving kernel + DB + DAMA work; `phpunit` job in CI — done 2026-10-26 (see §4.5) |
 | 1 ✅ | **TODO suite** | write every test from §4.4 (red) incl. route inventory provider — done 2026-10-26: 802 tests, all red for the right reason (404 / skeleton `LogicException`) except infrastructure + the `.htaccess` front-controller guard; Pohoda/Boxxi golden files rendered by the old code (`tests/fixtures/pohoda/_renderer/`) |
-| 2 | **Shell & security** | admin firewall, UserChecker, identifier fix, remember-me, login/logout, layout + nav, dashboard, change password, `admin` Encore entry; `.htaccess` 301 → 302 |
+| 2 ✅ | **Shell & security** | admin firewall, UserChecker, identifier fix, remember-me, login/logout, layout + nav, dashboard, change password, `admin` Encore entry; `.htaccess` 301 → 302 — done 2026-10-26; `ADMIN_REMEMBERME` is scoped to `path=/admin`; backlink test stays red until `/admin/objednavky` exists (Phase 9) |
 | 3 | **Generic grid** | `AdminTable` enum, 5 generic commands, CSRF POST controller, Twig macros for buttons, reorder |
 | 4 | **Simple CRUD** | Tiptap `wysiwyg` controller + dry-run normalization report → Content → Calendars (dead, cold, alive) → Vendors → Newsletter emails |
 | 5 | **Actuality + newsletter** | actuality CRUD, enqueue, `SendNewsletterBatch`, `/cron/newsletter-send` + `CRON_TOKEN`, email template |
@@ -694,6 +694,19 @@ they carry the external integrations and the highest risk. If order processing i
 ## 6. Decisions & open questions
 
 Decided:
+- **Phase 1 review (2026-10-26, accepted recommendations):**
+  1. Pohoda: customer name escaped **once** (old templates double-escaped `&` → `&amp;amp;`).
+  2. Boxxi: non-2xx / error response → order stays unsynced (`boxxi_sync_dt` NULL) + `.alert-danger` (old app ignored the response).
+  3. Bulk Pohoda: flash "Propsáno do Pohody: N objednávek" + `.alert-danger` naming the failed order ids.
+  4. Newsletter: row with an invalid e-mail is skipped, marked as processed and logged (does not block the queue).
+  5. Newsletter batch `ORDER BY id` (oldest first).
+  6. Newsletter: a deleted / inactive latest actuality is not enqueued.
+  7. Unsubscribe link stays fixed to `https://ceskakruta.cz`.
+  8. User list order count: non-deleted orders only.
+  9. Own `is_admin`: disabled checkbox + refused in the handler.
+  10. Turkey product (type 3/4): protected fields not in the form and ignored if posted (old form overwrote `unit=ks`, `weight=1`).
+  11. Parity kept: week label with ASCII hyphen `10/2024 (04.03. - 10.03. 2024)`; `hide_in_admin` places stay in dropdowns;
+      recipe images served from `/upload/recipes/…`.
 - **packages_size** written compact (`json_encode`, `[500,1000]`); reader accepts existing hand-written `[500, 1000]` rows (frontend only `json_decode`s).
 - **Q1** port `calendar_alive`, `sortiment`, `vendor` (customer may be asked later whether to drop them).
 - **Q2** place `address_1..3` / `map_url` / `phone` out of scope.

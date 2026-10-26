@@ -17,7 +17,8 @@
   RewriteRule ^index\.php$ / [R=301,L]
 
   # Redirect /admin and /admin/* to old.ceskakruta.cz/admin/...
-  RewriteRule ^\/?admin(.*)?$ https://old.ceskakruta.cz/admin/sign/in [R=301,L]
+  # Temporary (302) so browsers do not cache it — removed when the new admin goes live (docs/admin/PLAN.md §3.10)
+  RewriteRule ^\/?admin(.*)?$ https://old.ceskakruta.cz/admin/sign/in [R=302,L]
 
   # Front controller
   RewriteCond %{REQUEST_FILENAME} !-f
