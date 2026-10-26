@@ -19,7 +19,28 @@ final class PohodaDates
      */
     public function dateTo(\DateTimeImmutable $orderDate, AdminOrderPlace $place): \DateTimeImmutable
     {
-        throw new \LogicException('Not implemented yet');
+        $dayOfWeek = (int) $orderDate->format('N');
+
+        if ($place->isCoolBalik) {
+            return match ($dayOfWeek) {
+                1 => $orderDate->modify('previous friday'),
+                2 => $orderDate->modify('previous monday'),
+                3, 4 => $orderDate->modify('previous tuesday'),
+                5, 6 => $orderDate->modify('previous thursday'),
+                default => $orderDate->modify('last tuesday'),
+            };
+        }
+
+        // Shops except Rychvald
+        if ($place->id !== 1 && !$place->forceDeliveryAddress) {
+            return match ($dayOfWeek) {
+                2, 3 => $orderDate->modify('previous monday'),
+                5 => $orderDate->modify('previous thursday'),
+                default => $orderDate,
+            };
+        }
+
+        return $orderDate;
     }
 
     /**
@@ -29,7 +50,22 @@ final class PohodaDates
      */
     public function dateFrom(\DateTimeImmutable $dateTo, AdminOrderPlace $place, bool $wholeTurkeysOrder): \DateTimeImmutable
     {
-        throw new \LogicException('Not implemented yet');
+        $dayOfWeek = (int) $dateTo->format('N');
+
+        if ($place->isCoolBalik && $dayOfWeek <= 5) {
+            return match ($dayOfWeek) {
+                2 => $dateTo->modify($wholeTurkeysOrder ? 'previous monday' : 'previous friday'),
+                4 => $dateTo->modify($wholeTurkeysOrder ? 'previous tuesday' : 'previous monday'),
+                5 => $dateTo->modify('previous monday'),
+                default => $dateTo->modify('previous friday'),
+            };
+        }
+
+        return match ($dayOfWeek) {
+            3 => $dateTo->modify('previous monday'),
+            4, 5 => $dateTo->modify('previous tuesday'),
+            default => $dateTo->modify('previous friday'),
+        };
     }
 
     /**
@@ -37,6 +73,6 @@ final class PohodaDates
      */
     public function splitsWholeTurkeys(\DateTimeImmutable $dateTo, AdminOrderPlace $place): bool
     {
-        throw new \LogicException('Not implemented yet');
+        return $place->isCoolBalik && in_array((int) $dateTo->format('N'), [2, 4], true);
     }
 }

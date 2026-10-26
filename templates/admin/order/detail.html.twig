@@ -1,0 +1,13 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Detail objednávky {{ record.order.id }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Detail objednávky</h1>
+        <a class="btn btn-link" href="{{ path('admin_orders') }}">Zpět na seznam</a>
+    </div>
+
+    {{ include('admin/order/_summary.html.twig') }}
+    {{ include('admin/order/_items.html.twig') }}
+{% endblock %}

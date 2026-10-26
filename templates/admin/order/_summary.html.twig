@@ -1,0 +1,42 @@
+{% set order = record.order %}
+<div class="card mb-3">
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <tbody>
+                <tr>
+                    <th class="w-25">Č.:</th>
+                    <td>
+                        {{ order.id }}
+                        {% if record.source is not null %} <span class="badge bg-primary">Nový web</span>{% endif %}
+                    </td>
+                </tr>
+                <tr><th>Datum provedení:</th><td>{{ order.insertedAt|date('d.m.Y H:i', false) }}</td></tr>
+                <tr>
+                    <th>Zákazník:</th>
+                    <td>
+                        <strong>{{ order.name }}</strong><br>
+                        {{ order.phone }}<br>
+                        {{ order.email }}<br>
+                        {{ order.deliveryStreet }}<br>
+                        {{ order.deliveryCity }} {{ order.deliveryPostalCode }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Sleva:</th>
+                    <td>
+                        {% if order.couponPercentValue %}
+                            {{ record.couponCode }} <small class="text-muted">-{{ order.couponPercentValue }}%</small>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><th>Cena celkem:</th><td>{{ record.priceTotal|number_format(0, '', '.') }} Kč</td></tr>
+                <tr><th>Platba kartou:</th><td>{{ order.payByCard ? 'Ano' : 'Ne' }}</td></tr>
+                <tr><th>Místo:</th><td>{{ order.place.name }}</td></tr>
+                <tr><th>Datum:</th><td>{{ order.date|date('d.m.Y', false) }}</td></tr>
+                <tr><th>Poznámka:</th><td>{{ order.note }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

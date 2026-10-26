@@ -20,7 +20,19 @@ final class ShipmentWeightCalculator
      */
     public function weight(array $items): float
     {
-        throw new \LogicException('Not implemented yet');
+        $weight = 0.0;
+
+        foreach ($items as $item) {
+            if ($item->weightFrom !== null && $item->weightTo !== null) {
+                $weight += $item->amount * (($item->weightFrom + $item->weightTo) / 2);
+            } elseif ($item->productUnit === 'ks') {
+                $weight += $item->amount * $item->productWeightPerUnit;
+            } else {
+                $weight += $item->amount;
+            }
+        }
+
+        return $weight;
     }
 
     /**
@@ -28,6 +40,6 @@ final class ShipmentWeightCalculator
      */
     public function boxes(float $weight): int
     {
-        throw new \LogicException('Not implemented yet');
+        return (int) ceil($weight / 20);
     }
 }

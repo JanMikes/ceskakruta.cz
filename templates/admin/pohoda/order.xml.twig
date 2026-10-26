@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:ord="http://www.stormware.cz/schema/version_2/order.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Objednávky">
+    <dat:dataPackItem id="{{ order_number }}" version="2.0">
+        <ord:order version="2.0">
+            <ord:orderHeader>
+                {% if order.place.forceDeliveryAddress %}
+                    <ord:priceLevel>
+                        <typ:ids>{{ order.place.isCoolBalik ? 'BALÍK' : 'ROZVOZ' }}</typ:ids>
+                    </ord:priceLevel>
+                {% endif %}
+                <ord:centre>
+                    <typ:ids>200</typ:ids>
+                </ord:centre>
+                <ord:note>{% if order.couponPercentValue %}Sleva -{{ order.couponPercentValue }}%. {% endif %}Objednáno na: {{ order.date.format('d.m.Y') }}, Poznámka z formuláře: {{ order.note }}</ord:note>
+                <ord:orderType>receivedOrder</ord:orderType>
+                <ord:numberOrder>{{ order_number }}</ord:numberOrder>
+                <ord:number>
+                    <typ:numberRequested checkDuplicity="true">{{ order_number }}</typ:numberRequested>
+                </ord:number>
+                <ord:date>{{ order.insertedAt.format('Y-m-d') }}</ord:date>
+                <ord:dateFrom>{{ date_from.format('Y-m-d') }}</ord:dateFrom>
+                <ord:dateTo>{{ date_to.format('Y-m-d') }}</ord:dateTo>
+                <ord:dateDelivery>{{ order.date.format('Y-m-d') }}</ord:dateDelivery>
+                <ord:text>{{ order.place.name }}</ord:text>
+                <ord:partnerIdentity>
+                    {% if address_id is not null %}
+                        <typ:id>{{ address_id }}</typ:id>
+                    {% endif %}
+                    <typ:address>
+                        <typ:company>{{ order.name }}</typ:company>
+                        <typ:name>{{ order.name }}</typ:name>
+                        <typ:city>{{ order.deliveryCity }}</typ:city>
+                        <typ:street>{{ order.deliveryStreet }}</typ:street>
+                        <typ:zip>{{ order.deliveryPostalCode }}</typ:zip>
+                        <typ:phone>{{ order.phone }}</typ:phone>
+                        <typ:email>{{ order.email }}</typ:email>
+                        <typ:ico></typ:ico>
+                        <typ:dic></typ:dic>
+                    </typ:address>
+                </ord:partnerIdentity>
+                <ord:paymentType>
+                    <typ:ids>{{ order.payByCard ? 'Plat.kartou' : 'Hotově' }}</typ:ids>
+                </ord:paymentType>
+                <ord:carrier>
+                    <typ:ids>{{ order.place.isCoolBalik ? 'coolbalik' : (order.place.forceDeliveryAddress ? 'ceskakruta' : 'prodejny') }}</typ:ids>
+                </ord:carrier>
+            </ord:orderHeader>
+            <ord:orderDetail>
+                {% for item in items %}
+                    <ord:orderItem>
+                        <ord:centre>
+                            <typ:ids>200</typ:ids>
+                        </ord:centre>
+                        <ord:code>{{ item.code }}</ord:code>
+                        <ord:text>{{ item.name }}</ord:text>
+                        <ord:quantity>{{ item.item.amount }}</ord:quantity>
+                        <ord:delivered>0</ord:delivered>
+                        <ord:homeCurrency>
+                            <typ:unitPrice>{{ item.item.pricePerUnit }}</typ:unitPrice>
+                        </ord:homeCurrency>
+                        <ord:stockItem>
+                            <typ:store>
+                                <typ:ids>EXPEDICE</typ:ids>
+                            </typ:store>
+                            <typ:stockItem>
+                                <typ:ids>{{ item.code }}</typ:ids>
+                            </typ:stockItem>
+                        </ord:stockItem>
+                    </ord:orderItem>
+                {% endfor %}
+            </ord:orderDetail>
+            <ord:orderSummary>
+                <ord:roundingDocument>math2one</ord:roundingDocument>
+            </ord:orderSummary>
+        </ord:order>
+    </dat:dataPackItem>
+</dat:dataPack>

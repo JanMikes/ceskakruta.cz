@@ -1,0 +1,36 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Propsat objednávku {{ record.order.id }} do Boxxi{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Propsat objednávku do Boxxi</h1>
+        <a class="btn btn-link" href="{{ path('admin_orders') }}">Zpět na seznam</a>
+    </div>
+
+    {% if record.boxxiSyncedAt is not null %}
+        <div class="alert alert-info">
+            Objednávka už byla propsána do Boxxi {{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}, uloží se jen hodnoty formuláře.
+        </div>
+    {% endif %}
+
+    <div class="card mb-3">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3">{{ form_row(form.weight) }}</div>
+                    <div class="col-sm-6 col-lg-3">{{ form_row(form.cool_balik_price) }}</div>
+                    <div class="col-sm-6 col-lg-3">{{ form_row(form.cool_balik_box_count) }}</div>
+                    <div class="col-sm-6 col-lg-3">{{ form_row(form.date) }}</div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button class="btn btn-primary" type="submit">Uložit a propsat</button>
+                    <a class="btn btn-link" href="{{ path('admin_orders') }}">Zpět na seznam</a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    {{ include('admin/order/_summary.html.twig') }}
+    {{ include('admin/order/_items.html.twig', {weight_hint: true}) }}
+{% endblock %}

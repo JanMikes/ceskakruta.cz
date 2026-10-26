@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:lAdb="http://www.stormware.cz/schema/version_2/list_addBook.xsd" xmlns:ftr="http://www.stormware.cz/schema/version_2/filter.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Filtr Adresy">
+    <dat:dataPackItem id="WEB{{ order.id }}" version="2.0">
+        <lAdb:listAddressBookRequest version="2.0" addressBookVersion="2.0">
+            <lAdb:requestAddressBook>
+                <ftr:filter>
+                    <ftr:company>{{ order.name }}</ftr:company>
+                    <ftr:name>{{ order.name }}</ftr:name>
+                    <ftr:city>{{ order.deliveryCity }}</ftr:city>
+                    <ftr:street>{{ order.deliveryStreet }}</ftr:street>
+                    <ftr:zip>{{ order.deliveryPostalCode }}</ftr:zip>
+                </ftr:filter>
+            </lAdb:requestAddressBook>
+        </lAdb:listAddressBookRequest>
+    </dat:dataPackItem>
+</dat:dataPack>

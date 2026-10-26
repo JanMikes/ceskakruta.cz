@@ -13,12 +13,28 @@ use CeskaKruta\Web\Value\Admin\AdminOrderItem;
  */
 final class PohodaItemCode
 {
+    /** product_tp_id => product_id => [code, name] */
+    private const TURKEYS = [
+        1 => [
+            1 => ['600001', 'Krůta celá s droby'],
+            2 => ['600002', 'Krůta - půlka bez drobů'],
+            41 => ['600040', 'Porcovaná Krůta - celý kus'],
+            42 => ['600041', 'Porcovaná Krůta - půlka'],
+        ],
+        2 => [
+            1 => ['600045', 'Krocan celý s droby'],
+            2 => ['600046', 'Krocan - půlka bez drobů'],
+            41 => ['600047', 'Porcovaný Krocan - celý kus'],
+            42 => ['600048', 'Porcovaný Krocan - půlka'],
+        ],
+    ];
+
     /**
      * `ord:code` + `typ:stockItem/typ:ids`; NULL when the product has no code (rendered as empty element).
      */
     public function code(AdminOrderItem $item): null|string
     {
-        throw new \LogicException('Not implemented yet');
+        return self::turkey($item)[0] ?? $item->productCode;
     }
 
     /**
@@ -26,6 +42,18 @@ final class PohodaItemCode
      */
     public function name(AdminOrderItem $item): string
     {
-        throw new \LogicException('Not implemented yet');
+        return self::turkey($item)[1] ?? $item->productName;
+    }
+
+    /**
+     * @return null|array{string, string}
+     */
+    private static function turkey(AdminOrderItem $item): null|array
+    {
+        if ($item->productTypeId === null) {
+            return null;
+        }
+
+        return self::TURKEYS[$item->productTypeId][$item->productId] ?? null;
     }
 }

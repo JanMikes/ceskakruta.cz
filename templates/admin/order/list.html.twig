@@ -1,0 +1,155 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Objednávky{% endblock %}
+
+{% block content %}
+    {% set query = filter.toQuery %}
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Objednávky</h1>
+        <a class="btn btn-outline-primary btn-sm" href="{{ path('admin_orders_export', query) }}">CSV export</a>
+    </div>
+
+    <form method="get" action="{{ path('admin_orders') }}" class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg-2">
+                <label class="form-label" for="filter-date-from">Datum od</label>
+                <input class="form-control" type="date" id="filter-date-from" name="date_from" value="{{ filter.dateFrom ? filter.dateFrom|date('Y-m-d', false) }}">
+            </div>
+            <div class="col-sm-6 col-lg-2">
+                <label class="form-label" for="filter-date-to">Datum do</label>
+                <input class="form-control" type="date" id="filter-date-to" name="date_to" value="{{ filter.dateTo ? filter.dateTo|date('Y-m-d', false) }}">
+            </div>
+            <div class="col-sm-12 col-lg-4">
+                <label class="form-label" for="filter-customer-name">Jméno zákazníka</label>
+                <input class="form-control" type="text" id="filter-customer-name" name="customer_name" value="{{ filter.customerName }}">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" type="submit">Filtrovat</button>
+                <a class="btn btn-link" href="{{ path('admin_orders') }}">Resetovat</a>
+            </div>
+        </div>
+    </form>
+
+    <div data-controller="admin--order-select">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <form method="post" action="{{ path('admin_orders_pohoda_bulk') }}" id="pohoda-bulk">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+                <input type="hidden" name="_target" value="{{ app.request.requestUri }}">
+                <button class="btn btn-primary btn-sm" type="submit">Označené poslat do Pohody</button>
+            </form>
+            <span class="text-muted ms-auto">Celkem: {{ total }}</span>
+        </div>
+
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-nowrap">
+                                <input class="form-check-input" type="checkbox" aria-label="Označit vše"
+                                    data-admin--order-select-target="all" data-action="admin--order-select#toggleAll">
+                                <small class="text-muted" data-admin--order-select-target="counter"></small>
+                            </th>
+                            <th>Č.</th>
+                            <th>Datum provedení</th>
+                            <th>Zákazník</th>
+                            <th>Cena</th>
+                            <th>Místo</th>
+                            <th>Datum</th>
+                            <th>Poznámka</th>
+                            <th>Pohoda</th>
+                            <th>Boxxi</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in orders %}
+                            {% set order = record.order %}
+                            <tr id="item-{{ order.id }}">
+                                <td>
+                                    {% if record.pohodaSyncedAt is null %}
+                                        <input class="form-check-input" type="checkbox" name="orders[]" value="{{ order.id }}" form="pohoda-bulk" aria-label="Označit objednávku {{ order.id }}"
+                                            data-admin--order-select-target="item" data-action="admin--order-select#update">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ order.id }}
+                                    {% if record.source is not null %}<br><span class="badge bg-primary">Nový web</span>{% endif %}
+                                </td>
+                                <td class="text-nowrap">{{ order.insertedAt|date('d.m.Y H:i', false) }}</td>
+                                <td>
+                                    <strong>{{ order.name }}</strong><br>
+                                    {{ order.deliveryStreet }}<br>
+                                    {{ order.deliveryCity }} {{ order.deliveryPostalCode }}
+                                </td>
+                                <td class="text-nowrap">
+                                    {% if order.couponPercentValue %}<span class="text-primary">(Sleva -{{ order.couponPercentValue }}%)</span><br>{% endif %}
+                                    {{ record.priceTotal|number_format(0, '', '.') }} Kč
+                                </td>
+                                <td>{{ order.place.name }}</td>
+                                <td class="text-nowrap">{{ order.date|date('d.m.Y', false) }}</td>
+                                <td>{{ order.note }}</td>
+                                <td class="text-nowrap">
+                                    {% if record.pohodaSyncedAt is not null %}
+                                        {{ record.pohodaSyncedAt|date('d.m.Y H:i:s', false) }}
+                                    {% else %}
+                                        <span class="text-danger">Nepropsáno</span><br>
+                                        <form method="post" action="{{ path('admin_order_pohoda', {id: order.id}) }}" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+                                            <input type="hidden" name="_target" value="{{ app.request.requestUri }}">
+                                            <button class="btn btn-sm btn-primary" type="submit">Propsat</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                                <td class="text-nowrap">
+                                    {% if order.place.isCoolBalik %}
+                                        {% if record.boxxiSyncedAt is not null %}
+                                            {{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}<br>
+                                            {% if record.coolBalikPrice is not null %}{{ record.coolBalikPrice }} Kč{% endif %}
+                                        {% else %}
+                                            <span class="text-danger">Nepropsáno</span><br>
+                                            <a class="btn btn-sm btn-primary" href="{{ path('admin_order_boxxi', {id: order.id}) }}">Propsat</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_order_detail', {id: order.id}) }}">Detail</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="11" class="text-muted">Žádné objednávky.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if pages > 1 %}
+        {% set window = range(max(1, page - 3), min(pages, page + 3)) %}
+        <nav class="mt-3" aria-label="Stránkování">
+            <ul class="pagination pagination-sm flex-wrap">
+                <li class="page-item{{ page == 1 ? ' disabled' }}">
+                    <a class="page-link" href="{{ path('admin_orders', query|merge({page: max(1, page - 1)})) }}" aria-label="Předchozí">&laquo;</a>
+                </li>
+                {% if window|first > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ path('admin_orders', query|merge({page: 1})) }}">1</a></li>
+                    {% if window|first > 2 %}<li class="page-item disabled"><span class="page-link">…</span></li>{% endif %}
+                {% endif %}
+                {% for number in window %}
+                    <li class="page-item{{ number == page ? ' active' }}"{% if number == page %} aria-current="page"{% endif %}>
+                        <a class="page-link" href="{{ path('admin_orders', query|merge({page: number})) }}">{{ number }}</a>
+                    </li>
+                {% endfor %}
+                {% if window|last < pages %}
+                    {% if window|last < pages - 1 %}<li class="page-item disabled"><span class="page-link">…</span></li>{% endif %}
+                    <li class="page-item"><a class="page-link" href="{{ path('admin_orders', query|merge({page: pages})) }}">{{ pages }}</a></li>
+                {% endif %}
+                <li class="page-item{{ page == pages ? ' disabled' }}">
+                    <a class="page-link" href="{{ path('admin_orders', query|merge({page: min(pages, page + 1)})) }}" aria-label="Další">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}

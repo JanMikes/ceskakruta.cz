@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dat:dataPack xmlns:dat="http://www.stormware.cz/schema/version_2/data.xsd" xmlns:adb="http://www.stormware.cz/schema/version_2/addressbook.xsd" xmlns:typ="http://www.stormware.cz/schema/version_2/type.xsd" id="test001" ico="26866935" application="CeskaKruta.cz" version="2.0" note="Import Adresy">
+    <dat:dataPackItem id="WEB{{ order.id }}" version="2.0">
+        <adb:addressbook version="2.0">
+            <adb:addressbookHeader>
+                <adb:identity>
+                    <typ:address>
+                        <typ:company>{{ order.name }}</typ:company>
+                        <typ:name>{{ order.name }}</typ:name>
+                        <typ:city>{{ order.deliveryCity }}</typ:city>
+                        <typ:street>{{ order.deliveryStreet }}</typ:street>
+                        <typ:zip>{{ order.deliveryPostalCode }}</typ:zip>
+                    </typ:address>
+                </adb:identity>
+                <adb:phone>{{ order.phone }}</adb:phone>
+                <adb:email>{{ order.email }}</adb:email>
+            </adb:addressbookHeader>
+        </adb:addressbook>
+    </dat:dataPackItem>
+</dat:dataPack>

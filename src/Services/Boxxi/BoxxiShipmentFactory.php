@@ -19,6 +19,45 @@ final class BoxxiShipmentFactory
      */
     public function payload(AdminOrder $order, BoxxiShipmentData $shipment): array
     {
-        throw new \LogicException('Not implemented yet');
+        return [
+            'Note' => $order->note,
+            'DeliverAt' => $shipment->deliveryDate->setTime(12, 0)->format('Y-m-d H:i:s'),
+            'PreparedForPickup' => false,
+            'CodAmount' => (int) $shipment->price,
+            'ClientOrderNumber' => (string) $order->id,
+            'Currency' => 'CZK',
+            'PackageCount' => $shipment->boxCount,
+            'EveningDelivery' => true,
+            'TotalWeight' => $shipment->weight,
+            'Temperature' => 'Normal',
+            'AddressFrom' => [
+                'Country' => 'CZ',
+                'ContactName' => 'Česká Krůta',
+                'PhoneNumber' => '+420 596 546 672',
+                'Email' => 'farma.rychvald@volny.cz',
+                'CompanyName' => 'B+K FARMA Rychvald s.r.o.',
+                'Street' => 'Rychvald 1215',
+                'StreetLine1' => null,
+                'StreetLine2' => null,
+                'City' => 'Rychvald',
+                'PostalCode' => '73532',
+                'Note' => '',
+                'IsAddressDc' => true,
+            ],
+            'AddressTo' => [
+                'Country' => 'CZ',
+                'ContactName' => $order->name,
+                'PhoneNumber' => $order->phone,
+                'Email' => $order->email,
+                'CompanyName' => '',
+                'Street' => $order->deliveryStreet,
+                'StreetLine1' => null,
+                'StreetLine2' => null,
+                'City' => $order->deliveryCity,
+                'PostalCode' => $order->deliveryPostalCode,
+                'Note' => '',
+                'IsAddressDc' => false,
+            ],
+        ];
     }
 }
