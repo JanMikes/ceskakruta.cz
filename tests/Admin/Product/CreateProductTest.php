@@ -110,13 +110,14 @@ final class CreateProductTest extends AdminWebTestCase
 
         $countBefore = $this->fetchInt('SELECT COUNT(*) FROM product');
 
-        $this->submitAdminForm($crawler, $fields + [
+        // Omitted fields must not be re-added by the valid defaults
+        $this->submitAdminForm($crawler, array_diff_key($fields + [
             'product[name]' => 'Validní název',
             'product[type]' => '1',
             'product[unit]' => 'kg',
             'product[weight_per_unit]' => '1',
             'product[price]' => '100',
-        ], $omit);
+        ], array_flip($omit)), $omit);
 
         self::assertResponseStatusCodeSame(422);
         self::assertSelectorExists('.invalid-feedback');

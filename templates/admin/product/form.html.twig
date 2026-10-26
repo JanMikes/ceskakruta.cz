@@ -1,0 +1,52 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = product ? 'Upravit produkt' : 'Přidat produkt' %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }}{% if product and product.name %} <small class="text-muted">{{ product.name }}</small>{% endif %}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {% if product and product.turkey %}
+                    <div class="alert alert-info">U krůt lze upravit pouze cenu, kód produktu a popis.</div>
+
+                    <div class="row">
+                        <div class="col-md-3">{{ form_row(form.price) }}</div>
+                        <div class="col-md-3">{{ form_row(form.code) }}</div>
+                    </div>
+                    {{ form_row(form.text) }}
+                {% else %}
+                    <div class="row">
+                        <div class="col-md-6">{{ form_row(form.name) }}</div>
+                        <div class="col-md-3">{{ form_row(form.type) }}</div>
+                        <div class="col-md-3">{{ form_row(form.unit) }}</div>
+                        <div class="col-md-3">{{ form_row(form.weight_per_unit) }}</div>
+                        <div class="col-md-3">{{ form_row(form.price) }}</div>
+                        <div class="col-md-3">{{ form_row(form.code) }}</div>
+                        <div class="col-md-3">{{ form_row(form.packages_size) }}</div>
+                    </div>
+
+                    <div data-controller="admin--checkbox-toggle">
+                        {{ form_row(form.can_be_sliced_flag) }}
+                        {{ form_row(form.can_be_packed_flag, {attr: {
+                            'data-admin--checkbox-toggle-target': 'checkbox',
+                            'data-action': 'change->admin--checkbox-toggle#toggle',
+                        }}) }}
+                        <div class="row" data-admin--checkbox-toggle-target="content">
+                            <div class="col-md-3">{{ form_row(form.force_packing) }}</div>
+                            <div class="col-md-3">{{ form_row(form.price_pack) }}</div>
+                        </div>
+                    </div>
+
+                    {{ form_row(form.text_additional) }}
+                    {{ form_row(form.text) }}
+                {% endif %}
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: product is not null, back_url: path('admin_products')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

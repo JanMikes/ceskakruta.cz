@@ -1,0 +1,17 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Doplňkový sortiment{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-3">Doplňkový sortiment</h1>
+
+    <p class="fw-semibold">Vyberte kategorii:</p>
+
+    <div class="d-flex flex-wrap gap-2">
+        {% for category in categories %}
+            <a class="btn btn-lg {{ category.active ? 'btn-primary' : 'btn-outline-secondary' }}" href="{{ path('admin_sortiment_category', {categoryId: category.id}) }}">{{ category.name }}</a>
+        {% else %}
+            <p class="text-muted">Žádné kategorie.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

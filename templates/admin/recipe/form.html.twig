@@ -1,0 +1,30 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = recipe ? 'Upravit recept' : 'Přidat recept' %}
+
+{% block title %}{{ heading }} – {{ product.name }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }} <small class="text-muted">{{ recipe ? recipe.name : product.name }}</small></h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6">{{ form_row(form.name) }}</div>
+                    <div class="col-md-6">
+                        {{ form_row(form.image) }}
+                        {% if recipe and recipe.photo %}
+                            <a href="{{ asset(recipe.photo) }}" target="_blank" rel="noopener">
+                                <img class="img-thumbnail mb-3" src="{{ asset(recipe.photo) }}" alt="{{ recipe.name }}" width="200">
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {{ form_row(form.text) }}
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: recipe is not null, back_url: path('admin_recipes', {productId: product.id})}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

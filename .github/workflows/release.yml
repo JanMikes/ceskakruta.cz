@@ -48,6 +48,7 @@ jobs:
                         **/.github/**
                         **/assets/**
                         **/var/**
+                        **/public/upload/**
                         **/tests/**
                         **/docs/**
                         .env.test

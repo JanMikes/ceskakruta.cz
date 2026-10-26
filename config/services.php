@@ -19,6 +19,9 @@ return static function(ContainerConfigurator $configurator): void
     # https://symfony.com/doc/current/performance.html#dump-the-service-container-into-a-single-file
     $parameters->set('container.dumper.inline_factories', true);
 
+    // User uploads (recipe photos), never touched by the FTP deploy; `photo.path` values are relative to public/ (PLAN §3.9)
+    $parameters->set('uploads_dir', '%kernel.project_dir%/public/upload');
+
     $services = $configurator->services();
 
     $services->defaults()

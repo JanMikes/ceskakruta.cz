@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+
+{% block title %}Recepty – {{ product.name }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Recepty <small class="text-muted">{{ product.name }}</small></h1>
+        <a class="btn btn-outline-secondary btn-sm" href="{{ path('admin_products') }}">Zpět na produkty</a>
+        {{ grid.activate_all('recipe', inactive_count, {scope: product.id}) }}
+        <a class="btn btn-primary btn-sm" href="{{ path('admin_recipe_create', {productId: product.id}) }}">Přidat recept</a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Název</th>
+                        <th>Obrázek</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recipe in recipes %}
+                        <tr id="item-{{ recipe.id }}" class="{{ recipe.active ? '' : 'table-secondary text-muted' }}">
+                            <td>{{ recipe.name }}</td>
+                            <td>
+                                {% if recipe.photo %}
+                                    <img class="img-thumbnail" src="{{ asset(recipe.photo) }}" alt="{{ recipe.name }}" width="80" loading="lazy">
+                                {% endif %}
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_recipe_edit', {productId: product.id, id: recipe.id}) }}">Upravit</a>
+                                {{ grid.row_actions('recipe', {id: recipe.id, active: recipe.active}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-muted">Žádné recepty.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

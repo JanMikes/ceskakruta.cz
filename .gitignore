@@ -3,6 +3,9 @@
 /public/bundles/
 .phpunit.cache/
 
+# User uploads live only on the hosting (PLAN §3.9)
+/public/upload/
+
 .claude/settings.local.json
 
 .env.local

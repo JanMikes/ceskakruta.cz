@@ -1,0 +1,47 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+
+{% block title %}Maso a výrobky{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Maso a výrobky</h1>
+        {{ grid.activate_all('product', inactive_count) }}
+        <a class="btn btn-primary btn-sm" href="{{ path('admin_product_create') }}">Přidat produkt</a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Název</th>
+                        <th class="text-end">Cena/kg</th>
+                        <th>Recepty</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr id="item-{{ product.id }}" class="{{ product.active ? '' : 'table-secondary text-muted' }}">
+                            <td>
+                                {{ product.name }}
+                                {% if product.turkey %}<span class="badge text-bg-light border ms-1">krůta</span>{% endif %}
+                            </td>
+                            <td class="text-end text-nowrap">{% if product.price is not null %}{{ product.price }} Kč{% endif %}</td>
+                            <td>
+                                <a class="btn btn-sm btn-outline-secondary text-nowrap" href="{{ path('admin_recipes', {productId: product.id}) }}">Recepty ({{ product.recipesCount }})</a>
+                            </td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_product_edit', {id: product.id}) }}">Upravit</a>
+                                {{ grid.row_actions('product', {id: product.id, active: product.active, type: product.type}, {first: loop.first, last: loop.last}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4" class="text-muted">Žádné produkty.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

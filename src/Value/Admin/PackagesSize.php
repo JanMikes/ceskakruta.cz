@@ -27,7 +27,25 @@ final readonly class PackagesSize
      */
     public static function fromInput(string $input): self
     {
-        throw new \LogicException('Not implemented yet');
+        $sizes = [];
+
+        foreach (explode(',', $input) as $item) {
+            $item = trim($item);
+
+            if ($item === '') {
+                continue;
+            }
+
+            $size = (int) $item;
+
+            if (preg_match('/^[1-9]\d{0,8}$/', $item) !== 1 || $size < 1) {
+                throw new InvalidPackagesSize(sprintf('Velikost balení "%s" musí být kladné celé číslo (gramy).', $item));
+            }
+
+            $sizes[] = $size;
+        }
+
+        return self::normalized($sizes);
     }
 
     /**
@@ -35,7 +53,16 @@ final readonly class PackagesSize
      */
     public static function fromJson(string $json): self
     {
-        throw new \LogicException('Not implemented yet');
+        $decoded = json_decode($json, true);
+        $sizes = [];
+
+        foreach (is_array($decoded) ? $decoded : [] as $size) {
+            if (is_numeric($size) && (int) $size > 0) {
+                $sizes[] = (int) $size;
+            }
+        }
+
+        return self::normalized($sizes);
     }
 
     /**
@@ -43,7 +70,7 @@ final readonly class PackagesSize
      */
     public function toJson(): string
     {
-        throw new \LogicException('Not implemented yet');
+        return json_encode($this->sizes, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -51,6 +78,17 @@ final readonly class PackagesSize
      */
     public function toInput(): string
     {
-        throw new \LogicException('Not implemented yet');
+        return implode(', ', $this->sizes);
+    }
+
+    /**
+     * @param array<positive-int> $sizes
+     */
+    private static function normalized(array $sizes): self
+    {
+        $sizes = array_values(array_unique($sizes));
+        sort($sizes);
+
+        return new self($sizes);
     }
 }

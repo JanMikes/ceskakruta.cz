@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Query\Admin;
 
+use CeskaKruta\Web\Exceptions\RecordNotFound;
 use CeskaKruta\Web\Value\Admin\SortimentCategory;
 use Doctrine\DBAL\Connection;
 
@@ -51,5 +52,19 @@ final class GetSortimentCategories
         }
 
         return $this->categories;
+    }
+
+    /**
+     * @throws RecordNotFound
+     */
+    public function oneById(int $id): SortimentCategory
+    {
+        foreach ($this->all() as $category) {
+            if ($category->id === $id) {
+                return $category;
+            }
+        }
+
+        throw new RecordNotFound();
     }
 }

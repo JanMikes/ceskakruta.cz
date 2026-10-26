@@ -1,0 +1,20 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = item ? 'Upravit sortiment' : 'Přidat sortiment' %}
+
+{% block title %}{{ heading }} – {{ category.name }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }} <small class="text-muted">{{ item ? item.name : category.name }}</small></h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.text) }}
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: item is not null, back_url: path('admin_sortiment_category', {categoryId: category.id})}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
