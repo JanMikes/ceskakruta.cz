@@ -1,0 +1,58 @@
+{#
+    Generic grid actions (docs/admin/PLAN.md §3.3, §4.6), usage:
+    {% import 'admin/_grid.html.twig' as grid %}
+    {{ grid.row_actions('vendor', {id: vendor.id, active: vendor.active}, {first: loop.first, last: loop.last}) }}
+    {{ grid.activate_all('vendor', inactive_count) }}
+#}
+
+{% macro action_form(table, id, action, label, options = {}) %}
+    <form method="post" action="{{ path('admin_grid_record_action', {table: table, id: id, action: action}) }}" class="d-inline"
+        {%- if options.confirm is defined %} data-controller="confirm" data-confirm-message-value="{{ options.confirm }}" data-action="submit->confirm#confirm"{% endif %}>
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+        <input type="hidden" name="_target" value="{{ options.target ?? app.request.requestUri }}">
+        <button type="submit" class="btn btn-sm {{ options.class ?? 'btn-outline-secondary' }}" title="{{ options.title ?? label }}" aria-label="{{ options.title ?? label }}">{{ label }}</button>
+    </form>
+{% endmacro %}
+
+{#
+    row: {id, active, ...columns the rules need (product: type)}
+    options: {first, last (hide move arrows), hide_move_up, target}
+#}
+{% macro row_actions(table, row, options = {}) %}
+    {% set target = options.target ?? app.request.requestUri %}
+    <div class="d-inline-flex flex-wrap gap-1 align-items-center">
+        {% if row.active is defined %}
+            {% if row.active %}
+                {% if admin_grid_allows(table, 'deactivate', row) %}
+                    {{ _self.action_form(table, row.id, 'deactivate', 'Deaktivovat', {target: target, class: 'btn-outline-success', title: 'Aktivní – kliknutím deaktivovat'}) }}
+                {% endif %}
+            {% elseif admin_grid_allows(table, 'activate', row) %}
+                {{ _self.action_form(table, row.id, 'activate', 'Aktivovat', {target: target, class: 'btn-outline-warning', title: 'Neaktivní – kliknutím aktivovat'}) }}
+            {% endif %}
+        {% endif %}
+
+        {% if admin_grid_allows(table, 'move-up', row) and not (options.first ?? false) and not (options.hide_move_up ?? false) %}
+            {{ _self.action_form(table, row.id, 'move-up', '↑', {target: target, title: 'Posunout nahoru'}) }}
+        {% endif %}
+        {% if admin_grid_allows(table, 'move-down', row) and not (options.last ?? false) %}
+            {{ _self.action_form(table, row.id, 'move-down', '↓', {target: target, title: 'Posunout dolů'}) }}
+        {% endif %}
+
+        {% if admin_grid_allows(table, 'delete', row) %}
+            {{ _self.action_form(table, row.id, 'delete', 'Smazat', {target: target, class: 'btn-outline-danger', confirm: 'Opravdu smazat?'}) }}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro activate_all(table, inactive_count, options = {}) %}
+    <form method="post" action="{{ path('admin_grid_activate_all', {table: table}) }}" class="d-inline">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+        <input type="hidden" name="_target" value="{{ options.target ?? app.request.requestUri }}">
+        {% if options.scope is defined and options.scope is not null %}
+            <input type="hidden" name="scope" value="{{ options.scope }}">
+        {% endif %}
+        <button type="submit" class="btn btn-sm btn-outline-secondary"{% if inactive_count == 0 %} disabled{% endif %}>
+            Aktivovat vše{% if inactive_count > 0 %} ({{ inactive_count }}){% endif %}
+        </button>
+    </form>
+{% endmacro %}

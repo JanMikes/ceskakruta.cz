@@ -10,7 +10,8 @@
         {{ encore_entry_link_tags('admin') }}
         {{ encore_entry_script_tags('admin') }}
     </head>
-    <body class="admin">
+    {# Turbo Drive off: native form posts keep the #item-{id} anchor of grid redirects #}
+    <body class="admin" data-turbo="false">
         {% block navigation %}
             {{ include('admin/_navigation.html.twig') }}
         {% endblock %}
