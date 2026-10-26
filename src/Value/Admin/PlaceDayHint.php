@@ -10,6 +10,8 @@ namespace CeskaKruta\Web\Value\Admin;
  */
 final class PlaceDayHint
 {
+    private const DAY_NAMES = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
+
     /**
      * Weekday (1 = Monday … 7 = Sunday) on which ordering closes for delivery on `$deliveryDay`.
      *
@@ -18,7 +20,15 @@ final class PlaceDayHint
      */
     public static function orderDay(int $deliveryDay, int $daysBefore): int
     {
-        throw new \LogicException('Not implemented yet');
+        self::assertDay($deliveryDay);
+
+        if ($daysBefore < 0) {
+            throw new \InvalidArgumentException(sprintf('Days before must not be negative, %d given.', $daysBefore));
+        }
+
+        $day = ($deliveryDay - $daysBefore) % 7;
+
+        return $day <= 0 ? $day + 7 : $day;
     }
 
     /**
@@ -28,6 +38,18 @@ final class PlaceDayHint
      */
     public static function dayName(int $day): string
     {
-        throw new \LogicException('Not implemented yet');
+        self::assertDay($day);
+
+        return self::DAY_NAMES[$day - 1];
+    }
+
+    /**
+     * @phpstan-assert int<1, 7> $day
+     */
+    private static function assertDay(int $day): void
+    {
+        if ($day < 1 || $day > 7) {
+            throw new \InvalidArgumentException(sprintf('Day must be 1–7, %d given.', $day));
+        }
     }
 }

@@ -1,0 +1,62 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Uživatelé{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-3">Uživatelé</h1>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Registrace</th>
+                        <th>E-mail</th>
+                        <th>Jméno</th>
+                        <th>Počet objednávek</th>
+                        <th>Zakázané produkty</th>
+                        <th>Velkoobchod</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr id="item-{{ user.id }}">
+                            <td>{{ user.id }}</td>
+                            <td class="text-nowrap">{{ user.registeredAt|date('d.m.Y H:i', false) }}</td>
+                            <td>
+                                {{ user.email }}
+                                {% if user.isAdmin %}<span class="badge bg-primary ms-1">Administrátor</span>{% endif %}
+                            </td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.ordersCount }}</td>
+                            <td class="text-nowrap">
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ path('admin_user_banned_products', {id: user.id}) }}">{{ user.bannedProductsCount }} zakázaných</a>
+                            </td>
+                            <td class="text-nowrap">
+                                <form method="post" action="{{ path('admin_user_wholesale', {id: user.id}) }}" class="d-flex align-items-center gap-2">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+                                    {% if user.allowWholesale %}
+                                        <span class="text-success">Povolen</span>
+                                        <input type="hidden" name="allow" value="0">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Zakázat</button>
+                                    {% else %}
+                                        <span class="text-danger">Nepovolen</span>
+                                        <input type="hidden" name="allow" value="1">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">Povolit</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_user_edit', {id: user.id}) }}">Upravit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="8" class="text-muted">Žádní uživatelé.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

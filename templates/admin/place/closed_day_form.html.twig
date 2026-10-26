@@ -1,0 +1,20 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Přidat výjimku{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">Přidat výjimku <small class="text-muted">zavřeno</small></h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-4">{{ form_row(form.date) }}</div>
+                    <div class="col-md-8">{{ form_row(form.place_id) }}</div>
+                </div>
+
+                {{ include('admin/_form_buttons.html.twig', {back_url: path('admin_places')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

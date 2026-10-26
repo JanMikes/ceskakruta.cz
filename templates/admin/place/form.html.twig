@@ -1,0 +1,67 @@
+{% extends 'admin/base.html.twig' %}
+
+{% set heading = place ? 'Upravit prodejnu' : 'Přidat prodejnu' %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">{{ heading }}{% if place %} <small class="text-muted">{{ place.name }}</small>{% endif %}</h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {% if form.prices_from_place_id is defined %}
+                    <div class="row">
+                        <div class="col-md-6">{{ form_row(form.prices_from_place_id) }}</div>
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">{{ form_row(form.name) }}</div>
+                    <div class="col-md-6">{{ form_row(form.title) }}</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.allow_only_wholesale) }}
+                        {{ form_row(form.force_delivery_address) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.is_cool_balik) }}
+                        {{ form_row(form.force_packing) }}
+                    </div>
+                </div>
+
+                <h2 class="h5 mt-3">Dny prodeje</h2>
+                <div class="row g-3 mb-3">
+                    {% for day in 1..7 %}
+                        <div class="col-md-6 col-xl-3" data-controller="admin--place-day" data-admin--place-day-day-value="{{ day }}">
+                            <div class="border rounded p-3 h-100">
+                                {{ form_row(form['enable_day_' ~ day], {attr: {'data-admin--place-day-target': 'enable', 'data-action': 'admin--place-day#toggle'}}) }}
+                                <div data-admin--place-day-target="inputs">
+                                    {{ form_row(form['allow_order_day_' ~ day ~ '_days_before'], {
+                                        attr: {'data-admin--place-day-target': 'daysBefore', 'data-action': 'input->admin--place-day#update'},
+                                        help: '<span data-admin--place-day-target="hint"></span>',
+                                        help_html: true,
+                                    }) }}
+                                    {{ form_row(form['allow_order_day_' ~ day ~ '_time'], {
+                                        attr: {'data-admin--place-day-target': 'time', 'data-action': 'input->admin--place-day#validateTime'},
+                                    }) }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {{ form_row(form.description) }}
+
+                <div class="row">
+                    <div class="col-md-6">{{ form_row(form.opening_hours) }}</div>
+                    <div class="col-md-6">{{ form_row(form.opening_hours_email) }}</div>
+                </div>
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: place is not null, back_url: path('admin_places')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

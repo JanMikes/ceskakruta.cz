@@ -1,0 +1,23 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Zakázané produkty{% endblock %}
+
+{% block content %}
+    <h1 class="h3 mb-4">Zakázané produkty <small class="text-muted">{{ user.email }}</small></h1>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <p class="text-muted">Zaškrtnuté produkty uživatel nemůže objednat.</p>
+                <div class="row">
+                    {% for checkbox in form.products %}
+                        <div class="col-md-6 col-xl-4">{{ form_widget(checkbox) }}</div>
+                    {% endfor %}
+                </div>
+                {% do form.products.setRendered %}
+
+                {{ include('admin/_form_buttons.html.twig', {back_url: path('admin_users')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

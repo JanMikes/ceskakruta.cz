@@ -1,0 +1,101 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+
+{% block title %}Prodejny{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <h1 class="h3 mb-0 me-auto">Prodejny</h1>
+        <a class="btn btn-primary btn-sm" href="{{ path('admin_place_create') }}">Přidat prodejnu</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-wrap align-items-center gap-2">
+            <h2 class="h5 mb-0 me-auto">Zavřeno (výjimky)</h2>
+            <a class="btn btn-outline-primary btn-sm" href="{{ path('admin_place_closed_day_add') }}">Přidat výjimku</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Datum zavřeno</th>
+                        <th>Prodejna</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for closed_day in closed_days %}
+                        <tr id="closed-day-{{ closed_day.id }}">
+                            <td>{{ closed_day.date|date('d.m.Y', false) }}</td>
+                            <td>
+                                {% if closed_day.placeId is null %}
+                                    <strong>Všechny</strong>
+                                {% else %}
+                                    {{ closed_day.placeName }}
+                                {% endif %}
+                            </td>
+                            <td class="text-end text-nowrap">
+                                {{ grid.row_actions('place_closed_day', {id: closed_day.id}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-muted">Žádné výjimky.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex flex-wrap align-items-center gap-2">
+            <h2 class="h5 mb-0 me-auto">Prodejny a rozvozy</h2>
+            {{ grid.activate_all('place', inactive_count) }}
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Název</th>
+                        <th>Rozvoz</th>
+                        <th>Pondělí</th>
+                        <th>Úterý</th>
+                        <th>Středa</th>
+                        <th>Čtvrtek</th>
+                        <th>Pátek</th>
+                        <th>Sobota</th>
+                        <th>Neděle</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for place in places %}
+                        <tr id="item-{{ place.id }}" class="{{ place.active ? '' : 'table-secondary text-muted' }}">
+                            <td>{{ place.name }}</td>
+                            <td class="text-nowrap">
+                                {{ place.forceDeliveryAddress ? 'Ano' : 'Ne' }}
+                                {% if place.isCoolBalik %}<br><span class="small">(Cool balík)</span>{% endif %}
+                            </td>
+                            {% for day in place.days %}
+                                <td class="small">
+                                    {% if day.enabled %}
+                                        Povoleno<br>
+                                        Dnů před: {{ day.daysBefore }}<br>
+                                        <span class="text-info">({{ day.orderDayName }} {{ day.time }})</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_place_edit', {id: place.id}) }}">Upravit</a>
+                                {{ grid.row_actions('place', {id: place.id, active: place.active}, {first: loop.first, last: loop.last}) }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="10" class="text-muted">Žádné prodejny.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
