@@ -27,7 +27,7 @@
                             <td>{{ recipe.name }}</td>
                             <td>
                                 {% if recipe.photo %}
-                                    <img class="img-thumbnail" src="{{ asset(recipe.photo) }}" alt="{{ recipe.name }}" width="80" loading="lazy">
+                                    <img class="img-thumbnail" src="/{{ recipe.photo }}" alt="{{ recipe.name }}" width="80" loading="lazy">
                                 {% endif %}
                             </td>
                             <td class="text-end text-nowrap">

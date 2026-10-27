@@ -60,5 +60,8 @@ jobs:
 
         -   run: composer install --no-scripts --no-progress
 
+        # Frontend assets are not built here; asset() needs the manifest to exist
+        -   run: mkdir -p public/build && echo '{}' > public/build/manifest.json
+
         # Test database is (re)created from tests/database/*.sql by tests/bootstrap.php
         -   run: composer run-script test

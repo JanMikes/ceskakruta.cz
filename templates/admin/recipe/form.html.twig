@@ -15,8 +15,8 @@
                     <div class="col-md-6">
                         {{ form_row(form.image) }}
                         {% if recipe and recipe.photo %}
-                            <a href="{{ asset(recipe.photo) }}" target="_blank" rel="noopener">
-                                <img class="img-thumbnail mb-3" src="{{ asset(recipe.photo) }}" alt="{{ recipe.name }}" width="200">
+                            <a href="/{{ recipe.photo }}" target="_blank" rel="noopener">
+                                <img class="img-thumbnail mb-3" src="/{{ recipe.photo }}" alt="{{ recipe.name }}" width="200">
                             </a>
                         {% endif %}
                     </div>
