@@ -16,9 +16,10 @@
   RewriteCond %{THE_REQUEST} \s/index\.php [NC]
   RewriteRule ^index\.php$ / [R=301,L]
 
-  # Redirect /admin and /admin/* to old.ceskakruta.cz/admin/...
-  # Temporary (302) so browsers do not cache it — removed when the new admin goes live (docs/admin/PLAN.md §3.10)
-  RewriteRule ^\/?admin(.*)?$ https://old.ceskakruta.cz/admin/sign/in [R=302,L]
+  # Uploads not copied over from the old app yet (or uploaded via the old admin) are served from there.
+  # Temporary (302) — remove once public/upload is in sync and before old.ceskakruta.cz redirects here (docs/admin/PLAN.md §3.10)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^upload/(.+)$ https://old.ceskakruta.cz/upload/$1 [R=302,L]
 
   # Front controller
   RewriteCond %{REQUEST_FILENAME} !-f

@@ -17,7 +17,7 @@ final class AdminRedirectTest extends TestCase
         $htaccess = file_get_contents(dirname(__DIR__, 3) . '/public/.htaccess');
         self::assertIsString($htaccess);
 
-        self::assertStringNotContainsString('old.ceskakruta.cz', $htaccess);
+        self::assertStringNotContainsString('old.ceskakruta.cz/admin', $htaccess);
 
         foreach (preg_split('/\R/', $htaccess) ?: [] as $line) {
             $line = trim($line);
@@ -28,6 +28,15 @@ final class AdminRedirectTest extends TestCase
 
             self::assertDoesNotMatchRegularExpression('~^RewriteRule\s+\S*admin~i', $line, 'No rewrite rule for /admin may remain.');
         }
+    }
+
+    public function testMissingUploadsFallBackToOldDomain(): void
+    {
+        $htaccess = file_get_contents(dirname(__DIR__, 3) . '/public/.htaccess');
+        self::assertIsString($htaccess);
+
+        // Recipe photos are copied over by hand; until then the shop must not show broken images
+        self::assertStringContainsString('RewriteRule ^upload/(.+)$ https://old.ceskakruta.cz/upload/$1 [R=302,L]', $htaccess);
     }
 
     public function testFrontControllerRuleIsKept(): void

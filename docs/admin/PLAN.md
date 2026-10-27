@@ -401,7 +401,9 @@ generic `ActivateRecord` / `DeactivateRecord` / `ActivateAllRecords` / `SoftDele
 
 ### 3.10 Domains & redirects
 - Now: change the `/admin` rule in `public/.htaccess` from `R=301` to `R=302` (so browsers stop caching it).
-- At admin go-live: **remove** that rule; the new `/admin` serves the admin.
+- At admin go-live: **remove** that rule; the new `/admin` serves the admin. ✅ done 2026-10-27.
+- Until the recipe photos are copied by FTP, `public/.htaccess` 302-redirects missing `/upload/*` files to old.ceskakruta.cz
+  (also covers photos uploaded via the old admin during the parallel run). Remove that rule after the final sync, before the 301 below.
 - At old-app switch-off: on the old hosting replace the old app's `www/.htaccess` with a 301 from `old.ceskakruta.cz/*` →
   `https://ceskakruta.cz/` (`/admin*` → `https://ceskakruta.cz/admin`). Old files are **kept**.
 - Do §3.9 (recipe images local) **before** the old-domain 301, otherwise recipe images break.
@@ -749,9 +751,9 @@ Decided:
   - Enabled place day requires "days before"; changing your own e-mail logs you out (same as old app).
   - Empty item weight shown as "–" (en dash) in order detail / Boxxi.
 
-Open:
-- **Timezone**: old app writes datetimes in Europe/Prague, the Symfony app (shop + admin) in PHP's default
-  (`.docker/php.ini` = UTC). Check production `date.timezone`; if not Europe/Prague, set it explicitly in the app. (Note for later: the VPS has a working crontab, so a CLI cron may be possible there after all.)
+- **Timezone** (resolved 2026-10-27): production PHP 8.2.35 has `date.timezone = Europe/Prague` (hosting `php.ini`), same as
+  the old app → stored datetimes are Prague local time everywhere. Only local Docker was UTC → `.docker/php.ini` now Europe/Prague.
+  (Note for later: lily.srv has a working crontab, so a CLI cron may be possible there after all.)
 
 ---
 
