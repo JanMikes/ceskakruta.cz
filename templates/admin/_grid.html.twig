@@ -3,56 +3,108 @@
     {% import 'admin/_grid.html.twig' as grid %}
     {{ grid.row_actions('vendor', {id: vendor.id, active: vendor.active}, {first: loop.first, last: loop.last}) }}
     {{ grid.activate_all('vendor', inactive_count) }}
+    {{ grid.edit_link(url) }}, {{ grid.empty_row(colspan, 'Žádné záznamy.') }}
 #}
 
+{#
+    options: target, class (button classes), title (tooltip + accessible name), icon (icon-only button, label = accessible name),
+             text (visible text next to the icon), confirm
+#}
 {% macro action_form(table, id, action, label, options = {}) %}
-    <form method="post" action="{{ path('admin_grid_record_action', {table: table, id: id, action: action}) }}" class="d-inline"
+    {% import 'admin/_icons.html.twig' as icons %}
+    {% set title = options.title ?? label %}
+    <form method="post" action="{{ path('admin_grid_record_action', {table: table, id: id, action: action}) }}" class="admin-action-form"
         {%- if options.confirm is defined %} data-controller="confirm" data-confirm-message-value="{{ options.confirm }}" data-action="submit->confirm#confirm"{% endif %}>
         <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
         <input type="hidden" name="_target" value="{{ options.target ?? app.request.requestUri }}">
-        <button type="submit" class="btn btn-sm {{ options.class ?? 'btn-outline-secondary' }}" title="{{ options.title ?? label }}" aria-label="{{ options.title ?? label }}">{{ label }}</button>
+        {% if options.icon is defined %}
+            <button type="submit" class="btn btn-sm {{ options.class ?? 'btn-light' }}{{ options.text is defined ? '' : ' btn-icon' }}" title="{{ title }}" aria-label="{{ title }}">
+                {{- icons.icon(options.icon) -}}
+                {%- if options.text is defined %}<span>{{ options.text }}</span>{% endif -%}
+            </button>
+        {% else %}
+            <button type="submit" class="btn btn-sm {{ options.class ?? 'btn-outline-secondary' }}" title="{{ title }}" aria-label="{{ title }}">{{ label }}</button>
+        {% endif %}
     </form>
 {% endmacro %}
 
 {#
     row: {id, active, ...columns the rules need (product: type)}
     options: {first, last (hide move arrows), hide_move_up, target}
+    Hidden move arrows keep their slot (empty placeholder, no form), so the buttons of all rows stay aligned.
 #}
 {% macro row_actions(table, row, options = {}) %}
     {% set target = options.target ?? app.request.requestUri %}
-    <div class="d-inline-flex flex-wrap gap-1 align-items-center">
+    {% set can_move_up = admin_grid_allows(table, 'move-up', row) %}
+    {% set can_move_down = admin_grid_allows(table, 'move-down', row) %}
+    <div class="admin-row-actions">
         {% if row.active is defined %}
             {% if row.active %}
                 {% if admin_grid_allows(table, 'deactivate', row) %}
-                    {{ _self.action_form(table, row.id, 'deactivate', 'Deaktivovat', {target: target, class: 'btn-outline-success', title: 'Aktivní – kliknutím deaktivovat'}) }}
+                    {{ _self.action_form(table, row.id, 'deactivate', 'Deaktivovat', {target: target, class: 'admin-status is-active', icon: 'check', text: 'Aktivní', title: 'Aktivní – kliknutím deaktivovat'}) }}
                 {% endif %}
             {% elseif admin_grid_allows(table, 'activate', row) %}
-                {{ _self.action_form(table, row.id, 'activate', 'Aktivovat', {target: target, class: 'btn-outline-warning', title: 'Neaktivní – kliknutím aktivovat'}) }}
+                {{ _self.action_form(table, row.id, 'activate', 'Aktivovat', {target: target, class: 'admin-status is-inactive', icon: 'ban', text: 'Neaktivní', title: 'Neaktivní – kliknutím aktivovat'}) }}
             {% endif %}
         {% endif %}
 
-        {% if admin_grid_allows(table, 'move-up', row) and not (options.first ?? false) and not (options.hide_move_up ?? false) %}
-            {{ _self.action_form(table, row.id, 'move-up', '↑', {target: target, title: 'Posunout nahoru'}) }}
-        {% endif %}
-        {% if admin_grid_allows(table, 'move-down', row) and not (options.last ?? false) %}
-            {{ _self.action_form(table, row.id, 'move-down', '↓', {target: target, title: 'Posunout dolů'}) }}
+        {% if can_move_up or can_move_down %}
+            <div class="admin-move" role="group" aria-label="Pořadí">
+                {% if can_move_up and not (options.first ?? false) and not (options.hide_move_up ?? false) %}
+                    {{ _self.action_form(table, row.id, 'move-up', 'Posunout nahoru', {target: target, icon: 'arrow_up'}) }}
+                {% else %}
+                    <span class="admin-move-placeholder" aria-hidden="true"></span>
+                {% endif %}
+                {% if can_move_down and not (options.last ?? false) %}
+                    {{ _self.action_form(table, row.id, 'move-down', 'Posunout dolů', {target: target, icon: 'arrow_down'}) }}
+                {% else %}
+                    <span class="admin-move-placeholder" aria-hidden="true"></span>
+                {% endif %}
+            </div>
         {% endif %}
 
         {% if admin_grid_allows(table, 'delete', row) %}
-            {{ _self.action_form(table, row.id, 'delete', 'Smazat', {target: target, class: 'btn-outline-danger', confirm: 'Opravdu smazat?'}) }}
+            {{ _self.action_form(table, row.id, 'delete', 'Smazat', {target: target, class: 'btn-light admin-btn-danger', icon: 'trash', confirm: 'Opravdu smazat?'}) }}
         {% endif %}
     </div>
 {% endmacro %}
 
 {% macro activate_all(table, inactive_count, options = {}) %}
-    <form method="post" action="{{ path('admin_grid_activate_all', {table: table}) }}" class="d-inline">
+    {% import 'admin/_icons.html.twig' as icons %}
+    <form method="post" action="{{ path('admin_grid_activate_all', {table: table}) }}" class="admin-action-form">
         <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
         <input type="hidden" name="_target" value="{{ options.target ?? app.request.requestUri }}">
         {% if options.scope is defined and options.scope is not null %}
             <input type="hidden" name="scope" value="{{ options.scope }}">
         {% endif %}
-        <button type="submit" class="btn btn-sm btn-outline-secondary"{% if inactive_count == 0 %} disabled{% endif %}>
-            Aktivovat vše{% if inactive_count > 0 %} ({{ inactive_count }}){% endif %}
+        <button type="submit" class="btn btn-outline-secondary btn-with-icon"{% if inactive_count == 0 %} disabled title="Všechny záznamy jsou aktivní"{% endif %}>
+            {{ icons.icon('check_all') }}<span>Aktivovat vše{% if inactive_count > 0 %} ({{ inactive_count }}){% endif %}</span>
         </button>
     </form>
+{% endmacro %}
+
+{# Primary row action: edit link with icon and visible text #}
+{% macro edit_link(url, label = 'Upravit') %}
+    {% import 'admin/_icons.html.twig' as icons %}
+    <a class="btn btn-sm btn-outline-primary btn-with-icon" href="{{ url }}">{{ icons.icon('edit') }}<span>{{ label }}</span></a>
+{% endmacro %}
+
+{# Primary page action (create) #}
+{% macro add_link(url, label) %}
+    {% import 'admin/_icons.html.twig' as icons %}
+    <a class="btn btn-primary btn-with-icon" href="{{ url }}">{{ icons.icon('plus') }}<span>{{ label }}</span></a>
+{% endmacro %}
+
+{# Empty state row of a list table #}
+{% macro empty_row(colspan, message, hint = null) %}
+    {% import 'admin/_icons.html.twig' as icons %}
+    <tr class="admin-empty-row">
+        <td colspan="{{ colspan }}">
+            <div class="admin-empty">
+                <span class="admin-empty-icon">{{ icons.icon('inbox') }}</span>
+                <p class="admin-empty-title">{{ message }}</p>
+                {% if hint %}<p class="admin-empty-hint">{{ hint }}</p>{% endif %}
+            </div>
+        </td>
+    </tr>
 {% endmacro %}

@@ -1,9 +1,67 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Přehled{% endblock %}
 
 {% block content %}
-    <h1 class="h3 mb-4">Přehled</h1>
+    {% set quick_links = [
+        {label: 'Objednávky', url: '/admin/objednavky', icon: 'cart', primary: true},
+        {label: 'Přidat aktualitu', url: path('admin_actuality_create'), icon: 'plus'},
+        {label: 'Přidat výjimku (zavřeno)', url: path('admin_place_closed_day_add'), icon: 'calendar_x'},
+        {label: 'Přidat produkt', url: path('admin_product_create'), icon: 'tag'},
+    ] %}
+    {% set groups = [
+        {heading: 'Web', tiles: [
+            {label: 'Aktuality', url: '/admin/aktuality', icon: 'bell', text: 'Novinky na webu, rozesílané odběratelům.'},
+            {label: 'Rozkrmená krůťata', url: '/admin/rozkrmena-krutata', icon: 'trending', text: 'Tabulka rozkrmených krůťat po týdnech.'},
+            {label: 'Chlazené krůty', url: '/admin/chlazene-kruty', icon: 'snow', text: 'Týdny prodeje a váhy chlazených krůt.'},
+            {label: 'Živé krůty', url: '/admin/zive-kruty', icon: 'activity', text: 'Týdny prodeje a váhy živých krůt.'},
+        ]},
+        {heading: 'Produkty', tiles: [
+            {label: 'Maso a výrobky', url: '/admin/produkty', icon: 'tag', text: 'Produkty, ceny, balení a recepty.'},
+            {label: 'Doplňkový sortiment', url: '/admin/sortiment', icon: 'grid', text: 'Položky sortimentu podle kategorií.'},
+        ]},
+        {heading: 'Obsah a kontakty', tiles: [
+            {label: 'Texty', url: '/admin/texty', icon: 'text', text: 'Editovatelné texty sekcí webu.'},
+            {label: 'Prodejci', url: '/admin/prodejci', icon: 'briefcase', text: 'Prodejci a jejich kontakty.'},
+            {label: 'Emaily', url: '/admin/emaily', icon: 'mail', text: 'Odběratelé novinek.'},
+        ]},
+        {heading: 'Prodej', tiles: [
+            {label: 'Prodejny', url: '/admin/prodejny', icon: 'pin', text: 'Prodejny, rozvozy, dny prodeje a výjimky.'},
+            {label: 'Uživatelé', url: '/admin/uzivatele', icon: 'users', text: 'Zákaznické účty, velkoobchod a zakázané produkty.'},
+            {label: 'Objednávky', url: '/admin/objednavky', icon: 'cart', text: 'Objednávky, export a propsání do Pohody a Boxxi.'},
+        ]},
+    ] %}
 
-    <p class="text-muted">Vítejte v administraci. Sekce najdete v horním menu.</p>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Přehled</h1>
+            <p class="admin-page-subtitle">Vítejte v administraci{% if app.user.name ?? false %}, {{ app.user.name }}{% endif %}. Vyberte sekci, se kterou chcete pracovat.</p>
+        </div>
+    </div>
+
+    <h2 class="admin-tiles-heading">Rychlé akce</h2>
+    <div class="admin-quick">
+        {% for link in quick_links %}
+            <a class="admin-quick-link{{ (link.primary ?? false) ? ' is-primary' }}" href="{{ link.url }}">
+                <span class="admin-tile-icon">{{ icons.icon(link.icon) }}</span>
+                <span>{{ link.label }}</span>
+            </a>
+        {% endfor %}
+    </div>
+
+    {% for group in groups %}
+        <h2 class="admin-tiles-heading">{{ group.heading }}</h2>
+        <div class="admin-tiles">
+            {% for tile in group.tiles %}
+                <a class="admin-tile" href="{{ tile.url }}">
+                    <span class="admin-tile-icon">{{ icons.icon(tile.icon) }}</span>
+                    <span>
+                        <span class="admin-tile-title">{{ tile.label }}</span>
+                        <span class="admin-tile-text">{{ tile.text }}</span>
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% endfor %}
 {% endblock %}

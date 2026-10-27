@@ -1,3 +1,4 @@
+{% import 'admin/_icons.html.twig' as icons %}
 <!DOCTYPE html>
 <html lang="cs">
     <head>
@@ -6,27 +7,40 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="robots" content="noindex, nofollow">
         <meta name="turbo-prefetch" content="false">
+        <meta name="theme-color" content="#1b1e24">
+        <link rel="icon" type="image/svg+xml" href="/img/turkey-icon.svg">
 
         {{ encore_entry_link_tags('admin') }}
         {{ encore_entry_script_tags('admin') }}
     </head>
     {# Turbo Drive off: native form posts keep the #item-{id} anchor of grid redirects #}
-    <body class="admin" data-turbo="false">
-        {% block navigation %}
-            {{ include('admin/_navigation.html.twig') }}
-        {% endblock %}
+    <body class="{% block body_class %}admin{% endblock %}" data-turbo="false">
+        <div class="admin-shell">
+            {% block navigation %}
+                {{ include('admin/_navigation.html.twig') }}
+            {% endblock %}
 
-        <main class="{% block main_class %}container-fluid py-4{% endblock %}">
-            {% for type, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavřít"></button>
-                    </div>
-                {% endfor %}
-            {% endfor %}
+            <main class="{% block main_class %}admin-main{% endblock %}" id="admin-main">
+                {% block flashes %}
+                    {% set flashes = app.flashes %}
+                    {% if flashes is not empty %}
+                        <div class="admin-flashes">
+                            {% for type, messages in flashes %}
+                                {% set alert_type = type == 'error' ? 'danger' : type %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ alert_type }} alert-dismissible fade show admin-alert" role="alert">
+                                        {{ icons.icon(alert_type == 'success' ? 'check_circle' : (alert_type == 'danger' ? 'alert' : 'info'), 'admin-alert-icon') }}
+                                        <div class="admin-alert-text">{{ message }}</div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavřít"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endblock %}
 
-            {% block content %}{% endblock %}
-        </main>
+                {% block content %}{% endblock %}
+            </main>
+        </div>
     </body>
 </html>

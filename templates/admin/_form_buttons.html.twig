@@ -1,10 +1,14 @@
-{# Submit buttons of every admin form (docs/admin/PLAN.md §4.6), `is_edit` adds "save and continue" #}
-<div class="d-flex flex-wrap gap-2 mt-4">
-    <button class="btn btn-primary" type="submit">Uložit</button>
+{#
+    Submit buttons of every admin form (docs/admin/PLAN.md §4.6), `is_edit` adds "save and continue".
+    Rendered as a sticky action bar at the bottom of the form card (`.admin-form-actions`).
+#}
+{% import 'admin/_icons.html.twig' as icons %}
+<div class="admin-form-actions">
+    <button class="btn btn-primary btn-with-icon" type="submit">{{ icons.icon('check') }}<span>Uložit</span></button>
     {% if is_edit ?? false %}
         <button class="btn btn-outline-primary" type="submit" name="_continue" value="1">Uložit a pokračovat v editaci</button>
     {% endif %}
     {% if back_url is defined %}
-        <a class="btn btn-link" href="{{ back_url }}">Zpět na seznam</a>
+        <a class="btn btn-link admin-form-back" href="{{ back_url }}">Zpět na seznam</a>
     {% endif %}
 </div>

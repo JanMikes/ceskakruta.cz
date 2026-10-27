@@ -2,41 +2,46 @@
 
 {% block title %}Přihlášení{% endblock %}
 
+{% block body_class %}admin admin-login-page{% endblock %}
+
 {% block navigation %}{% endblock %}
 
-{% block main_class %}container admin-login py-5{% endblock %}
+{% block main_class %}admin-login{% endblock %}
+
+{% block flashes %}
+    <div class="admin-login-flashes">{{ parent() }}</div>
+{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-sm-9 col-md-6 col-lg-4">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <h1 class="h4 mb-4">Administrace Česká Krůta</h1>
+    <div class="card admin-login-card">
+        <div class="card-body">
+            <img class="admin-login-logo" src="/img/ceska-kruta-logo.svg" alt="Česká Krůta" width="72" height="75">
+            <h1 class="admin-login-title">Administrace Česká Krůta</h1>
+            <p class="admin-login-subtitle">Přihlaste se svým administrátorským účtem.</p>
 
-                    {% if error_message %}
-                        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
-                    {% endif %}
+            {% if error_message %}
+                <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+            {% endif %}
 
-                    <form action="{{ path('admin_login') }}" method="post">
-                        <div class="mb-3">
-                            <label class="form-label" for="username">E-mail</label>
-                            <input class="form-control" type="email" id="username" name="_username" value="{{ last_username }}" autocomplete="username" required autofocus>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="password">Heslo</label>
-                            <input class="form-control" type="password" id="password" name="_password" autocomplete="current-password" required>
-                        </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me" value="1">
-                            <label class="form-check-label" for="remember_me">Trvalé přihlášení</label>
-                        </div>
-
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                        <button class="btn btn-primary w-100" type="submit">Přihlásit</button>
-                    </form>
+            <form action="{{ path('admin_login') }}" method="post">
+                <div class="mb-3">
+                    <label class="form-label" for="username">E-mail</label>
+                    <input class="form-control" type="email" id="username" name="_username" value="{{ last_username }}" autocomplete="username" required autofocus>
                 </div>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">Heslo</label>
+                    <input class="form-control" type="password" id="password" name="_password" autocomplete="current-password" required>
+                </div>
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me" value="1">
+                    <label class="form-check-label" for="remember_me">Trvalé přihlášení</label>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button class="btn btn-primary btn-lg w-100" type="submit">Přihlásit</button>
+            </form>
         </div>
     </div>
+    <p class="admin-login-footer">&copy; {{ 'now'|date('Y') }} Česká Krůta</p>
 {% endblock %}
