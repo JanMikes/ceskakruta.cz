@@ -1,13 +1,25 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Detail objednávky {{ record.order.id }}{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Detail objednávky</h1>
-        <a class="btn btn-link" href="{{ path('admin_orders') }}">Zpět na seznam</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_orders') }}">{{ icons.icon('arrow_left') }}Objednávky</a>
+            <h1 class="admin-page-title">Detail objednávky</h1>
+        </div>
+        <div class="admin-page-actions">
+            <a class="btn btn-link" href="{{ path('admin_orders') }}">Zpět na seznam</a>
+        </div>
     </div>
 
-    {{ include('admin/order/_summary.html.twig') }}
-    {{ include('admin/order/_items.html.twig') }}
+    <div class="row g-3">
+        <div class="col-xl-5">
+            {{ include('admin/order/_summary.html.twig') }}
+        </div>
+        <div class="col-xl-7">
+            {{ include('admin/order/_items.html.twig') }}
+        </div>
+    </div>
 {% endblock %}

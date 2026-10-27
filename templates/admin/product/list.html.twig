@@ -1,18 +1,24 @@
 {% extends 'admin/base.html.twig' %}
 {% import 'admin/_grid.html.twig' as grid %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Maso a výrobky{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Maso a výrobky</h1>
-        {{ grid.activate_all('product', inactive_count) }}
-        <a class="btn btn-primary btn-sm" href="{{ path('admin_product_create') }}">Přidat produkt</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Maso a výrobky</h1>
+            <p class="admin-page-subtitle">Produkty e-shopu v pořadí, v jakém se zobrazují na webu.</p>
+        </div>
+        <div class="admin-page-actions">
+            {{ grid.activate_all('product', inactive_count) }}
+            {{ grid.add_link(path('admin_product_create'), 'Přidat produkt') }}
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Název</th>
@@ -23,22 +29,24 @@
                 </thead>
                 <tbody>
                     {% for product in products %}
-                        <tr id="item-{{ product.id }}" class="{{ product.active ? '' : 'table-secondary text-muted' }}">
-                            <td>
+                        <tr id="item-{{ product.id }}"{% if not product.active %} class="admin-row-inactive"{% endif %}>
+                            <td class="admin-cell-primary">
                                 {{ product.name }}
-                                {% if product.turkey %}<span class="badge text-bg-light border ms-1">krůta</span>{% endif %}
+                                {% if product.turkey %}<span class="admin-pill is-primary ms-1">krůta</span>{% endif %}
                             </td>
-                            <td class="text-end text-nowrap">{% if product.price is not null %}{{ product.price }} Kč{% endif %}</td>
-                            <td>
-                                <a class="btn btn-sm btn-outline-secondary text-nowrap" href="{{ path('admin_recipes', {productId: product.id}) }}">Recepty ({{ product.recipesCount }})</a>
+                            <td class="text-end text-nowrap" data-label="Cena/kg">{% if product.price is not null %}{{ product.price }} Kč{% endif %}</td>
+                            <td data-label="Recepty">
+                                <a class="btn btn-sm btn-light btn-with-icon text-nowrap" href="{{ path('admin_recipes', {productId: product.id}) }}">{{ icons.icon('book') }}<span>Recepty ({{ product.recipesCount }})</span></a>
                             </td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_product_edit', {id: product.id}) }}">Upravit</a>
-                                {{ grid.row_actions('product', {id: product.id, active: product.active, type: product.type}, {first: loop.first, last: loop.last}) }}
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_product_edit', {id: product.id})) }}
+                                    {{ grid.row_actions('product', {id: product.id, active: product.active, type: product.type}, {first: loop.first, last: loop.last}) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="4" class="text-muted">Žádné produkty.</td></tr>
+                        {{ grid.empty_row(4, 'Žádné produkty.') }}
                     {% endfor %}
                 </tbody>
             </table>

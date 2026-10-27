@@ -4,15 +4,20 @@
 {% block title %}Aktuality{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Aktuality</h1>
-        {{ grid.activate_all('actuality', inactive_count) }}
-        <a class="btn btn-primary btn-sm" href="{{ path('admin_actuality_create') }}">Přidat aktualitu</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Aktuality</h1>
+            <p class="admin-page-subtitle">Novinky na webu. Nová aktualita se po uložení rozešle odběratelům novinek.</p>
+        </div>
+        <div class="admin-page-actions">
+            {{ grid.activate_all('actuality', inactive_count) }}
+            {{ grid.add_link(path('admin_actuality_create'), 'Přidat aktualitu') }}
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Datum</th>
@@ -22,16 +27,18 @@
                 </thead>
                 <tbody>
                     {% for actuality in actualities %}
-                        <tr id="item-{{ actuality.id }}" class="{{ actuality.active ? '' : 'table-secondary text-muted' }}">
-                            <td class="text-nowrap">{{ actuality.date ? actuality.date|date('d.m.Y', false) }}</td>
-                            <td>{{ actuality.name }}</td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_actuality_edit', {id: actuality.id}) }}">Upravit</a>
-                                {{ grid.row_actions('actuality', {id: actuality.id, active: actuality.active}) }}
+                        <tr id="item-{{ actuality.id }}"{% if not actuality.active %} class="admin-row-inactive"{% endif %}>
+                            <td class="text-nowrap" data-label="Datum">{{ actuality.date ? actuality.date|date('d.m.Y', false) }}</td>
+                            <td class="admin-cell-primary">{{ actuality.name }}</td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_actuality_edit', {id: actuality.id})) }}
+                                    {{ grid.row_actions('actuality', {id: actuality.id, active: actuality.active}) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3" class="text-muted">Žádné aktuality.</td></tr>
+                        {{ grid.empty_row(3, 'Žádné aktuality.', 'Přidejte první aktualitu tlačítkem „Přidat aktualitu“.') }}
                     {% endfor %}
                 </tbody>
             </table>

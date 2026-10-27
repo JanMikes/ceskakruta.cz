@@ -1,128 +1,145 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Objednávky{% endblock %}
 
 {% block content %}
     {% set query = filter.toQuery %}
+    {% set filter_active = filter.dateFrom or filter.dateTo or filter.customerName %}
 
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Objednávky</h1>
-        <a class="btn btn-outline-primary btn-sm" href="{{ path('admin_orders_export', query) }}">CSV export</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Objednávky</h1>
+            <p class="admin-page-subtitle">Nejnovější objednávky nahoře, propsání do Pohody a Boxxi.</p>
+        </div>
+        <div class="admin-page-actions">
+            <a class="btn btn-outline-secondary btn-with-icon" href="{{ path('admin_orders_export', query) }}" title="Stáhnout objednávky podle aktuálního filtru">{{ icons.icon('download') }}<span>CSV export</span></a>
+        </div>
     </div>
 
-    <form method="get" action="{{ path('admin_orders') }}" class="card card-body mb-3">
-        <div class="row g-2 align-items-end">
-            <div class="col-sm-6 col-lg-2">
-                <label class="form-label" for="filter-date-from">Datum od</label>
-                <input class="form-control" type="date" id="filter-date-from" name="date_from" value="{{ filter.dateFrom ? filter.dateFrom|date('Y-m-d', false) }}">
-            </div>
-            <div class="col-sm-6 col-lg-2">
-                <label class="form-label" for="filter-date-to">Datum do</label>
-                <input class="form-control" type="date" id="filter-date-to" name="date_to" value="{{ filter.dateTo ? filter.dateTo|date('Y-m-d', false) }}">
-            </div>
-            <div class="col-sm-12 col-lg-4">
-                <label class="form-label" for="filter-customer-name">Jméno zákazníka</label>
-                <input class="form-control" type="text" id="filter-customer-name" name="customer_name" value="{{ filter.customerName }}">
-            </div>
-            <div class="col-auto">
-                <button class="btn btn-primary" type="submit">Filtrovat</button>
-                <a class="btn btn-link" href="{{ path('admin_orders') }}">Resetovat</a>
+    <button class="btn btn-light btn-with-icon w-100 admin-filter-toggle d-md-none{{ filter_active ? '' : ' collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#admin-order-filter" aria-expanded="{{ filter_active ? 'true' : 'false' }}" aria-controls="admin-order-filter">
+        {{ icons.icon('filter') }}<span>Filtry{% if filter_active %} (aktivní){% endif %}</span>
+    </button>
+
+    <form method="get" action="{{ path('admin_orders') }}" class="card admin-filter collapse d-md-block{{ filter_active ? ' show' }}" id="admin-order-filter">
+        <div class="card-body">
+            <div class="row g-2 g-md-3 align-items-end">
+                <div class="col-6 col-lg-2">
+                    <label class="form-label" for="filter-date-from">Datum od</label>
+                    <input class="form-control" type="date" id="filter-date-from" name="date_from" value="{{ filter.dateFrom ? filter.dateFrom|date('Y-m-d', false) }}">
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label" for="filter-date-to">Datum do</label>
+                    <input class="form-control" type="date" id="filter-date-to" name="date_to" value="{{ filter.dateTo ? filter.dateTo|date('Y-m-d', false) }}">
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <label class="form-label" for="filter-customer-name">Jméno zákazníka</label>
+                    <input class="form-control" type="text" id="filter-customer-name" name="customer_name" value="{{ filter.customerName }}" autocomplete="off">
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary btn-with-icon flex-grow-1 flex-md-grow-0" type="submit">{{ icons.icon('filter') }}<span>Filtrovat</span></button>
+                    <a class="btn btn-link text-muted" href="{{ path('admin_orders') }}">Resetovat</a>
+                </div>
             </div>
         </div>
     </form>
 
-    <div data-controller="admin--order-select">
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-            <form method="post" action="{{ path('admin_orders_pohoda_bulk') }}" id="pohoda-bulk">
+    <div class="card" data-controller="admin--order-select">
+        <div class="admin-bulkbar">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="admin-orders-all"
+                    data-admin--order-select-target="all" data-action="admin--order-select#toggleAll">
+                <label class="form-check-label" for="admin-orders-all">Označit vše <small class="text-muted" data-admin--order-select-target="counter"></small></label>
+            </div>
+            <form method="post" action="{{ path('admin_orders_pohoda_bulk') }}" id="pohoda-bulk" class="admin-action-form">
                 <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
                 <input type="hidden" name="_target" value="{{ app.request.requestUri }}">
-                <button class="btn btn-primary btn-sm" type="submit">Označené poslat do Pohody</button>
+                <button class="btn btn-primary btn-sm btn-with-icon" type="submit">{{ icons.icon('send') }}<span>Označené poslat do Pohody</span></button>
             </form>
-            <span class="text-muted ms-auto">Celkem: {{ total }}</span>
+            <span class="admin-bulkbar-total">Celkem: {{ total }}</span>
         </div>
 
-        <div class="card">
-            <div class="table-responsive">
-                <table class="table table-hover table-sm align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-nowrap">
-                                <input class="form-check-input" type="checkbox" aria-label="Označit vše"
-                                    data-admin--order-select-target="all" data-action="admin--order-select#toggleAll">
-                                <small class="text-muted" data-admin--order-select-target="counter"></small>
-                            </th>
-                            <th>Č.</th>
-                            <th>Datum provedení</th>
-                            <th>Zákazník</th>
-                            <th>Cena</th>
-                            <th>Místo</th>
-                            <th>Datum</th>
-                            <th>Poznámka</th>
-                            <th>Pohoda</th>
-                            <th>Boxxi</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for record in orders %}
-                            {% set order = record.order %}
-                            <tr id="item-{{ order.id }}">
-                                <td>
-                                    {% if record.pohodaSyncedAt is null %}
-                                        <input class="form-check-input" type="checkbox" name="orders[]" value="{{ order.id }}" form="pohoda-bulk" aria-label="Označit objednávku {{ order.id }}"
-                                            data-admin--order-select-target="item" data-action="admin--order-select#update">
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ order.id }}
-                                    {% if record.source is not null %}<br><span class="badge bg-primary">Nový web</span>{% endif %}
-                                </td>
-                                <td class="text-nowrap">{{ order.insertedAt|date('d.m.Y H:i', false) }}</td>
-                                <td>
-                                    <strong>{{ order.name }}</strong><br>
-                                    {{ order.deliveryStreet }}<br>
-                                    {{ order.deliveryCity }} {{ order.deliveryPostalCode }}
-                                </td>
-                                <td class="text-nowrap">
-                                    {% if order.couponPercentValue %}<span class="text-primary">(Sleva -{{ order.couponPercentValue }}%)</span><br>{% endif %}
-                                    {{ record.priceTotal|number_format(0, '', '.') }} Kč
-                                </td>
-                                <td>{{ order.place.name }}</td>
-                                <td class="text-nowrap">{{ order.date|date('d.m.Y', false) }}</td>
-                                <td>{{ order.note }}</td>
-                                <td class="text-nowrap">
-                                    {% if record.pohodaSyncedAt is not null %}
-                                        {{ record.pohodaSyncedAt|date('d.m.Y H:i:s', false) }}
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover table-sm align-middle admin-table admin-orders-table">
+                <thead>
+                    <tr>
+                        <th class="admin-cell-check"><span class="visually-hidden">Označit</span></th>
+                        <th>Č.</th>
+                        <th>Datum provedení</th>
+                        <th>Zákazník</th>
+                        <th class="text-end">Cena</th>
+                        <th>Místo</th>
+                        <th>Datum</th>
+                        <th>Poznámka</th>
+                        <th>Pohoda</th>
+                        <th>Boxxi</th>
+                        <th><span class="visually-hidden">Akce</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in orders %}
+                        {% set order = record.order %}
+                        <tr id="item-{{ order.id }}">
+                            <td class="admin-cell-check">
+                                {% if record.pohodaSyncedAt is null %}
+                                    <input class="form-check-input" type="checkbox" name="orders[]" value="{{ order.id }}" form="pohoda-bulk" aria-label="Označit objednávku {{ order.id }}"
+                                        data-admin--order-select-target="item" data-action="admin--order-select#update">
+                                {% endif %}
+                            </td>
+                            <td class="text-nowrap" data-label="Č.">
+                                <strong>{{ order.id }}</strong>
+                                {% if record.source is not null %}<br><span class="badge admin-badge-soft">Nový web</span>{% endif %}
+                            </td>
+                            <td class="admin-cell-date" data-label="Datum provedení">{{ order.insertedAt|date('d.m.Y H:i', false) }}</td>
+                            <td class="admin-cell-primary admin-cell-customer">
+                                <strong>{{ order.name }}</strong><br>
+                                <span class="admin-cell-muted">{{ order.deliveryStreet }}<br>
+                                {{ order.deliveryCity }} {{ order.deliveryPostalCode }}</span>
+                            </td>
+                            <td class="text-end text-nowrap" data-label="Cena">
+                                {% if order.couponPercentValue %}<span class="text-primary small">(Sleva -{{ order.couponPercentValue }}%)</span><br>{% endif %}
+                                <strong>{{ record.priceTotal|number_format(0, '', '.') }} Kč</strong>
+                            </td>
+                            <td class="admin-cell-place" data-label="Místo">{{ order.place.name }}</td>
+                            <td class="text-nowrap" data-label="Datum">{{ order.date|date('d.m.Y', false) }}</td>
+                            <td class="admin-cell-note" data-label="Poznámka">{{ order.note }}</td>
+                            <td class="admin-cell-sync" data-label="Pohoda">
+                                {% if record.pohodaSyncedAt is not null %}
+                                    <span class="admin-sync is-done" title="Propsáno do Pohody">{{ icons.icon('check') }}{{ record.pohodaSyncedAt|date('d.m.Y H:i:s', false) }}</span>
+                                {% else %}
+                                    <span class="admin-pill is-danger">Nepropsáno</span><br>
+                                    <form method="post" action="{{ path('admin_order_pohoda', {id: order.id}) }}" class="admin-action-form mt-1">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+                                        <input type="hidden" name="_target" value="{{ app.request.requestUri }}">
+                                        <button class="btn btn-sm btn-outline-primary btn-with-icon" type="submit">{{ icons.icon('send') }}<span>Propsat</span></button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                            <td class="admin-cell-sync" data-label="Boxxi">
+                                {% if order.place.isCoolBalik %}
+                                    {% if record.boxxiSyncedAt is not null %}
+                                        <span class="admin-sync is-done" title="Propsáno do Boxxi">{{ icons.icon('check') }}{{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}</span><br>
+                                        {% if record.coolBalikPrice is not null %}<span class="admin-cell-muted">{{ record.coolBalikPrice }} Kč</span>{% endif %}
                                     {% else %}
-                                        <span class="text-danger">Nepropsáno</span><br>
-                                        <form method="post" action="{{ path('admin_order_pohoda', {id: order.id}) }}" class="d-inline">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
-                                            <input type="hidden" name="_target" value="{{ app.request.requestUri }}">
-                                            <button class="btn btn-sm btn-primary" type="submit">Propsat</button>
-                                        </form>
+                                        <span class="admin-pill is-danger">Nepropsáno</span><br>
+                                        <a class="btn btn-sm btn-outline-primary btn-with-icon mt-1" href="{{ path('admin_order_boxxi', {id: order.id}) }}">{{ icons.icon('box') }}<span>Propsat</span></a>
                                     {% endif %}
-                                </td>
-                                <td class="text-nowrap">
-                                    {% if order.place.isCoolBalik %}
-                                        {% if record.boxxiSyncedAt is not null %}
-                                            {{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}<br>
-                                            {% if record.coolBalikPrice is not null %}{{ record.coolBalikPrice }} Kč{% endif %}
-                                        {% else %}
-                                            <span class="text-danger">Nepropsáno</span><br>
-                                            <a class="btn btn-sm btn-primary" href="{{ path('admin_order_boxxi', {id: order.id}) }}">Propsat</a>
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                                <td class="text-end">
-                                    <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_order_detail', {id: order.id}) }}">Detail</a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr><td colspan="11" class="text-muted">Žádné objednávky.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                                {% else %}
+                                    <span class="admin-cell-muted" aria-hidden="true">–</span>
+                                {% endif %}
+                            </td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    <a class="btn btn-sm btn-light btn-with-icon admin-btn-detail" href="{{ path('admin_order_detail', {id: order.id}) }}" title="Detail objednávky {{ order.id }}">{{ icons.icon('eye') }}<span class="admin-btn-detail-text">Detail</span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        {{ grid.empty_row(11, 'Žádné objednávky.', filter_active ? 'Zkuste upravit nebo zrušit filtr.' : null) }}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 

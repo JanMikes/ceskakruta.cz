@@ -1,15 +1,19 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
 
 {% block title %}Texty{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Texty</h1>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Texty</h1>
+            <p class="admin-page-subtitle">Editovatelné texty jednotlivých sekcí webu.</p>
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Sekce</th>
@@ -19,13 +23,15 @@
                 <tbody>
                     {% for content in contents %}
                         <tr id="item-{{ content.id }}">
-                            <td>{{ content.name }}</td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_content_edit', {id: content.id}) }}">Upravit</a>
+                            <td class="admin-cell-primary">{{ content.name }}</td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_content_edit', {id: content.id})) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="2" class="text-muted">Žádné texty.</td></tr>
+                        {{ grid.empty_row(2, 'Žádné texty.') }}
                     {% endfor %}
                 </tbody>
             </table>

@@ -1,13 +1,19 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% set heading = recipe ? 'Upravit recept' : 'Přidat recept' %}
 
 {% block title %}{{ heading }} – {{ product.name }}{% endblock %}
 
 {% block content %}
-    <h1 class="h3 mb-4">{{ heading }} <small class="text-muted">{{ recipe ? recipe.name : product.name }}</small></h1>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_recipes', {productId: product.id}) }}">{{ icons.icon('arrow_left') }}Recepty – {{ product.name }}</a>
+            <h1 class="admin-page-title">{{ heading }} <small class="text-muted">{{ recipe ? recipe.name : product.name }}</small></h1>
+        </div>
+    </div>
 
-    <div class="card">
+    <div class="card admin-form-card">
         <div class="card-body">
             {{ form_start(form) }}
                 <div class="row">
@@ -15,8 +21,8 @@
                     <div class="col-md-6">
                         {{ form_row(form.image) }}
                         {% if recipe and recipe.photo %}
-                            <a href="/{{ recipe.photo }}" target="_blank" rel="noopener">
-                                <img class="img-thumbnail mb-3" src="/{{ recipe.photo }}" alt="{{ recipe.name }}" width="200">
+                            <a class="admin-photo-preview" href="/{{ recipe.photo }}" target="_blank" rel="noopener" title="Otevřít obrázek v plné velikosti">
+                                <img src="/{{ recipe.photo }}" alt="{{ recipe.name }}" width="200">
                             </a>
                         {% endif %}
                     </div>

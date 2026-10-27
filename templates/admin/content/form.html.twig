@@ -1,11 +1,17 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Upravit text{% endblock %}
 
 {% block content %}
-    <h1 class="h3 mb-4">Upravit text{% if content.name %} <small class="text-muted">{{ content.name }}</small>{% endif %}</h1>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_contents') }}">{{ icons.icon('arrow_left') }}Texty</a>
+            <h1 class="admin-page-title">Upravit text{% if content.name %} <small class="text-muted">{{ content.name }}</small>{% endif %}</h1>
+        </div>
+    </div>
 
-    <div class="card">
+    <div class="card admin-form-card">
         <div class="card-body">
             {{ form_start(form) }}
                 {{ form_row(form.text) }}

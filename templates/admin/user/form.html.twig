@@ -1,44 +1,59 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Upravit uživatele{% endblock %}
 
 {% block content %}
-    <h1 class="h3 mb-4">Upravit uživatele <small class="text-muted">{{ user.email }}</small></h1>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_users') }}">{{ icons.icon('arrow_left') }}Uživatelé</a>
+            <h1 class="admin-page-title">Upravit uživatele <small class="text-muted">{{ user.email }}</small></h1>
+        </div>
+    </div>
 
-    <div class="card">
+    <div class="card admin-form-card">
         <div class="card-body">
             {{ form_start(form) }}
-                <div class="row">
-                    <div class="col-md-4">{{ form_row(form.email) }}</div>
-                    <div class="col-md-4">{{ form_row(form.name) }}</div>
-                    <div class="col-md-4">{{ form_row(form.phone) }}</div>
+                <div class="admin-form-section">
+                    <h2 class="admin-form-section-title">Kontaktní údaje</h2>
+                    <div class="row">
+                        <div class="col-md-4">{{ form_row(form.email) }}</div>
+                        <div class="col-md-4">{{ form_row(form.name) }}</div>
+                        <div class="col-md-4">{{ form_row(form.phone) }}</div>
+                    </div>
                 </div>
 
-                <h2 class="h5 mt-3">Doprava</h2>
-                <div class="row">
-                    <div class="col-md-6">{{ form_row(form.preferred_place_id) }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">{{ form_row(form.delivery_street) }}</div>
-                    <div class="col-md-4">{{ form_row(form.delivery_city) }}</div>
-                    <div class="col-md-2">{{ form_row(form.delivery_zip) }}</div>
-                </div>
-
-                <h2 class="h5 mt-3">Fakturace</h2>
-                {{ form_row(form.company_invoicing) }}
-                <div class="row">
-                    <div class="col-md-6">{{ form_row(form.company_name) }}</div>
-                    <div class="col-md-3">{{ form_row(form.company_id) }}</div>
-                    <div class="col-md-3">{{ form_row(form.company_vat_id) }}</div>
-                    <div class="col-md-6">{{ form_row(form.invoicing_street) }}</div>
-                    <div class="col-md-4">{{ form_row(form.invoicing_city) }}</div>
-                    <div class="col-md-2">{{ form_row(form.invoicing_zip) }}</div>
+                <div class="admin-form-section">
+                    <h2 class="admin-form-section-title">Doprava</h2>
+                    <div class="row">
+                        <div class="col-md-6">{{ form_row(form.preferred_place_id) }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">{{ form_row(form.delivery_street) }}</div>
+                        <div class="col-8 col-md-4">{{ form_row(form.delivery_city) }}</div>
+                        <div class="col-4 col-md-2">{{ form_row(form.delivery_zip) }}</div>
+                    </div>
                 </div>
 
-                <h2 class="h5 mt-3">Oprávnění</h2>
-                {{ form_row(form.allow_wholesale) }}
-                {{ form_row(form.is_ceskakruta) }}
-                {{ form_row(form.is_admin) }}
+                <div class="admin-form-section">
+                    <h2 class="admin-form-section-title">Fakturace</h2>
+                    {{ form_row(form.company_invoicing, {label_attr: {class: 'checkbox-switch'}}) }}
+                    <div class="row">
+                        <div class="col-md-6">{{ form_row(form.company_name) }}</div>
+                        <div class="col-6 col-md-3">{{ form_row(form.company_id) }}</div>
+                        <div class="col-6 col-md-3">{{ form_row(form.company_vat_id) }}</div>
+                        <div class="col-md-6">{{ form_row(form.invoicing_street) }}</div>
+                        <div class="col-8 col-md-4">{{ form_row(form.invoicing_city) }}</div>
+                        <div class="col-4 col-md-2">{{ form_row(form.invoicing_zip) }}</div>
+                    </div>
+                </div>
+
+                <div class="admin-form-section">
+                    <h2 class="admin-form-section-title">Oprávnění</h2>
+                    {{ form_row(form.allow_wholesale, {label_attr: {class: 'checkbox-switch'}}) }}
+                    {{ form_row(form.is_ceskakruta, {label_attr: {class: 'checkbox-switch'}}) }}
+                    {{ form_row(form.is_admin, {label_attr: {class: 'checkbox-switch'}}) }}
+                </div>
 
                 {{ include('admin/_form_buttons.html.twig', {is_edit: true, back_url: path('admin_users')}) }}
             {{ form_end(form) }}

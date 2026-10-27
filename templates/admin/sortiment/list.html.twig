@@ -1,18 +1,24 @@
 {% extends 'admin/base.html.twig' %}
 {% import 'admin/_grid.html.twig' as grid %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Doplňkový sortiment – {{ category.name }}{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Doplňkový sortiment <small class="text-muted">{{ category.name }}</small></h1>
-        {{ grid.activate_all('sortiment', inactive_count, {scope: category.id}) }}
-        <a class="btn btn-primary btn-sm" href="{{ path('admin_sortiment_create', {categoryId: category.id}) }}">Přidat sortiment</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="/admin/sortiment">{{ icons.icon('arrow_left') }}Kategorie sortimentu</a>
+            <h1 class="admin-page-title">Doplňkový sortiment <small class="text-muted">{{ category.name }}</small></h1>
+        </div>
+        <div class="admin-page-actions">
+            {{ grid.activate_all('sortiment', inactive_count, {scope: category.id}) }}
+            {{ grid.add_link(path('admin_sortiment_create', {categoryId: category.id}), 'Přidat sortiment') }}
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Název</th>
@@ -21,16 +27,18 @@
                 </thead>
                 <tbody>
                     {% for item in items %}
-                        <tr id="item-{{ item.id }}" class="{{ item.active ? '' : 'table-secondary text-muted' }}">
-                            <td>{{ item.name }}</td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_sortiment_edit', {categoryId: category.id, id: item.id}) }}">Upravit</a>
-                                {# Old SortimentList: the first 3 rows have no up arrow #}
-                                {{ grid.row_actions('sortiment', {id: item.id, active: item.active}, {last: loop.last, hide_move_up: loop.index <= 3}) }}
+                        <tr id="item-{{ item.id }}"{% if not item.active %} class="admin-row-inactive"{% endif %}>
+                            <td class="admin-cell-primary">{{ item.name }}</td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_sortiment_edit', {categoryId: category.id, id: item.id})) }}
+                                    {# Old SortimentList: the first 3 rows have no up arrow #}
+                                    {{ grid.row_actions('sortiment', {id: item.id, active: item.active}, {last: loop.last, hide_move_up: loop.index <= 3}) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="2" class="text-muted">Žádné položky.</td></tr>
+                        {{ grid.empty_row(2, 'Žádné položky.') }}
                     {% endfor %}
                 </tbody>
             </table>

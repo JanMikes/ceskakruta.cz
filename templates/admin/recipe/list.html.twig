@@ -1,19 +1,24 @@
 {% extends 'admin/base.html.twig' %}
 {% import 'admin/_grid.html.twig' as grid %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Recepty – {{ product.name }}{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Recepty <small class="text-muted">{{ product.name }}</small></h1>
-        <a class="btn btn-outline-secondary btn-sm" href="{{ path('admin_products') }}">Zpět na produkty</a>
-        {{ grid.activate_all('recipe', inactive_count, {scope: product.id}) }}
-        <a class="btn btn-primary btn-sm" href="{{ path('admin_recipe_create', {productId: product.id}) }}">Přidat recept</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_products') }}">{{ icons.icon('arrow_left') }}Zpět na produkty</a>
+            <h1 class="admin-page-title">Recepty <small class="text-muted">{{ product.name }}</small></h1>
+        </div>
+        <div class="admin-page-actions">
+            {{ grid.activate_all('recipe', inactive_count, {scope: product.id}) }}
+            {{ grid.add_link(path('admin_recipe_create', {productId: product.id}), 'Přidat recept') }}
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Název</th>
@@ -23,20 +28,24 @@
                 </thead>
                 <tbody>
                     {% for recipe in recipes %}
-                        <tr id="item-{{ recipe.id }}" class="{{ recipe.active ? '' : 'table-secondary text-muted' }}">
-                            <td>{{ recipe.name }}</td>
-                            <td>
+                        <tr id="item-{{ recipe.id }}"{% if not recipe.active %} class="admin-row-inactive"{% endif %}>
+                            <td class="admin-cell-primary">{{ recipe.name }}</td>
+                            <td data-label="Obrázek">
                                 {% if recipe.photo %}
-                                    <img class="img-thumbnail" src="/{{ recipe.photo }}" alt="{{ recipe.name }}" width="80" loading="lazy">
+                                    <img class="admin-thumb" src="/{{ recipe.photo }}" alt="{{ recipe.name }}" width="64" height="48" loading="lazy">
+                                {% else %}
+                                    <span class="admin-cell-muted">–</span>
                                 {% endif %}
                             </td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_recipe_edit', {productId: product.id, id: recipe.id}) }}">Upravit</a>
-                                {{ grid.row_actions('recipe', {id: recipe.id, active: recipe.active}) }}
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_recipe_edit', {productId: product.id, id: recipe.id})) }}
+                                    {{ grid.row_actions('recipe', {id: recipe.id, active: recipe.active}) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3" class="text-muted">Žádné recepty.</td></tr>
+                        {{ grid.empty_row(3, 'Žádné recepty.', 'K tomuto produktu zatím nejsou přidány žádné recepty.') }}
                     {% endfor %}
                 </tbody>
             </table>

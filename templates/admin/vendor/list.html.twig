@@ -4,15 +4,20 @@
 {% block title %}Prodejci{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Prodejci</h1>
-        {{ grid.activate_all('vendor', inactive_count) }}
-        <a class="btn btn-primary btn-sm" href="{{ path('admin_vendor_create') }}">Přidat prodejce</a>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Prodejci</h1>
+            <p class="admin-page-subtitle">Prodejci produktů České Krůty zobrazení na webu.</p>
+        </div>
+        <div class="admin-page-actions">
+            {{ grid.activate_all('vendor', inactive_count) }}
+            {{ grid.add_link(path('admin_vendor_create'), 'Přidat prodejce') }}
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Název prodejce</th>
@@ -22,16 +27,18 @@
                 </thead>
                 <tbody>
                     {% for vendor in vendors %}
-                        <tr id="item-{{ vendor.id }}" class="{{ vendor.active ? '' : 'table-secondary text-muted' }}">
-                            <td>{{ vendor.name }}</td>
-                            <td>{{ vendor.city }}</td>
-                            <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-primary" href="{{ path('admin_vendor_edit', {id: vendor.id}) }}">Upravit</a>
-                                {{ grid.row_actions('vendor', {id: vendor.id, active: vendor.active}, {first: loop.first, last: loop.last}) }}
+                        <tr id="item-{{ vendor.id }}"{% if not vendor.active %} class="admin-row-inactive"{% endif %}>
+                            <td class="admin-cell-primary">{{ vendor.name }}</td>
+                            <td data-label="Město">{{ vendor.city }}</td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_vendor_edit', {id: vendor.id})) }}
+                                    {{ grid.row_actions('vendor', {id: vendor.id, active: vendor.active}, {first: loop.first, last: loop.last}) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3" class="text-muted">Žádní prodejci.</td></tr>
+                        {{ grid.empty_row(3, 'Žádní prodejci.') }}
                     {% endfor %}
                 </tbody>
             </table>

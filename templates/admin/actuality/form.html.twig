@@ -1,22 +1,31 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
 
 {% set heading = actuality ? 'Upravit aktualitu' : 'Přidat aktualitu' %}
 
 {% block title %}{{ heading }}{% endblock %}
 
 {% block content %}
-    <h1 class="h3 mb-4">{{ heading }}{% if actuality and actuality.name %} <small class="text-muted">{{ actuality.name }}</small>{% endif %}</h1>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_actualities') }}">{{ icons.icon('arrow_left') }}Aktuality</a>
+            <h1 class="admin-page-title">{{ heading }}{% if actuality and actuality.name %} <small class="text-muted">{{ actuality.name }}</small>{% endif %}</h1>
+        </div>
+    </div>
 
-    <div class="card">
+    <div class="card admin-form-card">
         <div class="card-body">
             {{ form_start(form) }}
+                {% if not actuality %}
+                    <div class="alert alert-info d-flex align-items-start gap-2 py-2">
+                        {{ icons.icon('info', 'mt-1') }}
+                        <span>Po uložení bude aktualita rozeslána e-mailem všem odběratelům novinek.</span>
+                    </div>
+                {% endif %}
                 <div class="row">
-                    <div class="col-md-3">{{ form_row(form.date) }}</div>
+                    <div class="col-sm-5 col-md-3">{{ form_row(form.date) }}</div>
                     <div class="col-md-9">{{ form_row(form.name) }}</div>
                 </div>
-                {% if not actuality %}
-                    <p class="form-text mt-0">Po uložení bude aktualita rozeslána e-mailem všem odběratelům novinek.</p>
-                {% endif %}
                 {{ form_row(form.text) }}
                 {{ form_row(form.text_full) }}
 

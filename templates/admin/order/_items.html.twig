@@ -1,7 +1,10 @@
 {# items: list<AdminOrderDetailItem>, weight_hint: "{weight_per_unit} kg/ks" for ks products without turkey weights #}
-<div class="card mb-3">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+<section class="card mb-3">
+    <div class="admin-card-header">
+        <h2 class="admin-card-title">Položky</h2>
+    </div>
+    <div class="admin-table-wrap admin-table-stack">
+        <table class="table align-middle admin-table">
             <thead>
                 <tr>
                     <th>Položka</th>
@@ -15,19 +18,19 @@
                 {% for row in items %}
                     {% set item = row.item %}
                     <tr>
-                        <td>{{ item.productName }}</td>
-                        <td class="text-nowrap">{{ item.pricePerUnit }} Kč / {{ item.weightFrom is not null ? 'kg' : item.productUnit }}</td>
-                        <td class="text-nowrap">
+                        <td class="admin-cell-primary">{{ item.productName }}</td>
+                        <td class="text-nowrap" data-label="Cena j.">{{ item.pricePerUnit }} Kč / {{ item.weightFrom is not null ? 'kg' : item.productUnit }}</td>
+                        <td class="text-nowrap" data-label="Počet">
                             {{ item.amount }} {{ item.productUnit }}
                             {% if (weight_hint ?? false) and item.weightFrom is null and item.productUnit == 'ks' %}
                                 <br><small class="text-muted">{{ item.productWeightPerUnit }} kg/ks</small>
                             {% endif %}
                         </td>
-                        <td class="text-nowrap">{{ item.weightFrom is not null ? item.weightFrom ~ ' - ' ~ item.weightTo ~ ' kg' : '–' }}</td>
-                        <td class="text-end text-nowrap">{{ row.priceTotal|number_format(0, '', '.') }} Kč</td>
+                        <td class="text-nowrap" data-label="Váha">{{ item.weightFrom is not null ? item.weightFrom ~ ' - ' ~ item.weightTo ~ ' kg' : '–' }}</td>
+                        <td class="text-end text-nowrap fw-semibold" data-label="Cena celkem">{{ row.priceTotal|number_format(0, '', '.') }} Kč</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
+</section>

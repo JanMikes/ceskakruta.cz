@@ -4,14 +4,16 @@
 {% block title %}Emaily{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-        <h1 class="h3 mb-0 me-auto">Emaily</h1>
-        <span class="text-muted small">Celkem {{ total }}</span>
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Emaily</h1>
+            <p class="admin-page-subtitle">Odběratelé novinek, nejnovější nahoře. <span class="admin-count">Celkem {{ total }}</span></p>
+        </div>
     </div>
 
     <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
                         <th>Email</th>
@@ -22,14 +24,16 @@
                 <tbody>
                     {% for email in emails %}
                         <tr id="item-{{ email.id }}">
-                            <td>{{ email.email }}</td>
-                            <td class="text-nowrap">{{ email.insertedAt|date('d.m.Y H:i:s', false) }}</td>
-                            <td class="text-end text-nowrap">
-                                {{ grid.row_actions('newsletter', {id: email.id}) }}
+                            <td class="admin-cell-primary admin-cell-email">{{ email.email }}</td>
+                            <td class="text-nowrap admin-cell-muted" data-label="Přidáno">{{ email.insertedAt|date('d.m.Y H:i:s', false) }}</td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.row_actions('newsletter', {id: email.id}) }}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="3" class="text-muted">Prozatím nebyly přidány žádné záznamy.</td></tr>
+                        {{ grid.empty_row(3, 'Prozatím nebyly přidány žádné záznamy.') }}
                     {% endfor %}
                 </tbody>
             </table>
