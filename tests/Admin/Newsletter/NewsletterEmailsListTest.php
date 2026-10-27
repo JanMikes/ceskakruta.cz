@@ -38,6 +38,43 @@ final class NewsletterEmailsListTest extends AdminWebTestCase
         self::assertCount(0, $crawler->filter('form[action="/admin/record/newsletter/activate-all"]'));
     }
 
+    public function testPaginatesFiftyPerPage(): void
+    {
+        // 55 extra subscribers sorted after the fixtures → 60 rows = 2 pages
+        for ($i = 1; $i <= 55; $i++) {
+            $this->insert('newsletter', [
+                'email' => sprintf('zz-paging-%02d@example.test', $i),
+                'ins_dt' => '2024-01-01 00:00:00',
+                'active_flag' => 1,
+                'del_flag' => 0,
+            ]);
+        }
+
+        $this->loginAsAdmin();
+
+        $crawler = $this->client->request('GET', '/admin/emaily');
+        self::assertResponseIsSuccessful();
+        self::assertCount(50, $this->listedIds($crawler));
+        self::assertStringContainsString('Celkem 60', $crawler->filter('body')->text());
+        $nextPage = $crawler->filter('nav[aria-label="Stránkování"] a[href="/admin/emaily?page=2"]');
+        self::assertContains('2', $nextPage->each(static fn ($link): string => trim($link->text())));
+
+        $crawler = $this->client->request('GET', '/admin/emaily?page=2');
+        self::assertResponseIsSuccessful();
+        self::assertCount(10, $this->listedIds($crawler));
+        self::assertStringContainsString('zz-paging-55@example.test', $crawler->filter('body')->text());
+
+        // Deleting returns to the same page
+        $id = $this->listedIds($crawler)[0];
+        $this->client->submit($this->gridActionForm($crawler, 'newsletter', $id, 'delete'));
+        $this->assertRedirectsTo('/admin/emaily?page=2', $id);
+
+        // Out of range clamps to the last page
+        $crawler = $this->client->request('GET', '/admin/emaily?page=99');
+        self::assertResponseIsSuccessful();
+        self::assertCount(9, $this->listedIds($crawler));
+    }
+
     public function testDelete(): void
     {
         $this->loginAsAdmin();

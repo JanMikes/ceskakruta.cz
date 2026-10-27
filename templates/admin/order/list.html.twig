@@ -126,30 +126,5 @@
         </div>
     </div>
 
-    {% if pages > 1 %}
-        {% set window = range(max(1, page - 3), min(pages, page + 3)) %}
-        <nav class="mt-3" aria-label="Stránkování">
-            <ul class="pagination pagination-sm flex-wrap">
-                <li class="page-item{{ page == 1 ? ' disabled' }}">
-                    <a class="page-link" href="{{ path('admin_orders', query|merge({page: max(1, page - 1)})) }}" aria-label="Předchozí">&laquo;</a>
-                </li>
-                {% if window|first > 1 %}
-                    <li class="page-item"><a class="page-link" href="{{ path('admin_orders', query|merge({page: 1})) }}">1</a></li>
-                    {% if window|first > 2 %}<li class="page-item disabled"><span class="page-link">…</span></li>{% endif %}
-                {% endif %}
-                {% for number in window %}
-                    <li class="page-item{{ number == page ? ' active' }}"{% if number == page %} aria-current="page"{% endif %}>
-                        <a class="page-link" href="{{ path('admin_orders', query|merge({page: number})) }}">{{ number }}</a>
-                    </li>
-                {% endfor %}
-                {% if window|last < pages %}
-                    {% if window|last < pages - 1 %}<li class="page-item disabled"><span class="page-link">…</span></li>{% endif %}
-                    <li class="page-item"><a class="page-link" href="{{ path('admin_orders', query|merge({page: pages})) }}">{{ pages }}</a></li>
-                {% endif %}
-                <li class="page-item{{ page == pages ? ' disabled' }}">
-                    <a class="page-link" href="{{ path('admin_orders', query|merge({page: min(pages, page + 1)})) }}" aria-label="Další">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
-    {% endif %}
+    {% include 'admin/_pagination.html.twig' with {route: 'admin_orders', query: query, page: page, pages: pages} only %}
 {% endblock %}

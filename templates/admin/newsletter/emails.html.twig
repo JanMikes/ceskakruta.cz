@@ -6,7 +6,7 @@
 {% block content %}
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <h1 class="h3 mb-0 me-auto">Emaily</h1>
-        <span class="text-muted small">Celkem {{ emails|length }}</span>
+        <span class="text-muted small">Celkem {{ total }}</span>
     </div>
 
     <div class="card">
@@ -35,4 +35,6 @@
             </table>
         </div>
     </div>
+
+    {% include 'admin/_pagination.html.twig' with {route: 'admin_newsletter_emails', page: page, pages: pages} only %}
 {% endblock %}

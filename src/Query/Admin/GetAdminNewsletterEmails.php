@@ -14,16 +14,31 @@ readonly final class GetAdminNewsletterEmails
     ) {
     }
 
+    public function count(): int
+    {
+        $count = $this->connection->fetchOne('SELECT COUNT(*) FROM newsletter WHERE del_flag = 0');
+        assert(is_numeric($count));
+
+        return (int) $count;
+    }
+
     /**
      * Inactive (unsubscribed) included like in the old list.
      *
      * @return list<AdminNewsletterEmail>
      */
-    public function all(): array
+    public function page(int $offset, int $limit): array
     {
         /** @var list<array{id: int, email: null|string, ins_dt: string}> $rows */
-        $rows = $this->connection
-            ->executeQuery('SELECT id, email, ins_dt FROM newsletter WHERE del_flag = 0 ORDER BY email ASC')
+        $rows = $this->connection->createQueryBuilder()
+            ->select('id', 'email', 'ins_dt')
+            ->from('newsletter')
+            ->where('del_flag = 0')
+            ->orderBy('email', 'ASC')
+            ->addOrderBy('id', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->executeQuery()
             ->fetchAllAssociative();
 
         return array_map(
