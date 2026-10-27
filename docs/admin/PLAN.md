@@ -743,9 +743,9 @@ Decided:
   - Tiptap 3.31.4, setup shared with the dry-run `tools/wysiwyg-normalization-report.mjs` (h1–h4 supported); local run:
     298 rows, 0 flagged. Untouched / raw-mode fields are saved byte-for-byte.
   - Uploads: container parameter `uploads_dir` = `public/upload` (no env var), excluded from git + FTP deploy.
-  - Newsletter: `phpmail://` passes `-f <sender>` (old Nette did not → bounce address changes; verify with the real test send).
+  - Newsletter: `phpmail://` passes `-f <sender>` (old Nette did not → bounce address changes; verify with the real test send). User confirmed info@ceskakruta.cz as the sender (2026-10-27).
   - Boxxi send failure rolls back the form values too; form re-rendered with the entered values + `.alert-danger`.
-  - Pohoda: only HTTP / transport errors are failures (like the old app); `state="error"` replies are not checked.
+  - Pohoda: only HTTP / transport errors are failures (like the old app); `state="error"` replies are not checked. User confirmed this is fine (2026-10-27).
   - Enabled place day requires "days before"; changing your own e-mail logs you out (same as old app).
   - Empty item weight shown as "–" (en dash) in order detail / Boxxi.
 
