@@ -14,7 +14,11 @@
     {% if record.boxxiSyncedAt is not null %}
         <div class="alert alert-info d-flex align-items-start gap-2">
             {{ icons.icon('info', 'mt-1') }}
-            <span>Objednávka už byla propsána do Boxxi {{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}, uloží se jen hodnoty formuláře.</span>
+            {% if record.boxxiShipmentNumber is not null %}
+                <span>Objednávka byla propsána do Boxxi {{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }} jako zásilka <strong>{{ record.boxxiShipmentNumber }}</strong>, uložením se změny propíšou i do Boxxi.</span>
+            {% else %}
+                <span>Objednávka už byla propsána do Boxxi {{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}, uloží se jen hodnoty formuláře. Číslo zásilky není uloženo, změny v Boxxi proveďte ručně.</span>
+            {% endif %}
         </div>
     {% endif %}
 
@@ -28,10 +32,17 @@
                     <div class="col-6 col-lg-3">{{ form_row(form.date) }}</div>
                 </div>
                 <div class="admin-form-actions">
-                    <button class="btn btn-primary btn-with-icon" type="submit">{{ icons.icon('box') }}<span>Uložit a propsat</span></button>
+                    <button class="btn btn-primary btn-with-icon" type="submit">{{ icons.icon('box') }}<span>{{ record.boxxiShipmentNumber is not null ? 'Uložit a aktualizovat v Boxxi' : 'Uložit a propsat' }}</span></button>
                     <a class="btn btn-link admin-form-back" href="{{ path('admin_orders') }}">Zpět na seznam</a>
                 </div>
             {{ form_end(form) }}
+            {% if record.boxxiShipmentNumber is not null %}
+                <form method="post" action="{{ path('admin_order_boxxi_cancel', {id: record.order.id}) }}" class="admin-action-form mt-3"
+                      data-controller="confirm" data-confirm-message-value="Opravdu zrušit zásilku {{ record.boxxiShipmentNumber }} v Boxxi?" data-action="submit->confirm#confirm">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+                    <button class="btn btn-sm btn-light admin-btn-danger btn-with-icon" type="submit">{{ icons.icon('trash') }}<span>Zrušit zásilku v Boxxi</span></button>
+                </form>
+            {% endif %}
         </div>
     </div>
 

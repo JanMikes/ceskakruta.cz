@@ -197,6 +197,7 @@ readonly final class GetAdminOrders
          *     pohoda_sync_dt: null|string,
          *     boxxi_sync_dt: null|string,
          *     cool_balik_price: null|float|string,
+         *     boxxi_shipment_number: null|string,
          * } $row
          */
 
@@ -229,6 +230,7 @@ readonly final class GetAdminOrders
             pohodaSyncedAt: $row['pohoda_sync_dt'] !== null ? new \DateTimeImmutable($row['pohoda_sync_dt']) : null,
             boxxiSyncedAt: $row['boxxi_sync_dt'] !== null ? new \DateTimeImmutable($row['boxxi_sync_dt']) : null,
             coolBalikPrice: $row['cool_balik_price'] !== null ? (float) $row['cool_balik_price'] : null,
+            boxxiShipmentNumber: $row['boxxi_shipment_number'],
         );
     }
 }

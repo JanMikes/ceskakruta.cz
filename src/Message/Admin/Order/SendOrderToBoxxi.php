@@ -8,8 +8,8 @@ use CeskaKruta\Web\FormData\Admin\BoxxiFormData;
 use CeskaKruta\Web\Value\Admin\BoxxiShipmentData;
 
 /**
- * Saves the Boxxi form values on the order and creates the shipment unless the order was already sent (`boxxi_sync_dt`).
- * The handler returns true when the shipment was sent.
+ * Saves the Boxxi form values on the order and creates the shipment, or updates it when the order was already sent
+ * (`boxxi_sync_dt`) and its `boxxi_shipment_number` is known. The handler returns a `BoxxiSyncResult`.
  */
 readonly final class SendOrderToBoxxi
 {

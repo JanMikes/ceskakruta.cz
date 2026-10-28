@@ -105,6 +105,7 @@ final class AdminPages
             '/admin/uzivatele/2/velkoobchod',
             '/admin/objednavky/1/pohoda',
             '/admin/objednavky/pohoda',
+            '/admin/objednavky/1/boxxi/zrusit',
         ];
     }
 

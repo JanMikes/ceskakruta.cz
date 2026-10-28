@@ -27,10 +27,17 @@ docker compose exec web vendor/bin/phpstan --memory-limit=-1 analyse
 docker compose exec web bin/console cache:clear
 docker compose exec web bin/console cache:warmup --env=dev
 
-# Database operations
+# Database operations (local only, see "Database Schema Changes")
 docker compose exec web bin/console doctrine:migrations:migrate
 docker compose exec web bin/console doctrine:schema:update --force
 ```
+
+### Database Schema Changes
+There is no CLI access to production, so migrations cannot be run there. A schema change is done like this:
+1. Write the plain SQL (`ALTER TABLE …`) and hand it to the owner, who runs it **manually on production before the deploy**
+   (the code must not go live before the column exists – e.g. `GetAdminOrders` selects `o.*`).
+2. Apply the same change to `tests/database/schema.sql` (the production schema the test DB is built from).
+3. Keep changes additive and backwards compatible (new nullable columns/tables) – the DB is shared with the old Nette app.
 
 ### Frontend Asset Commands
 Frontend assets are automatically built by the `js-watch` service in docker-compose.
@@ -75,7 +82,7 @@ docker compose exec web npm run build
 # PHPUnit; tests/bootstrap.php recreates the `ceskakruta_test` database from tests/database/schema.sql + fixtures.sql
 docker compose exec web composer run-script test
 ```
-- `tests/database/schema.sql` is the production schema (DB is shared with the old Nette app — no schema changes)
+- `tests/database/schema.sql` is the production schema (DB is shared with the old Nette app — only additive changes, see "Database Schema Changes")
 - Extend `tests/Support/IntegrationTestCase` / `tests/Support/WebTestCase`; each test runs in a rolled-back transaction (DAMA)
 
 ### Static Analysis

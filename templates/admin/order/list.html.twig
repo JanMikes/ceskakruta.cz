@@ -121,6 +121,7 @@
                                     {% if record.boxxiSyncedAt is not null %}
                                         <span class="admin-sync is-done" title="Propsáno do Boxxi">{{ icons.icon('check') }}{{ record.boxxiSyncedAt|date('d.m.Y H:i:s', false) }}</span><br>
                                         {% if record.coolBalikPrice is not null %}<span class="admin-cell-muted">{{ record.coolBalikPrice }} Kč</span>{% endif %}
+                                        {% if record.boxxiShipmentNumber is not null %}<br><a class="admin-cell-muted" href="{{ path('admin_order_boxxi', {id: order.id}) }}" title="Upravit nebo zrušit zásilku v Boxxi">{{ record.boxxiShipmentNumber }}</a>{% endif %}
                                     {% else %}
                                         <span class="admin-pill is-danger">Nepropsáno</span><br>
                                         <a class="btn btn-sm btn-outline-primary btn-with-icon mt-1" href="{{ path('admin_order_boxxi', {id: order.id}) }}">{{ icons.icon('box') }}<span>Propsat</span></a>

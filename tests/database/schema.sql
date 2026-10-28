@@ -273,6 +273,7 @@ CREATE TABLE `order` (
   `cool_balik_box_count` int(10) unsigned DEFAULT NULL,
   `boxxi_sync_dt` datetime DEFAULT NULL,
   `boxxi_weight` float unsigned DEFAULT NULL,
+  `boxxi_shipment_number` varchar(64) DEFAULT NULL,
   `source` text DEFAULT NULL,
   `coupon_id` int(11) unsigned DEFAULT NULL,
   `coupon_code` varchar(100) DEFAULT NULL,

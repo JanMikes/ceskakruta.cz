@@ -18,6 +18,8 @@ readonly final class AdminOrderRecord
         public null|\DateTimeImmutable $pohodaSyncedAt,
         public null|\DateTimeImmutable $boxxiSyncedAt,
         public null|float $coolBalikPrice,
+        /** `order.boxxi_shipment_number` from the create response, NULL for orders sent before it was stored */
+        public null|string $boxxiShipmentNumber,
     ) {
     }
 }

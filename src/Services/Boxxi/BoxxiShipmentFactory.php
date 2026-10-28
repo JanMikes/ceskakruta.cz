@@ -60,4 +60,20 @@ final class BoxxiShipmentFactory
             ],
         ];
     }
+
+    /**
+     * `POST /v1/shipments/{shipmentNumber}/update` payload: only the values editable in the Boxxi form,
+     * same formats as the create payload (COD as int, DeliverAt = delivery date 12:00:00).
+     *
+     * @return array<string, mixed> JSON-encodable payload
+     */
+    public function updatePayload(BoxxiShipmentData $shipment): array
+    {
+        return [
+            'PackageCount' => $shipment->boxCount,
+            'Weight' => $shipment->weight,
+            'Cod' => (int) $shipment->price,
+            'DeliverAt' => $shipment->deliveryDate->setTime(12, 0)->format('Y-m-d H:i:s'),
+        ];
+    }
 }

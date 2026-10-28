@@ -11,6 +11,7 @@ use CeskaKruta\Web\FormType\Admin\BoxxiFormType;
 use CeskaKruta\Web\Message\Admin\Order\SendOrderToBoxxi;
 use CeskaKruta\Web\Query\Admin\GetAdminOrders;
 use CeskaKruta\Web\Services\Boxxi\ShipmentWeightCalculator;
+use CeskaKruta\Web\Value\Admin\BoxxiSyncResult;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +52,12 @@ final class OrderBoxxiController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $sent = $this->handle(SendOrderToBoxxi::fromFormData($id, $admin->id, $formData));
+                $result = $this->handle(SendOrderToBoxxi::fromFormData($id, $admin->id, $formData));
 
-                if ($sent === true) {
+                if ($result === BoxxiSyncResult::Created) {
                     $this->addFlash('success', 'Objednávka propsána do Boxxi');
+                } elseif ($result === BoxxiSyncResult::Updated) {
+                    $this->addFlash('success', 'Zásilka v Boxxi aktualizována');
                 }
 
                 return $this->redirect($this->generateUrl('admin_orders') . '#item-' . $id);
@@ -63,7 +66,9 @@ final class OrderBoxxiController extends AbstractController
                     throw $handlerFailedException;
                 }
 
-                $this->addFlash('danger', 'Objednávku se nepodařilo propsat do Boxxi, nic nebylo uloženo. Zkuste to prosím znovu.');
+                $this->addFlash('danger', $record->boxxiShipmentNumber !== null
+                    ? 'Zásilku se nepodařilo v Boxxi aktualizovat (už může být na cestě), nic nebylo uloženo.'
+                    : 'Objednávku se nepodařilo propsat do Boxxi, nic nebylo uloženo. Zkuste to prosím znovu.');
             }
         }
 
