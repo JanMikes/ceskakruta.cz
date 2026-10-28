@@ -39,6 +39,11 @@ There is no CLI access to production, so migrations cannot be run there. A schem
 2. Apply the same change to `tests/database/schema.sql` (the production schema the test DB is built from).
 3. Keep changes additive and backwards compatible (new nullable columns/tables) – the DB is shared with the old Nette app.
 
+Gotcha: old production tables can still be `ROW_FORMAT=COMPACT` (created on old MariaDB, local/test tables are `DYNAMIC`),
+so `ADD COLUMN` fails there with error 1118 "Row size too large" whatever the column type. Check with
+`SELECT TABLE_NAME, ROW_FORMAT FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE();` and convert in the same
+statement: `ALTER TABLE … ROW_FORMAT=DYNAMIC, ADD COLUMN …;` (`order` was converted 2026-10-28).
+
 ### Frontend Asset Commands
 Frontend assets are automatically built by the `js-watch` service in docker-compose.
 ```bash
