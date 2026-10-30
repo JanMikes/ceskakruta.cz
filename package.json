@@ -1,8 +1,10 @@
 {
     "devDependencies": {
+        "@symfony/ux-chartjs": "file:vendor/symfony/ux-chartjs/assets",
         "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
         "@symfony/webpack-encore": "^4.2.0",
         "@tiptap/html": "3.31.4",
+        "chart.js": "^3.4.1 || ^4.0",
         "core-js": "^3.26.1",
         "file-loader": "^6.2.0",
         "regenerator-runtime": "^0.14.0",

@@ -7,14 +7,18 @@ namespace CeskaKruta\Web\Value\Admin;
 use Symfony\Component\HttpFoundation\InputBag;
 
 /**
- * Order list filter = plain GET params `date_from`, `date_to` (YYYY-MM-DD, on `order.date`) and `customer_name` (LIKE).
+ * Order list filter = plain GET params `date_from`, `date_to` (YYYY-MM-DD, on `order.date`), `customer_name` (LIKE)
+ * and `missing` (`pohoda` / `boxxi` = not yet sent there, Boxxi only for CoolBalík places; linked from the dashboard).
  */
 readonly final class AdminOrderFilter
 {
+    public const MISSING = ['pohoda', 'boxxi'];
+
     public function __construct(
         public null|\DateTimeImmutable $dateFrom = null,
         public null|\DateTimeImmutable $dateTo = null,
         public null|string $customerName = null,
+        public null|string $missing = null,
     ) {
     }
 
@@ -24,11 +28,13 @@ readonly final class AdminOrderFilter
     public static function fromQuery(InputBag $query): self
     {
         $customerName = trim((string) $query->get('customer_name', ''));
+        $missing = (string) $query->get('missing', '');
 
         return new self(
             self::date((string) $query->get('date_from', '')),
             self::date((string) $query->get('date_to', '')),
             $customerName !== '' ? $customerName : null,
+            in_array($missing, self::MISSING, true) ? $missing : null,
         );
     }
 
@@ -43,6 +49,7 @@ readonly final class AdminOrderFilter
             'date_from' => $this->dateFrom?->format('Y-m-d'),
             'date_to' => $this->dateTo?->format('Y-m-d'),
             'customer_name' => $this->customerName,
+            'missing' => $this->missing,
         ], static fn (null|string $value): bool => $value !== null);
     }
 

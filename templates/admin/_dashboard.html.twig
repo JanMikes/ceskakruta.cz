@@ -1,0 +1,65 @@
+{#
+    Dashboard building blocks: {% import 'admin/_dashboard.html.twig' as dashboard %}
+#}
+
+{% macro weekday(date) -%}
+    {{- ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'][date|date('N', false) - 1] -}}
+{%- endmacro %}
+
+{% macro money(value) -%}
+    {{- value|number_format(0, '', '.') }} Kč
+{%- endmacro %}
+
+{# Change against the comparison period: "+12 %" / "−5 %", direction as icon + sign (never colour alone) #}
+{% macro delta(current, previous) %}
+    {% import 'admin/_icons.html.twig' as icons %}
+    {% if previous > 0 %}
+        {% set change = ((current - previous) / previous * 100)|round %}
+        <span class="admin-dash-delta {{ change > 0 ? 'is-up' : (change < 0 ? 'is-down' : 'is-flat') }}" title="Předtím: {{ previous|number_format(0, '', '.') }}">
+            {%- if change != 0 %}{{ icons.icon(change > 0 ? 'arrow_up' : 'arrow_down') }}{% endif -%}
+            {{ change > 0 ? '+' : (change < 0 ? '−' : '') }}{{ change|abs }} %
+        </span>
+    {% else %}
+        <span class="admin-dash-delta is-flat" title="Ve srovnávacím období nic">–</span>
+    {% endif %}
+{% endmacro %}
+
+{% macro kpi(title, comparison, current, previous) %}
+    {% import _self as dashboard %}
+    <div class="card admin-dash-kpi">
+        <div class="card-body">
+            <div class="admin-dash-kpi-title">{{ title }}</div>
+            <div class="admin-dash-kpi-main">
+                <span class="admin-dash-kpi-value">{{ dashboard.money(current.revenue) }}</span>
+                {{ dashboard.delta(current.revenue, previous.revenue) }}
+            </div>
+            <dl class="admin-dash-kpi-list">
+                <div><dt>Objednávek</dt><dd>{{ current.ordersCount }} {{ dashboard.delta(current.ordersCount, previous.ordersCount) }}</dd></div>
+                <div><dt>Průměrná objednávka</dt><dd>{{ dashboard.money(current.averageOrder) }} {{ dashboard.delta(current.averageOrder, previous.averageOrder) }}</dd></div>
+                <div><dt>Nové registrace</dt><dd>{{ current.registrations }} {{ dashboard.delta(current.registrations, previous.registrations) }}</dd></div>
+            </dl>
+            <div class="admin-dash-kpi-note">{{ comparison }}</div>
+        </div>
+    </div>
+{% endmacro %}
+
+{# Orders not sent to an integration: overdue (expedition today or earlier) is the problem, upcoming is info #}
+{% macro attention(title, icon, overdue, upcoming, url) %}
+    {% import 'admin/_icons.html.twig' as icons %}
+    <a class="admin-dash-check{{ overdue > 0 ? ' is-danger' : (upcoming > 0 ? ' is-info' : ' is-ok') }}" href="{{ url }}">
+        <span class="admin-tile-icon">{{ icons.icon(icon) }}</span>
+        <span>
+            <span class="admin-dash-check-title">{{ title }}</span>
+            {% if overdue + upcoming == 0 %}
+                <span class="admin-dash-check-value">{{ icons.icon('check') }} vše propsáno</span>
+            {% else %}
+                <span class="admin-dash-check-value">
+                    {% if overdue > 0 %}<strong>{{ overdue }}</strong> s expedicí dnes či dříve{% endif %}
+                    {% if overdue > 0 and upcoming > 0 %} · {% endif %}
+                    {% if upcoming > 0 %}{{ upcoming }} nadcházejících{% endif %}
+                </span>
+            {% endif %}
+            <span class="admin-dash-check-hint">nepropsané objednávky</span>
+        </span>
+    </a>
+{% endmacro %}

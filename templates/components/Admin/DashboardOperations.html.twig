@@ -1,0 +1,159 @@
+{% import 'admin/_icons.html.twig' as icons %}
+{% import 'admin/_dashboard.html.twig' as dashboard %}
+
+<section {{ attributes.defaults({class: 'admin-dash-ops'}) }} data-loading="addClass(is-loading)">
+    {% set today = this.today %}
+    {% set selected = this.selectedDay %}
+    {% set prep_items = computed.prepItems %}
+    {% set day_orders = computed.dayOrders %}
+    {% set day_label = this.basis.value == 'expedition' ? 'expedice' : 'vyzvednutí / doručení' %}
+
+    <div class="admin-dash-ops-head">
+        <h2 class="admin-tiles-heading mb-0">Provoz</h2>
+        <div class="btn-group btn-group-sm admin-dash-toggle" role="group" aria-label="Den objednávky podle">
+            {% for basis in this.bases %}
+                <input type="radio" class="btn-check" name="dashboard-basis" id="dashboard-basis-{{ basis.value }}" value="{{ basis.value }}" data-model="basis" autocomplete="off"{{ this.basis == basis ? ' checked' }}>
+                <label class="btn btn-outline-secondary" for="dashboard-basis-{{ basis.value }}">Podle: {{ basis.label|lower }}</label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="admin-dash-days">
+        {% for item in [{title: 'Dnes', stats: this.dayStats(today)}, {title: this.nextDayTitle, stats: this.dayStats(this.nextDay)}] %}
+            {% set stats = item.stats %}
+            <button type="button" class="card admin-dash-day{{ stats.date == selected ? ' is-selected' }}"
+                data-action="live#action" data-live-action-param="selectDay" data-live-day-param="{{ stats.date|date('Y-m-d', false) }}"
+                aria-pressed="{{ stats.date == selected ? 'true' : 'false' }}">
+                <span class="card-body">
+                    <span class="admin-dash-day-title">{{ item.title }} <span class="admin-dash-day-date">{{ dashboard.weekday(stats.date) }} {{ stats.date|date('j. n.', false) }} · {{ day_label }}</span></span>
+                    <span class="admin-dash-day-main">
+                        <span class="admin-dash-day-count">{{ stats.ordersCount }}</span>
+                        <span class="admin-dash-day-unit">{{ stats.ordersCount == 1 ? 'objednávka' : (stats.ordersCount in 2..4 ? 'objednávky' : 'objednávek') }}</span>
+                        <span class="admin-dash-day-revenue">{{ dashboard.money(stats.revenue) }}</span>
+                    </span>
+                    {% if stats.ordersCount > 0 %}
+                        <span class="admin-dash-channels">
+                            {% for channel in stats.channels %}
+                                <span class="admin-dash-channel"><span class="admin-dash-swatch" style="background: {{ channel.channel.color }}"></span>{{ channel.channel.label }} <strong>{{ channel.count }}</strong></span>
+                            {% endfor %}
+                        </span>
+                        <span class="admin-dash-day-flags">
+                            {% if stats.withNoteCount > 0 %}<span class="admin-pill is-info">{{ icons.icon('text') }}{{ stats.withNoteCount }}× poznámka</span>{% endif %}
+                            {% if stats.pohodaMissingCount > 0 %}<span class="admin-pill is-danger">{{ icons.icon('alert') }}{{ stats.pohodaMissingCount }}× nepropsáno do Pohody</span>{% endif %}
+                            {% if stats.boxxiMissingCount > 0 %}<span class="admin-pill is-danger">{{ icons.icon('alert') }}{{ stats.boxxiMissingCount }}× nepropsáno do Boxxi</span>{% endif %}
+                        </span>
+                    {% endif %}
+                </span>
+            </button>
+        {% endfor %}
+    </div>
+
+    <div class="admin-dash-strip" role="group" aria-label="Příštích 7 dní">
+        {% for stats in this.strip %}
+            <button type="button" class="admin-dash-strip-day{{ stats.date == selected ? ' is-selected' }}{{ stats.ordersCount == 0 ? ' is-empty' }}"
+                data-action="live#action" data-live-action-param="selectDay" data-live-day-param="{{ stats.date|date('Y-m-d', false) }}"
+                aria-pressed="{{ stats.date == selected ? 'true' : 'false' }}">
+                <span class="admin-dash-strip-date">{{ dashboard.weekday(stats.date) }} {{ stats.date|date('j. n.', false) }}</span>
+                <span class="admin-dash-strip-count">{{ stats.ordersCount }}</span>
+                <span class="admin-dash-strip-revenue">{{ dashboard.money(stats.revenue) }}</span>
+            </button>
+        {% endfor %}
+    </div>
+
+    <div class="admin-dash-ops-grid">
+        <section class="card admin-dash-section">
+            <div class="card-body">
+                {% set month = this.monthStart %}
+                <div class="admin-dash-calendar-head">
+                    <button type="button" class="btn btn-sm btn-light" data-action="live#action" data-live-action-param="showMonth" data-live-month-param="{{ month|date_modify('-1 month')|date('Y-m', false) }}" aria-label="Předchozí měsíc">{{ icons.icon('arrow_left') }}</button>
+                    <h2 class="admin-dash-section-title mb-0">{{ ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'][month|date('n', false) - 1] }} {{ month|date('Y', false) }}</h2>
+                    <button type="button" class="btn btn-sm btn-light admin-dash-next" data-action="live#action" data-live-action-param="showMonth" data-live-month-param="{{ month|date_modify('+1 month')|date('Y-m', false) }}" aria-label="Další měsíc">{{ icons.icon('arrow_right') }}</button>
+                </div>
+                <table class="admin-dash-calendar">
+                    <caption class="visually-hidden">Počet objednávek a tržba po dnech ({{ day_label }})</caption>
+                    <thead>
+                        <tr>{% for name in ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'] %}<th scope="col">{{ name }}</th>{% endfor %}</tr>
+                    </thead>
+                    <tbody>
+                        {% for week in this.calendarWeeks %}
+                            <tr>
+                                {% for stats in week %}
+                                    <td>
+                                        {% if stats %}
+                                            <button type="button" class="admin-dash-cal-day is-heat-{{ this.heatLevel(stats) }}{{ stats.date == selected ? ' is-selected' }}{{ stats.date == today ? ' is-today' }}"
+                                                data-action="live#action" data-live-action-param="selectDay" data-live-day-param="{{ stats.date|date('Y-m-d', false) }}"
+                                                title="{{ stats.date|date('j. n. Y', false) }}: {{ stats.ordersCount }} obj., {{ dashboard.money(stats.revenue) }}"
+                                                aria-pressed="{{ stats.date == selected ? 'true' : 'false' }}">
+                                                <span class="admin-dash-cal-num">{{ stats.date|date('j', false) }}</span>
+                                                {% if stats.ordersCount > 0 %}<span class="admin-dash-cal-count">{{ stats.ordersCount }}</span>{% endif %}
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card admin-dash-section">
+            <div class="card-body">
+                <div class="admin-dash-section-head">
+                    <div>
+                        <h2 class="admin-dash-section-title">Co připravit – {{ dashboard.weekday(selected) }} {{ selected|date('j. n. Y', false) }}</h2>
+                        <p class="admin-dash-section-text">Součet položek všech objednávek dne ({{ day_label }}).</p>
+                    </div>
+                </div>
+
+                {% if prep_items is empty %}
+                    <p class="admin-dash-empty">Na tento den nejsou žádné objednávky.</p>
+                {% else %}
+                    <div class="admin-table-wrap">
+                        <table class="table table-sm align-middle admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Produkt</th>
+                                    <th class="text-end">Množství</th>
+                                    <th class="text-end">Krájet</th>
+                                    <th class="text-end">Balit</th>
+                                    <th class="text-end">Obj.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in prep_items %}
+                                    <tr>
+                                        <td>{{ item.name }}</td>
+                                        <td class="text-end text-nowrap"><strong>{{ item.amount|number_format(item.amount == item.amount|round ? 0 : 2, ',', ' ') }} {{ item.unit }}</strong></td>
+                                        <td class="text-end text-nowrap">{{ item.slicedAmount > 0 ? item.slicedAmount|number_format(item.slicedAmount == item.slicedAmount|round ? 0 : 2, ',', ' ') ~ ' ' ~ item.unit : '–' }}</td>
+                                        <td class="text-end text-nowrap">{{ item.packedAmount > 0 ? item.packedAmount|number_format(item.packedAmount == item.packedAmount|round ? 0 : 2, ',', ' ') ~ ' ' ~ item.unit : '–' }}</td>
+                                        <td class="text-end">{{ item.ordersCount }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                {% if day_orders is not empty %}
+                    <h3 class="admin-dash-subtitle">Objednávky ({{ day_orders|length }})</h3>
+                    <ul class="admin-dash-orders">
+                        {% for order in day_orders %}
+                            <li>
+                                <span class="admin-dash-swatch" style="background: {{ order.channel.color }}" title="{{ order.channel.label }}"></span>
+                                <a href="{{ path('admin_order_detail', {id: order.id}) }}"><strong>#{{ order.id }}</strong> {{ order.name }}</a>
+                                <span class="admin-cell-muted">{{ order.placeName }}{% if order.expeditionDate != order.customerDate %} · {{ this.basis.value == 'expedition' ? 'zákazník ' ~ order.customerDate|date('j. n.', false) : 'expedice ' ~ order.expeditionDate|date('j. n.', false) }}{% endif %}</span>
+                                <span class="admin-dash-orders-end">
+                                    {% if order.hasNote %}<span title="Má poznámku">{{ icons.icon('text') }}</span>{% endif %}
+                                    {% if not order.pohodaSynced %}<span class="admin-pill is-danger">Pohoda</span>{% endif %}
+                                    {% if order.boxxiSynced is same as(false) %}<span class="admin-pill is-danger">Boxxi</span>{% endif %}
+                                    <strong>{{ dashboard.money(order.priceTotal) }}</strong>
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</section>

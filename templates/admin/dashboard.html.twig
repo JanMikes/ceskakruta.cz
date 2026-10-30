@@ -1,41 +1,25 @@
 {% extends 'admin/base.html.twig' %}
 {% import 'admin/_icons.html.twig' as icons %}
+{% import 'admin/_dashboard.html.twig' as dashboard %}
 
 {% block title %}Přehled{% endblock %}
 
 {% block content %}
     {% set quick_links = [
-        {label: 'Objednávky', url: '/admin/objednavky', icon: 'cart', primary: true},
+        {label: 'Objednávky', url: path('admin_orders'), icon: 'cart', primary: true},
         {label: 'Přidat aktualitu', url: path('admin_actuality_create'), icon: 'plus'},
         {label: 'Přidat výjimku (zavřeno)', url: path('admin_place_closed_day_add'), icon: 'calendar_x'},
         {label: 'Přidat produkt', url: path('admin_product_create'), icon: 'tag'},
+        {label: 'Rozkrmená krůťata', url: '/admin/rozkrmena-krutata', icon: 'trending'},
+        {label: 'Chlazené krůty', url: '/admin/chlazene-kruty', icon: 'snow'},
     ] %}
-    {% set groups = [
-        {heading: 'Web', tiles: [
-            {label: 'Aktuality', url: '/admin/aktuality', icon: 'bell', text: 'Novinky na webu, rozesílané odběratelům.'},
-            {label: 'Rozkrmená krůťata', url: '/admin/rozkrmena-krutata', icon: 'trending', text: 'Tabulka rozkrmených krůťat po týdnech.'},
-            {label: 'Chlazené krůty', url: '/admin/chlazene-kruty', icon: 'snow', text: 'Týdny prodeje a váhy chlazených krůt.'},
-        ]},
-        {heading: 'Produkty', tiles: [
-            {label: 'Maso a výrobky', url: '/admin/produkty', icon: 'tag', text: 'Produkty, ceny, balení a recepty.'},
-            {label: 'Doplňkový sortiment', url: '/admin/sortiment', icon: 'grid', text: 'Položky sortimentu podle kategorií.'},
-        ]},
-        {heading: 'Obsah a kontakty', tiles: [
-            {label: 'Texty', url: '/admin/texty', icon: 'text', text: 'Editovatelné texty sekcí webu.'},
-            {label: 'Prodejci', url: '/admin/prodejci', icon: 'briefcase', text: 'Prodejci a jejich kontakty.'},
-            {label: 'Emaily', url: '/admin/emaily', icon: 'mail', text: 'Odběratelé novinek.'},
-        ]},
-        {heading: 'Prodej', tiles: [
-            {label: 'Prodejny', url: '/admin/prodejny', icon: 'pin', text: 'Prodejny, rozvozy, dny prodeje a výjimky.'},
-            {label: 'Uživatelé', url: '/admin/uzivatele', icon: 'users', text: 'Zákaznické účty, velkoobchod a zakázané produkty.'},
-            {label: 'Objednávky', url: '/admin/objednavky', icon: 'cart', text: 'Objednávky, export a propsání do Pohody a Boxxi.'},
-        ]},
-    ] %}
+    {% set missing_expected = expected_orders|filter(expected => expected.status.value == 'missing') %}
+    {% set sync_since = sync.since|date('Y-m-d', false) %}
 
     <div class="admin-page-header">
         <div class="admin-page-heading">
             <h1 class="admin-page-title">Přehled</h1>
-            <p class="admin-page-subtitle">Vítejte v administraci{% if app.user.name ?? false %}, {{ app.user.name }}{% endif %}. Vyberte sekci, se kterou chcete pracovat.</p>
+            <p class="admin-page-subtitle">Vítejte v administraci{% if app.user.name ?? false %}, {{ app.user.name }}{% endif %}.</p>
         </div>
     </div>
 
@@ -49,18 +33,131 @@
         {% endfor %}
     </div>
 
-    {% for group in groups %}
-        <h2 class="admin-tiles-heading">{{ group.heading }}</h2>
-        <div class="admin-tiles">
-            {% for tile in group.tiles %}
-                <a class="admin-tile" href="{{ tile.url }}">
-                    <span class="admin-tile-icon">{{ icons.icon(tile.icon) }}</span>
-                    <span>
-                        <span class="admin-tile-title">{{ tile.label }}</span>
-                        <span class="admin-tile-text">{{ tile.text }}</span>
-                    </span>
-                </a>
-            {% endfor %}
+    <h2 class="admin-tiles-heading">Ke kontrole</h2>
+    <div class="admin-dash-attention">
+        {{ dashboard.attention('Pohoda', 'send', sync.pohodaOverdue, sync.pohodaUpcoming, path('admin_orders', {missing: 'pohoda', date_from: sync_since})) }}
+        {{ dashboard.attention('Boxxi (CoolBalík)', 'box', sync.boxxiOverdue, sync.boxxiUpcoming, path('admin_orders', {missing: 'boxxi', date_from: sync_since})) }}
+        <a class="admin-dash-check{{ missing_expected|length > 0 ? ' is-danger' : ' is-ok' }}" href="#pravidelne-objednavky">
+            <span class="admin-tile-icon">{{ icons.icon('users') }}</span>
+            <span>
+                <span class="admin-dash-check-title">Pravidelné objednávky</span>
+                {% if missing_expected|length > 0 %}
+                    <span class="admin-dash-check-value"><strong>{{ missing_expected|length }}</strong> chybí</span>
+                {% else %}
+                    <span class="admin-dash-check-value">{{ icons.icon('check') }} vše v pořádku</span>
+                {% endif %}
+                <span class="admin-dash-check-hint">{{ expected_orders|length }} očekávaných na 7 dní</span>
+            </span>
+        </a>
+    </div>
+
+    <h2 class="admin-tiles-heading">Přijaté objednávky</h2>
+    <div class="admin-dash-kpis">
+        {{ dashboard.kpi('Dnes', 'oproti stejnému dni minulý týden', kpis.today, kpis.today_previous) }}
+        {{ dashboard.kpi('Tento měsíc', 'oproti stejnému období loni', kpis.month, kpis.month_previous) }}
+        {{ dashboard.kpi('Letos', 'oproti stejnému období loni', kpis.year, kpis.year_previous) }}
+    </div>
+
+    <twig:Admin:DashboardOperations />
+
+    <section class="card admin-dash-section" id="pravidelne-objednavky">
+        <div class="card-body">
+            <div class="admin-dash-section-head">
+                <div>
+                    <h2 class="admin-dash-section-title">Pravidelné objednávky – příštích 7 dní</h2>
+                    <p class="admin-dash-section-text">Objednávky, které má vytvořit cron po uzávěrce. Chybějící je potřeba dořešit ručně.</p>
+                </div>
+            </div>
+
+            {% if expected_orders is empty %}
+                <p class="admin-dash-empty">Žádné pravidelné objednávky.</p>
+            {% else %}
+                <div class="admin-table-wrap admin-table-stack">
+                    <table class="table table-sm align-middle admin-table">
+                        <thead>
+                            <tr>
+                                <th>Den</th>
+                                <th>Zákazník</th>
+                                <th>Místo</th>
+                                <th>Uzávěrka</th>
+                                <th>Stav</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expected in expected_orders %}
+                                <tr class="{{ expected.status.value == 'missing' ? 'admin-dash-row-danger' }}">
+                                    <td class="text-nowrap" data-label="Den">{{ dashboard.weekday(expected.date) }} {{ expected.date|date('j. n.', false) }}</td>
+                                    <td class="admin-cell-primary" data-label="Zákazník">
+                                        <a class="admin-link-plain" href="{{ path('admin_user_edit', {id: expected.userId}) }}"><strong>{{ expected.customerName }}</strong></a>
+                                        {% if expected.isWholesale %}<span class="badge admin-badge-soft ms-1">Velkoodběratel</span>{% endif %}
+                                    </td>
+                                    <td data-label="Místo">{{ expected.placeName }}</td>
+                                    <td class="text-nowrap" data-label="Uzávěrka">{{ expected.deadline ? dashboard.weekday(expected.deadline) ~ ' ' ~ expected.deadline|date('j. n. H:i', false) : '–' }}</td>
+                                    <td data-label="Stav">
+                                        <span class="admin-pill {{ expected.status.pillClass }}">{{ expected.status.label }}</span>
+                                        {% if expected.orderId %}<a class="ms-1" href="{{ path('admin_order_detail', {id: expected.orderId}) }}">#{{ expected.orderId }}</a>{% endif %}
+                                        {% if expected.problem %}<div class="admin-dash-problem">{{ expected.problem }}</div>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
         </div>
-    {% endfor %}
+    </section>
+
+    <h2 class="admin-tiles-heading">Vývoj</h2>
+    <div class="admin-dash-charts">
+        <section class="card admin-dash-section">
+            <div class="card-body">
+                <h2 class="admin-dash-section-title">Tržby podle kanálu</h2>
+                <p class="admin-dash-section-text">Podle data vytvoření objednávky, včetně dopravy a balení, po slevě.</p>
+                <div class="admin-dash-chart">{{ render_chart(revenue_chart, {'aria-label': 'Tržby po měsících podle prodejního kanálu', role: 'img'}) }}</div>
+            </div>
+        </section>
+        <section class="card admin-dash-section">
+            <div class="card-body">
+                <h2 class="admin-dash-section-title">Počet objednávek</h2>
+                <p class="admin-dash-section-text">Po měsících, ve srovnání se stejným měsícem o rok dříve.</p>
+                <div class="admin-dash-chart">{{ render_chart(orders_chart, {'aria-label': 'Počet objednávek po měsících ve srovnání s předchozím rokem', role: 'img'}) }}</div>
+            </div>
+        </section>
+    </div>
+
+    <details class="card admin-dash-section admin-dash-table-view">
+        <summary class="card-body">Tabulka tržeb po měsících</summary>
+        <div class="admin-table-wrap">
+            <table class="table table-sm align-middle admin-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Měsíc</th>
+                        {% for channel in channels %}<th class="text-end">{{ channel.label }}</th>{% endfor %}
+                        <th class="text-end">Celkem</th>
+                        <th class="text-end">Objednávek</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for month in months|reverse %}
+                        {% set totals = monthly[month|date('Y-m', false)] ?? {} %}
+                        <tr>
+                            <td>{{ month|date('n/Y', false) }}</td>
+                            {% set revenue = 0 %}
+                            {% set count = 0 %}
+                            {% for channel in channels %}
+                                {% set channel_totals = totals[channel.value] ?? null %}
+                                {% set revenue = revenue + (channel_totals.revenue ?? 0) %}
+                                {% set count = count + (channel_totals.ordersCount ?? 0) %}
+                                <td class="text-end">{{ (channel_totals.revenue ?? 0)|number_format(0, '', '.') }} Kč</td>
+                            {% endfor %}
+                            <td class="text-end"><strong>{{ revenue|number_format(0, '', '.') }} Kč</strong></td>
+                            <td class="text-end">{{ count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+
+    <twig:Admin:DashboardTopProducts />
 {% endblock %}

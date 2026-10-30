@@ -166,6 +166,14 @@ readonly final class GetAdminOrders
             $query->andWhere('o.name LIKE :customerName')->setParameter('customerName', '%' . $filter->customerName . '%');
         }
 
+        if ($filter->missing === 'pohoda') {
+            $query->andWhere('o.pohoda_sync_dt IS NULL');
+        }
+
+        if ($filter->missing === 'boxxi') {
+            $query->andWhere('p.is_cool_balik = 1 AND o.boxxi_sync_dt IS NULL');
+        }
+
         return $query;
     }
 

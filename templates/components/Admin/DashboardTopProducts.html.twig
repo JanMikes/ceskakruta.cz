@@ -1,0 +1,36 @@
+{% import 'admin/_dashboard.html.twig' as dashboard %}
+
+<section {{ attributes.defaults({class: 'card admin-dash-section'}) }} data-loading="addClass(is-loading)">
+    {% set products = computed.products %}
+    {% set max_revenue = max([1]|merge(products|map(product => product.revenue))) %}
+
+    <div class="card-body">
+        <div class="admin-dash-section-head">
+            <div>
+                <h2 class="admin-dash-section-title">Nejprodávanější produkty</h2>
+                <p class="admin-dash-section-text">Podle tržby z položek objednávek vytvořených v daném období.</p>
+            </div>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Období">
+                {% for days, label in this.periods %}
+                    <input type="radio" class="btn-check" name="top-products-days" id="top-products-{{ days }}" value="{{ days }}" data-model="days" autocomplete="off"{{ this.days == days ? ' checked' }}>
+                    <label class="btn btn-outline-secondary" for="top-products-{{ days }}">{{ label }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if products is empty %}
+            <p class="admin-dash-empty">V tomto období žádné objednávky.</p>
+        {% else %}
+            <ol class="admin-dash-top">
+                {% for product in products %}
+                    <li>
+                        <span class="admin-dash-top-name">{{ product.name }}</span>
+                        <span class="admin-dash-top-bar" aria-hidden="true"><span style="width: {{ (product.revenue / max_revenue * 100)|round(1) }}%"></span></span>
+                        <span class="admin-dash-top-amount">{{ product.amount|number_format(product.amount == product.amount|round ? 0 : 1, ',', ' ') }} {{ product.unit }}</span>
+                        <strong class="admin-dash-top-revenue">{{ dashboard.money(product.revenue) }}</strong>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+    </div>
+</section>

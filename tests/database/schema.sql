@@ -291,6 +291,8 @@ CREATE TABLE `order` (
   KEY `user_id` (`user_id`),
   KEY `place_id` (`place_id`),
   KEY `coupon_id` (`coupon_id`),
+  KEY `date` (`date`),
+  KEY `ins_dt` (`ins_dt`),
   CONSTRAINT `order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `order_ibfk_3` FOREIGN KEY (`place_id`) REFERENCES `place` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,
   CONSTRAINT `order_ibfk_4` FOREIGN KEY (`coupon_id`) REFERENCES `coupon` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION,

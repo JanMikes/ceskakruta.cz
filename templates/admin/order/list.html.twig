@@ -6,7 +6,7 @@
 
 {% block content %}
     {% set query = filter.toQuery %}
-    {% set filter_active = filter.dateFrom or filter.dateTo or filter.customerName %}
+    {% set filter_active = filter.dateFrom or filter.dateTo or filter.customerName or filter.missing %}
 
     <div class="admin-page-header">
         <div class="admin-page-heading">
@@ -33,11 +33,19 @@
                     <label class="form-label" for="filter-date-to">Datum do</label>
                     <input class="form-control" type="date" id="filter-date-to" name="date_to" value="{{ filter.dateTo ? filter.dateTo|date('Y-m-d', false) }}">
                 </div>
-                <div class="col-12 col-md-6 col-lg-4">
+                <div class="col-12 col-md-6 col-lg-3">
                     <label class="form-label" for="filter-customer-name">Jméno zákazníka</label>
                     <input class="form-control" type="text" id="filter-customer-name" name="customer_name" value="{{ filter.customerName }}" autocomplete="off">
                 </div>
-                <div class="col-12 col-md-6 col-lg-4 d-flex flex-wrap gap-2">
+                <div class="col-12 col-md-6 col-lg-2">
+                    <label class="form-label" for="filter-missing">Nepropsáno</label>
+                    <select class="form-select" id="filter-missing" name="missing">
+                        <option value="">–</option>
+                        <option value="pohoda"{{ filter.missing == 'pohoda' ? ' selected' }}>do Pohody</option>
+                        <option value="boxxi"{{ filter.missing == 'boxxi' ? ' selected' }}>do Boxxi</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 d-flex flex-wrap gap-2">
                     <button class="btn btn-primary btn-with-icon flex-grow-1 flex-md-grow-0" type="submit">{{ icons.icon('filter') }}<span>Filtrovat</span></button>
                     <a class="btn btn-link text-muted" href="{{ path('admin_orders') }}">Resetovat</a>
                 </div>

@@ -1566,45 +1566,6 @@ body.admin {
     text-transform: uppercase;
 }
 
-.admin-tiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-    gap: .75rem;
-    margin-bottom: 1.75rem;
-}
-
-.admin-tile {
-    display: flex;
-    align-items: flex-start;
-    gap: .875rem;
-    height: 100%;
-    padding: 1rem 1.125rem;
-    color: $body-color;
-    background: #fff;
-    border: 1px solid $border-color;
-    border-radius: $card-border-radius;
-    box-shadow: $admin-shadow-sm;
-    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
-
-    &:hover,
-    &:focus-visible {
-        color: $body-color;
-        text-decoration: none;
-        border-color: mix($primary, #fff, 40%);
-        box-shadow: $admin-shadow-md;
-        transform: translateY(-1px);
-
-        .admin-tile-title {
-            color: $primary;
-        }
-    }
-
-    &:focus-visible {
-        outline: 0;
-        box-shadow: 0 0 0 .2rem rgba($primary, .25);
-    }
-}
-
 .admin-tile-icon {
     display: inline-flex;
     flex-shrink: 0;
@@ -1622,19 +1583,597 @@ body.admin {
     }
 }
 
-.admin-tile-title {
+// Dashboard insights: checks, KPIs, operations (days, calendar, prep list), recurring orders, charts, top products
+.admin-dash-attention,
+.admin-dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    gap: .75rem;
+    margin-bottom: 2rem;
+}
+
+.admin-dash-check {
+    display: flex;
+    align-items: flex-start;
+    gap: .875rem;
+    padding: 1rem 1.125rem;
+    color: $body-color;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-left-width: 4px;
+    border-radius: $card-border-radius;
+    box-shadow: $admin-shadow-sm;
+
+    &:hover,
+    &:focus-visible {
+        color: $body-color;
+        text-decoration: none;
+        box-shadow: $admin-shadow-md;
+    }
+
+    &.is-ok {
+        border-left-color: $success;
+
+        .admin-tile-icon {
+            color: $success;
+            background: #e3f5ea;
+        }
+    }
+
+    &.is-info {
+        border-left-color: $info;
+
+        .admin-tile-icon {
+            color: $info;
+            background: #e3f0fa;
+        }
+    }
+
+    &.is-danger {
+        border-left-color: $danger;
+    }
+}
+
+.admin-dash-check-title {
     display: block;
     color: $headings-color;
     font-weight: 650;
-    transition: color .15s ease;
 }
 
-.admin-tile-text {
-    display: block;
+.admin-dash-check-value {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
     margin-top: .125rem;
+
+    strong {
+        color: $danger;
+        font-size: 1.125rem;
+    }
+
+    .admin-icon {
+        width: 1rem;
+        height: 1rem;
+        color: $success;
+    }
+}
+
+.admin-dash-check-hint,
+.admin-dash-kpi-note {
+    display: block;
+    color: $text-muted;
+    font-size: .8125rem;
+}
+
+.admin-dash-kpi {
+    .card-body {
+        padding: 1.125rem 1.25rem;
+    }
+}
+
+.admin-dash-kpi-title {
+    color: $text-muted;
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.admin-dash-kpi-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .5rem;
+    margin: .25rem 0 .75rem;
+}
+
+.admin-dash-kpi-value {
+    color: $headings-color;
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+}
+
+.admin-dash-kpi-list {
+    margin: 0 0 .5rem;
+    font-size: .875rem;
+
+    > div {
+        display: flex;
+        justify-content: space-between;
+        gap: .5rem;
+        padding: .25rem 0;
+        border-top: 1px solid $table-border-color;
+    }
+
+    dt {
+        color: $text-muted;
+        font-weight: 400;
+    }
+
+    dd {
+        margin: 0;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+    }
+}
+
+.admin-dash-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: .125rem;
+    font-size: .75rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    .admin-icon {
+        width: .8125rem;
+        height: .8125rem;
+    }
+
+    &.is-up {
+        color: #11663a;
+    }
+
+    &.is-down {
+        color: #a3161c;
+    }
+
+    &.is-flat {
+        color: $text-muted;
+    }
+}
+
+.admin-dash-section {
+    margin-bottom: 1.5rem;
+}
+
+.admin-dash-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: .75rem;
+}
+
+.admin-dash-section-title {
+    margin-bottom: .25rem;
+    font-size: 1.0625rem;
+}
+
+.admin-dash-section-text {
+    margin-bottom: .75rem;
     color: $text-muted;
     font-size: .875rem;
-    line-height: 1.4;
+}
+
+.admin-dash-subtitle {
+    margin: 1.25rem 0 .5rem;
+    font-size: .9375rem;
+}
+
+.admin-dash-empty {
+    margin: 0;
+    padding: 1rem 0;
+    color: $text-muted;
+}
+
+.admin-dash-problem {
+    margin-top: .25rem;
+    color: #a3161c;
+    font-size: .8125rem;
+}
+
+.admin-dash-row-danger > td {
+    background: #fff7f7;
+}
+
+// Operations (live component)
+.admin-dash-ops {
+    margin-bottom: 2rem;
+    transition: opacity .15s ease;
+
+    &.is-loading {
+        opacity: .6;
+    }
+}
+
+.admin-dash-ops-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    margin-bottom: .75rem;
+}
+
+.admin-dash-days {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: .75rem;
+    margin-bottom: .75rem;
+}
+
+.admin-dash-day {
+    width: 100%;
+    padding: 0;
+    color: $body-color;
+    text-align: left;
+
+    .card-body {
+        display: block;
+    }
+
+    &:hover {
+        box-shadow: $admin-shadow-md;
+    }
+
+    &.is-selected {
+        border-color: $primary;
+        box-shadow: 0 0 0 1px $primary, $admin-shadow-sm;
+    }
+}
+
+.admin-dash-day-title {
+    display: block;
+    color: $headings-color;
+    font-weight: 650;
+}
+
+.admin-dash-day-date {
+    color: $text-muted;
+    font-size: .8125rem;
+    font-weight: 400;
+}
+
+.admin-dash-day-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .375rem;
+    margin: .25rem 0 .5rem;
+}
+
+.admin-dash-day-count {
+    color: $headings-color;
+    font-size: 2rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+
+.admin-dash-day-unit {
+    color: $text-muted;
+}
+
+.admin-dash-day-revenue {
+    margin-left: auto;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-dash-channels,
+.admin-dash-day-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .375rem .875rem;
+    font-size: .8125rem;
+}
+
+.admin-dash-day-flags {
+    gap: .375rem;
+    margin-top: .5rem;
+
+    .admin-icon {
+        width: .875rem;
+        height: .875rem;
+    }
+}
+
+.admin-dash-channel {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+}
+
+.admin-dash-swatch {
+    display: inline-block;
+    flex-shrink: 0;
+    width: .625rem;
+    height: .625rem;
+    border-radius: 2px;
+}
+
+.admin-dash-strip {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: .5rem;
+    margin-bottom: 1rem;
+
+    @include media-breakpoint-down(md) {
+        grid-auto-flow: column;
+        grid-template-columns: none;
+        grid-auto-columns: minmax(5.5rem, 1fr);
+        overflow-x: auto;
+    }
+}
+
+.admin-dash-strip-day {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: .5rem .75rem;
+    color: $body-color;
+    text-align: left;
+    background: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+
+    &:hover {
+        border-color: mix($primary, #fff, 40%);
+    }
+
+    &.is-selected {
+        border-color: $primary;
+        box-shadow: 0 0 0 1px $primary;
+    }
+
+    &.is-empty {
+        color: $text-muted;
+    }
+}
+
+.admin-dash-strip-date {
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.admin-dash-strip-count {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-dash-strip-revenue {
+    color: $text-muted;
+    font-size: .75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-dash-ops-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 1.5rem;
+    align-items: start;
+
+    @include media-breakpoint-down(lg) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    > .admin-dash-section {
+        margin-bottom: 0;
+    }
+}
+
+.admin-dash-calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    margin-bottom: .75rem;
+}
+
+.admin-dash-calendar {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 3px;
+
+    th {
+        padding-bottom: .25rem;
+        color: $text-muted;
+        font-size: .75rem;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    td {
+        padding: 0;
+    }
+}
+
+// Sequential single hue (brand red), light → dark by orders count relative to the busiest day of the month
+$admin-dash-heat: (
+    0: #f6f7f9,
+    1: mix($primary, #fff, 12%),
+    2: mix($primary, #fff, 28%),
+    3: mix($primary, #fff, 50%),
+    4: mix($primary, #fff, 75%),
+);
+
+.admin-dash-cal-day {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    aspect-ratio: 1 / .85;
+    padding: .25rem .375rem;
+    color: $body-color;
+    font-size: .75rem;
+    border: 1px solid transparent;
+    border-radius: $border-radius-sm;
+
+    @each $level, $color in $admin-dash-heat {
+        &.is-heat-#{$level} {
+            background: $color;
+        }
+    }
+
+    &.is-heat-3,
+    &.is-heat-4 {
+        color: #fff;
+    }
+
+    &:hover {
+        border-color: $headings-color;
+    }
+
+    &.is-today .admin-dash-cal-num {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 2px;
+    }
+
+    &.is-selected {
+        border-color: $headings-color;
+        box-shadow: 0 0 0 1px $headings-color;
+    }
+}
+
+.admin-dash-cal-num {
+    font-weight: 600;
+}
+
+.admin-dash-cal-count {
+    align-self: flex-end;
+    font-size: .9375rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-dash-orders {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .25rem .5rem;
+        padding: .5rem 0;
+        font-size: .875rem;
+        border-top: 1px solid $table-border-color;
+    }
+
+    .admin-icon {
+        width: 1rem;
+        height: 1rem;
+        color: $text-muted;
+    }
+}
+
+.admin-dash-orders-end {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+// Charts & top products
+.admin-dash-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 0 1.5rem;
+}
+
+.admin-dash-chart {
+    position: relative;
+    height: 18rem;
+}
+
+.admin-dash-table-view {
+    summary {
+        color: $text-muted;
+        font-size: .875rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    &[open] summary {
+        padding-bottom: .5rem;
+    }
+}
+
+.admin-dash-top {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: top;
+
+    li {
+        display: grid;
+        grid-template-columns: 1.5rem minmax(8rem, 2fr) minmax(4rem, 3fr) 6rem 7rem;
+        align-items: center;
+        gap: .75rem;
+        padding: .375rem 0;
+        font-size: .875rem;
+        border-top: 1px solid $table-border-color;
+        counter-increment: top;
+
+        &::before {
+            color: $text-muted;
+            font-variant-numeric: tabular-nums;
+            content: counter(top) ".";
+        }
+
+        @include media-breakpoint-down(md) {
+            grid-template-columns: 1.5rem 1fr auto;
+
+            .admin-dash-top-bar,
+            .admin-dash-top-amount {
+                display: none;
+            }
+        }
+    }
+}
+
+.admin-dash-top-bar {
+    height: .5rem;
+    background: #f1f2f4;
+    border-radius: 4px;
+
+    span {
+        display: block;
+        height: 100%;
+        background: #2a78b8;
+        border-radius: 4px;
+    }
+}
+
+.admin-dash-top-amount,
+.admin-dash-top-revenue {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.admin-dash-top-amount {
+    color: $text-muted;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
