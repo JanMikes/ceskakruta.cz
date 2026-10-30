@@ -33,9 +33,6 @@ final class AdminPages
             '/admin/chlazene-kruty/pridat' => null,
             '/admin/chlazene-kruty/1' => null,
 
-            '/admin/zive-kruty' => 'Živé krůty',
-            '/admin/zive-kruty/pridat' => null,
-            '/admin/zive-kruty/1' => null,
 
             '/admin/produkty' => 'Maso a výrobky',
             '/admin/produkty/pridat' => null,

@@ -40,7 +40,7 @@ Status legend used in checklists: `[ ]` todo, `[x]` done.
 | `Actuality` | **live** | + enqueues newsletter on create |
 | `CalendarDead` ("Rozkrmená krůťata") | **live** | frontend reads it (`GetAliveCalendar`) |
 | `CalendarCold` ("Chlazené krůty") | **live** | frontend reads it (`GetColdProductsCalendar`) |
-| `CalendarAlive` ("Živé krůty") | live in old admin, unused by new frontend | **port** (customer may drop later) |
+| `CalendarAlive` ("Živé krůty") | live in old admin, unused by new frontend | ported, **removed 2026-10-30** (dead end, table `calendar_alive` kept) |
 | `Product` ("Maso a výrobky") | **live** | |
 | `Recipe` (per product) | **live** | photo upload |
 | `Sortiment` ("Doplňkový sortiment") | live in old admin, unused by new frontend | **port** |

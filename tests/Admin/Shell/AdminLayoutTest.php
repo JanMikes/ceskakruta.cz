@@ -16,7 +16,6 @@ final class AdminLayoutTest extends AdminWebTestCase
         'Aktuality' => '/admin/aktuality',
         'Rozkrmená krůťata' => '/admin/rozkrmena-krutata',
         'Chlazené krůty' => '/admin/chlazene-kruty',
-        'Živé krůty' => '/admin/zive-kruty',
         'Maso a výrobky' => '/admin/produkty',
         'Doplňkový sortiment' => null, // dropdown with categories
         'Texty' => '/admin/texty',

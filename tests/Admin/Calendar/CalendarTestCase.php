@@ -7,7 +7,7 @@ namespace CeskaKruta\Web\Tests\Admin\Calendar;
 use CeskaKruta\Web\Tests\Support\AdminWebTestCase;
 
 /**
- * Common setup of the three calendar sections (PLAN §2.6–2.8): calendar_dead, calendar_cold, calendar_alive.
+ * Common setup of the calendar sections (PLAN §2.6–2.7): calendar_dead, calendar_cold.
  */
 abstract class CalendarTestCase extends AdminWebTestCase
 {

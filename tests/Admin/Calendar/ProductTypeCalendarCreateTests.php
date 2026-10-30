@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
- * Shared by calendar_cold and calendar_alive create tests (old ManageCalendarCold/AliveFormFactory):
+ * Shared by calendar_cold create tests (old ManageCalendarColdFormFactory):
  * `product_tp_id` required select from `lst_product_tp` with prompt "-- Vyberte --", `weight_from` / `weight_to` required floats.
  */
 trait ProductTypeCalendarCreateTests

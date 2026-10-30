@@ -13,7 +13,6 @@ enum AdminTable: string
     case Actuality = 'actuality';
     case CalendarDead = 'calendar_dead';
     case CalendarCold = 'calendar_cold';
-    case CalendarAlive = 'calendar_alive';
     case Product = 'product';
     case Recipe = 'recipe';
     case Sortiment = 'sortiment';

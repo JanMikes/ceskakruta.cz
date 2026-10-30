@@ -21,7 +21,6 @@ final class GridActivateAllTest extends AdminWebTestCase
         yield 'actuality' => ['actuality', '/admin/aktuality'];
         yield 'calendar_dead' => ['calendar_dead', '/admin/rozkrmena-krutata'];
         yield 'calendar_cold' => ['calendar_cold', '/admin/chlazene-kruty'];
-        yield 'calendar_alive' => ['calendar_alive', '/admin/zive-kruty'];
         yield 'product' => ['product', '/admin/produkty'];
         yield 'vendor' => ['vendor', '/admin/prodejci'];
         yield 'place' => ['place', '/admin/prodejny'];
@@ -131,7 +130,7 @@ final class GridActivateAllTest extends AdminWebTestCase
             'product' => ['name' => 'Neaktivní produkt', 'type' => 1, 'unit' => 'kg', 'price' => 100, 'packages_size' => '[]', 'order' => 1],
             'place' => ['name' => 'Neaktivní prodejna', 'title' => 'Neaktivní prodejna', 'force_delivery_address' => 0, 'hide_in_admin' => 0],
             'calendar_dead' => ['week_number' => 20, 'year' => 2024],
-            'calendar_cold', 'calendar_alive' => ['product_tp_id' => 1, 'week_number' => 20, 'year' => 2024, 'weight_from' => 5, 'weight_to' => 6],
+            'calendar_cold' => ['product_tp_id' => 1, 'week_number' => 20, 'year' => 2024, 'weight_from' => 5, 'weight_to' => 6],
             'actuality' => ['name' => 'Neaktivní aktualita', 'date' => '2024-01-01'],
             default => ['name' => 'Neaktivní záznam'],
         };

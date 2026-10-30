@@ -7,7 +7,7 @@ namespace CeskaKruta\Web\Query\Admin;
 use Doctrine\DBAL\Connection;
 
 /**
- * `lst_product_tp` options of the calendar_cold / calendar_alive forms (old `fetchPairs("id", "name", "id ASC")`).
+ * `lst_product_tp` options of the calendar_cold form (old `fetchPairs("id", "name", "id ASC")`).
  */
 readonly final class GetProductTypes
 {

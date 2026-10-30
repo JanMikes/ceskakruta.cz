@@ -23,7 +23,6 @@ final class GridActionsTest extends AdminWebTestCase
         yield 'actuality' => ['actuality', '/admin/aktuality', 1];
         yield 'calendar_dead' => ['calendar_dead', '/admin/rozkrmena-krutata', 1];
         yield 'calendar_cold' => ['calendar_cold', '/admin/chlazene-kruty', 1];
-        yield 'calendar_alive' => ['calendar_alive', '/admin/zive-kruty', 1];
         yield 'product' => ['product', '/admin/produkty', 100];
         yield 'recipe' => ['recipe', '/admin/produkty/100/recepty', 1];
         yield 'sortiment' => ['sortiment', '/admin/sortiment/1', 3];
@@ -39,7 +38,6 @@ final class GridActionsTest extends AdminWebTestCase
         yield 'actuality' => ['actuality', '/admin/aktuality', 1];
         yield 'calendar_dead' => ['calendar_dead', '/admin/rozkrmena-krutata', 1];
         yield 'calendar_cold' => ['calendar_cold', '/admin/chlazene-kruty', 1];
-        yield 'calendar_alive' => ['calendar_alive', '/admin/zive-kruty', 1];
         yield 'product' => ['product', '/admin/produkty', 100];
         yield 'recipe' => ['recipe', '/admin/produkty/100/recepty', 1];
         yield 'sortiment' => ['sortiment', '/admin/sortiment/1', 3];
