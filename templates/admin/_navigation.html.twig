@@ -1,10 +1,21 @@
 {#
     Sidebar navigation: static on ≥ lg, Bootstrap 5.2 responsive offcanvas (`offcanvas-lg`) below.
-    Order and labels of the old admin navbar (docs/admin/PLAN.md §2.18), the group headings are plain text.
+    Labels of the old admin navbar (docs/admin/PLAN.md §2.18), "Prodej" first as the daily work; the group headings are plain text.
 #}
 {% import 'admin/_icons.html.twig' as icons %}
 {% set current_path = app.request.pathInfo %}
+{% set dashboards = [
+    {label: 'Přehled', url: path('admin_dashboard'), icon: 'home'},
+    {label: 'Co připravit', url: path('admin_preparation'), icon: 'clipboard'},
+    {label: 'Pravidelné objednávky', url: path('admin_recurring_orders'), icon: 'repeat'},
+    {label: 'Statistiky', url: path('admin_statistics'), icon: 'bar_chart'},
+] %}
 {% set groups = [
+    {heading: 'Prodej', links: [
+        {label: 'Objednávky', url: '/admin/objednavky', icon: 'cart'},
+        {label: 'Uživatelé', url: '/admin/uzivatele', icon: 'users'},
+        {label: 'Prodejny', url: '/admin/prodejny', icon: 'pin'},
+    ]},
     {heading: 'Web', links: [
         {label: 'Aktuality', url: '/admin/aktuality', icon: 'bell'},
         {label: 'Rozkrmená krůťata', url: '/admin/rozkrmena-krutata', icon: 'trending'},
@@ -18,11 +29,6 @@
         {label: 'Texty', url: '/admin/texty', icon: 'text'},
         {label: 'Prodejci', url: '/admin/prodejci', icon: 'briefcase'},
         {label: 'Emaily', url: '/admin/emaily', icon: 'mail'},
-    ]},
-    {heading: 'Prodej', links: [
-        {label: 'Prodejny', url: '/admin/prodejny', icon: 'pin'},
-        {label: 'Uživatelé', url: '/admin/uzivatele', icon: 'users'},
-        {label: 'Objednávky', url: '/admin/objednavky', icon: 'cart'},
     ]},
 ] %}
 
@@ -46,10 +52,12 @@
     </div>
 
     <nav class="admin-sidebar-nav" aria-label="Hlavní navigace">
-        {% set dashboard_active = current_path == path('admin_dashboard') %}
-        <a class="admin-nav-link{{ dashboard_active ? ' active' }}" href="{{ path('admin_dashboard') }}"{% if dashboard_active %} aria-current="page"{% endif %}>
-            {{ icons.icon('home') }}<span>Přehled</span>
-        </a>
+        {% for link in dashboards %}
+            {% set active = current_path == link.url %}
+            <a class="admin-nav-link{{ active ? ' active' }}" href="{{ link.url }}"{% if active %} aria-current="page"{% endif %}>
+                {{ icons.icon(link.icon) }}<span>{{ link.label }}</span>
+            </a>
+        {% endfor %}
 
         {% for group in groups %}
             <div class="admin-nav-heading">{{ group.heading }}</div>
@@ -81,9 +89,9 @@
 
     <nav class="admin-sidebar-account" aria-label="Účet">
         {% set password_active = current_path == path('admin_change_password') %}
-        <a class="admin-account-link{{ password_active ? ' active' }}" href="{{ path('admin_change_password') }}" title="Změnit heslo">
+        <a class="admin-account-link{{ password_active ? ' active' }}" href="{{ path('admin_change_password') }}" title="Změnit heslo – {{ app.user.email }}">
             <span class="admin-account-avatar" aria-hidden="true">{{ icons.icon('user') }}</span>
-            <span class="admin-account-name">{{ app.user.name ?? app.user.email }}</span>
+            <span class="admin-account-name">{{ app.user.email }}</span>
         </a>
         <a class="admin-account-logout" href="{{ path('admin_logout') }}" title="Odhlásit se">
             {{ icons.icon('logout') }}<span>Odhlásit</span>

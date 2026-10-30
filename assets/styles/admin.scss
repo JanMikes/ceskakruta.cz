@@ -1822,6 +1822,7 @@ body.admin {
     padding: 0;
     color: $body-color;
     text-align: left;
+    text-decoration: none; // also a link (home overview)
 
     .card-body {
         display: block;
@@ -1928,6 +1929,7 @@ body.admin {
     padding: .5rem .75rem;
     color: $body-color;
     text-align: left;
+    text-decoration: none;
     background: #fff;
     border: 1px solid $border-color;
     border-radius: $border-radius;

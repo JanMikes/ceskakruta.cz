@@ -9,7 +9,6 @@
     {% set day_label = this.basis.value == 'expedition' ? 'expedice' : 'vyzvednutí / doručení' %}
 
     <div class="admin-dash-ops-head">
-        <h2 class="admin-tiles-heading mb-0">Provoz</h2>
         <div class="btn-group btn-group-sm admin-dash-toggle" role="group" aria-label="Den objednávky podle">
             {% for basis in this.bases %}
                 <input type="radio" class="btn-check" name="dashboard-basis" id="dashboard-basis-{{ basis.value }}" value="{{ basis.value }}" data-model="basis" autocomplete="off"{{ this.basis == basis ? ' checked' }}>
@@ -19,46 +18,11 @@
     </div>
 
     <div class="admin-dash-days">
-        {% for item in [{title: 'Dnes', stats: this.dayStats(today)}, {title: this.nextDayTitle, stats: this.dayStats(this.nextDay)}] %}
-            {% set stats = item.stats %}
-            <button type="button" class="card admin-dash-day{{ stats.date == selected ? ' is-selected' }}"
-                data-action="live#action" data-live-action-param="selectDay" data-live-day-param="{{ stats.date|date('Y-m-d', false) }}"
-                aria-pressed="{{ stats.date == selected ? 'true' : 'false' }}">
-                <span class="card-body">
-                    <span class="admin-dash-day-title">{{ item.title }} <span class="admin-dash-day-date">{{ dashboard.weekday(stats.date) }} {{ stats.date|date('j. n.', false) }} · {{ day_label }}</span></span>
-                    <span class="admin-dash-day-main">
-                        <span class="admin-dash-day-count">{{ stats.ordersCount }}</span>
-                        <span class="admin-dash-day-unit">{{ stats.ordersCount == 1 ? 'objednávka' : (stats.ordersCount in 2..4 ? 'objednávky' : 'objednávek') }}</span>
-                        <span class="admin-dash-day-revenue">{{ dashboard.money(stats.revenue) }}</span>
-                    </span>
-                    {% if stats.ordersCount > 0 %}
-                        <span class="admin-dash-channels">
-                            {% for channel in stats.channels %}
-                                <span class="admin-dash-channel"><span class="admin-dash-swatch" style="background: {{ channel.channel.color }}"></span>{{ channel.channel.label }} <strong>{{ channel.count }}</strong></span>
-                            {% endfor %}
-                        </span>
-                        <span class="admin-dash-day-flags">
-                            {% if stats.withNoteCount > 0 %}<span class="admin-pill is-info">{{ icons.icon('text') }}{{ stats.withNoteCount }}× poznámka</span>{% endif %}
-                            {% if stats.pohodaMissingCount > 0 %}<span class="admin-pill is-danger">{{ icons.icon('alert') }}{{ stats.pohodaMissingCount }}× nepropsáno do Pohody</span>{% endif %}
-                            {% if stats.boxxiMissingCount > 0 %}<span class="admin-pill is-danger">{{ icons.icon('alert') }}{{ stats.boxxiMissingCount }}× nepropsáno do Boxxi</span>{% endif %}
-                        </span>
-                    {% endif %}
-                </span>
-            </button>
-        {% endfor %}
+        {{ dashboard.day_card('Dnes', this.dayStats(today), day_label, selected) }}
+        {{ dashboard.day_card(this.nextDayTitle, this.dayStats(this.nextDay), day_label, selected) }}
     </div>
 
-    <div class="admin-dash-strip" role="group" aria-label="Příštích 7 dní">
-        {% for stats in this.strip %}
-            <button type="button" class="admin-dash-strip-day{{ stats.date == selected ? ' is-selected' }}{{ stats.ordersCount == 0 ? ' is-empty' }}"
-                data-action="live#action" data-live-action-param="selectDay" data-live-day-param="{{ stats.date|date('Y-m-d', false) }}"
-                aria-pressed="{{ stats.date == selected ? 'true' : 'false' }}">
-                <span class="admin-dash-strip-date">{{ dashboard.weekday(stats.date) }} {{ stats.date|date('j. n.', false) }}</span>
-                <span class="admin-dash-strip-count">{{ stats.ordersCount }}</span>
-                <span class="admin-dash-strip-revenue">{{ dashboard.money(stats.revenue) }}</span>
-            </button>
-        {% endfor %}
-    </div>
+    {{ dashboard.strip(this.strip, selected) }}
 
     <div class="admin-dash-ops-grid">
         <section class="card admin-dash-section">

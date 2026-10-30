@@ -1,0 +1,53 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_dashboard.html.twig' as dashboard %}
+
+{% block title %}Pravidelné objednávky{% endblock %}
+
+{% block content %}
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Pravidelné objednávky</h1>
+            <p class="admin-page-subtitle">Příštích 7 dní – objednávky, které má vytvořit cron po uzávěrce. Chybějící je potřeba dořešit ručně.</p>
+        </div>
+    </div>
+
+    <section class="card admin-dash-section">
+        <div class="card-body">
+            {% if expected_orders is empty %}
+                <p class="admin-dash-empty">Žádné pravidelné objednávky.</p>
+            {% else %}
+                <div class="admin-table-wrap admin-table-stack">
+                    <table class="table table-sm align-middle admin-table">
+                        <thead>
+                            <tr>
+                                <th>Den</th>
+                                <th>Zákazník</th>
+                                <th>Místo</th>
+                                <th>Uzávěrka</th>
+                                <th>Stav</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expected in expected_orders %}
+                                <tr class="{{ expected.status.value == 'missing' ? 'admin-dash-row-danger' }}">
+                                    <td class="text-nowrap" data-label="Den">{{ dashboard.weekday(expected.date) }} {{ expected.date|date('j. n.', false) }}</td>
+                                    <td class="admin-cell-primary" data-label="Zákazník">
+                                        <a class="admin-link-plain" href="{{ path('admin_user_edit', {id: expected.userId}) }}"><strong>{{ expected.customerName }}</strong></a>
+                                        {% if expected.isWholesale %}<span class="badge admin-badge-soft ms-1">Velkoodběratel</span>{% endif %}
+                                    </td>
+                                    <td data-label="Místo">{{ expected.placeName }}</td>
+                                    <td class="text-nowrap" data-label="Uzávěrka">{{ expected.deadline ? dashboard.weekday(expected.deadline) ~ ' ' ~ expected.deadline|date('j. n. H:i', false) : '–' }}</td>
+                                    <td data-label="Stav">
+                                        <span class="admin-pill {{ expected.status.pillClass }}">{{ expected.status.label }}</span>
+                                        {% if expected.orderId %}<a class="ms-1" href="{{ path('admin_order_detail', {id: expected.orderId}) }}">#{{ expected.orderId }}</a>{% endif %}
+                                        {% if expected.problem %}<div class="admin-dash-problem">{{ expected.problem }}</div>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

@@ -4,29 +4,25 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller\Admin;
 
+use CeskaKruta\Web\Components\Admin\DashboardOperations;
 use CeskaKruta\Web\Query\Admin\GetDashboardTrends;
 use CeskaKruta\Web\Services\Admin\Dashboard\DashboardDays;
 use CeskaKruta\Web\Services\Admin\Dashboard\RecurringOrdersWatch;
-use CeskaKruta\Web\Value\Admin\Dashboard\PeriodTotals;
-use CeskaKruta\Web\Value\Admin\Dashboard\SalesChannel;
+use CeskaKruta\Web\Value\Admin\Dashboard\DateBasis;
 use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
-use Symfony\UX\Chartjs\Model\Chart;
 
+/**
+ * Quick overview: what needs attention, received orders and the next days by expedition, details on the other pages.
+ */
 final class AdminDashboardController extends AbstractController
 {
-    private const CHART_MONTHS = 13;
-
-    private const RECURRING_DAYS = 7;
-
     public function __construct(
         readonly private GetDashboardTrends $getDashboardTrends,
         readonly private DashboardDays $dashboardDays,
         readonly private RecurringOrdersWatch $recurringOrdersWatch,
-        readonly private ChartBuilderInterface $chartBuilder,
         readonly private ClockInterface $clock,
     ) {
     }
@@ -47,134 +43,17 @@ final class AdminDashboardController extends AbstractController
             'year_previous' => [$today->modify('first day of january this year')->modify('-1 year'), $now->modify('-1 year')],
         ]);
 
-        $chartFrom = $today->modify('first day of this month')->modify(sprintf('-%d months', self::CHART_MONTHS - 1));
-        $chartTo = $today->modify('first day of next month');
-        // The order count chart compares with the year before, so one query covers both years
-        $monthly = $this->getDashboardTrends->monthlyByChannel($chartFrom->modify('-1 year'), $chartTo);
-        $months = [];
-
-        for ($month = $chartFrom; $month < $chartTo; $month = $month->modify('+1 month')) {
-            $months[] = $month;
-        }
+        $nextDay = DashboardDays::nextDay($today);
+        $days = $this->dashboardDays->days(DateBasis::Expedition, $today, $today->modify(sprintf('+%d days', DashboardOperations::STRIP_DAYS - 1)));
 
         return $this->render('admin/dashboard.html.twig', [
             'kpis' => $kpis,
             'sync' => $this->dashboardDays->syncAttention($today),
-            'expected_orders' => $this->recurringOrdersWatch->expectedOrders($now, $today, $today->modify(sprintf('+%d days', self::RECURRING_DAYS - 1))),
-            'months' => $months,
-            'monthly' => $monthly,
-            'channels' => SalesChannel::cases(),
-            'revenue_chart' => $this->revenueChart($months, $monthly),
-            'orders_chart' => $this->ordersChart($months, $monthly),
+            'expected_orders' => $this->recurringOrdersWatch->expectedOrders($now, $today, $today->modify(sprintf('+%d days', AdminRecurringOrdersController::DAYS - 1))),
+            'days' => array_values($days),
+            'today_stats' => $days[$today->format('Y-m-d')],
+            'next_day_stats' => $days[$nextDay->format('Y-m-d')],
+            'next_day_title' => DashboardDays::nextDayTitle($today),
         ]);
-    }
-
-    /**
-     * Revenue per month stacked by sales channel.
-     *
-     * @param list<\DateTimeImmutable> $months
-     * @param array<string, array<string, PeriodTotals>> $monthly
-     */
-    private function revenueChart(array $months, array $monthly): Chart
-    {
-        $datasets = [];
-
-        foreach (SalesChannel::cases() as $channel) {
-            $datasets[] = [
-                'label' => $channel->label(),
-                'data' => array_map(static fn (\DateTimeImmutable $month): int => (int) round($monthly[$month->format('Y-m')][$channel->value]->revenue ?? 0), $months),
-                'backgroundColor' => $channel->color(),
-                'borderColor' => '#ffffff',
-                'borderWidth' => ['top' => 2],
-                'borderRadius' => 4,
-                'borderSkipped' => 'bottom',
-                'maxBarThickness' => 40,
-            ];
-        }
-
-        return $this->chart(Chart::TYPE_BAR, self::monthLabels($months), $datasets, stacked: true, unit: 'Kč');
-    }
-
-    /**
-     * Created orders per month vs the same month a year before (one axis, two series).
-     *
-     * @param list<\DateTimeImmutable> $months
-     * @param array<string, array<string, PeriodTotals>> $monthly
-     */
-    private function ordersChart(array $months, array $monthly): Chart
-    {
-        $count = static fn (\DateTimeImmutable $month): int => array_sum(array_map(
-            static fn (PeriodTotals $totals): int => $totals->ordersCount,
-            $monthly[$month->format('Y-m')] ?? [],
-        ));
-
-        return $this->chart(Chart::TYPE_LINE, self::monthLabels($months), [
-            [
-                'label' => 'Posledních 13 měsíců',
-                'data' => array_map($count, $months),
-                'borderColor' => '#2a78b8',
-                'backgroundColor' => '#2a78b8',
-                'borderWidth' => 2,
-                'pointRadius' => 4,
-                'pointHoverRadius' => 6,
-                'pointBorderColor' => '#ffffff',
-                'pointBorderWidth' => 2,
-                'tension' => 0.25,
-            ],
-            [
-                'label' => 'O rok dříve',
-                'data' => array_map(static fn (\DateTimeImmutable $month): int => $count($month->modify('-1 year')), $months),
-                'borderColor' => '#9aa1ad',
-                'backgroundColor' => '#9aa1ad',
-                'borderWidth' => 2,
-                'borderDash' => [6, 4],
-                'pointRadius' => 4,
-                'pointHoverRadius' => 6,
-                'pointBorderColor' => '#ffffff',
-                'pointBorderWidth' => 2,
-                'tension' => 0.25,
-            ],
-        ], stacked: false, unit: null);
-    }
-
-    /**
-     * @param list<string> $labels
-     * @param list<array<string, mixed>> $datasets
-     */
-    private function chart(string $type, array $labels, array $datasets, bool $stacked, null|string $unit): Chart
-    {
-        $chart = $this->chartBuilder->createChart($type);
-        $chart->setData(['labels' => $labels, 'datasets' => $datasets]);
-        $chart->setOptions([
-            'locale' => 'cs-CZ',
-            'maintainAspectRatio' => false,
-            'interaction' => ['mode' => 'index', 'intersect' => false],
-            'plugins' => [
-                'legend' => ['position' => 'bottom', 'labels' => ['usePointStyle' => true, 'boxWidth' => 8, 'boxHeight' => 8, 'color' => '#52514e']],
-                'tooltip' => ['backgroundColor' => '#1d2230', 'padding' => 10, 'boxPadding' => 4, 'usePointStyle' => true],
-            ],
-            'scales' => [
-                'x' => ['stacked' => $stacked, 'grid' => ['display' => false], 'ticks' => ['color' => '#6b7280']],
-                'y' => [
-                    'stacked' => $stacked,
-                    'beginAtZero' => true,
-                    'border' => ['display' => false],
-                    'grid' => ['color' => '#eef0f3'],
-                    'ticks' => ['color' => '#6b7280', 'precision' => 0],
-                    'title' => ['display' => $unit !== null, 'text' => (string) $unit, 'color' => '#6b7280'],
-                ],
-            ],
-        ]);
-
-        return $chart;
-    }
-
-    /**
-     * @param list<\DateTimeImmutable> $months
-     * @return list<string>
-     */
-    private static function monthLabels(array $months): array
-    {
-        return array_map(static fn (\DateTimeImmutable $month): string => $month->format('n/Y'), $months);
     }
 }

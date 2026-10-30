@@ -6,6 +6,7 @@ namespace CeskaKruta\Web\Tests\Admin\Dashboard;
 
 use CeskaKruta\Web\Tests\Support\AdminWebTestCase;
 use Doctrine\Bundle\DoctrineBundle\DataCollector\DoctrineDataCollector;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
@@ -24,21 +25,69 @@ final class DashboardPageTest extends AdminWebTestCase
             $crawler->filter('.admin-quick-link')->each(static fn ($link): string => trim($link->text())),
         );
 
-        foreach (['Ke kontrole', 'Přijaté objednávky', 'Provoz', 'Pravidelné objednávky – příštích 7 dní', 'Tržby podle kanálu', 'Nejprodávanější produkty'] as $heading) {
+        foreach (['Ke kontrole', 'Přijaté objednávky', 'Expedice'] as $heading) {
+            self::assertSelectorTextContains('main', $heading);
+        }
+
+        // Quick overview only: day cards link to "Co připravit", details live on the other pages
+        self::assertCount(2, $crawler->filter('a.admin-dash-day[href^="/admin/co-pripravit?day="]'));
+        self::assertCount(7, $crawler->filter('a.admin-dash-strip-day'));
+        self::assertCount(1, $crawler->filter('a[href="/admin/pravidelne-objednavky"].admin-dash-check'));
+        self::assertCount(0, $crawler->filter('canvas, [data-live-name-value]'));
+    }
+
+    public function testPreparationPage(): void
+    {
+        $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/admin/co-pripravit');
+
+        self::assertResponseIsSuccessful();
+        self::assertCount(1, $crawler->filter('[data-live-name-value="Admin:DashboardOperations"]'));
+        self::assertSelectorTextContains('main', 'Co připravit –');
+    }
+
+    public function testRecurringOrdersPage(): void
+    {
+        $this->loginAsAdmin();
+        $this->client->request('GET', '/admin/pravidelne-objednavky');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextSame('h1', 'Pravidelné objednávky');
+    }
+
+    public function testStatisticsPage(): void
+    {
+        $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/admin/statistiky');
+
+        self::assertResponseIsSuccessful();
+
+        foreach (['Tržby podle kanálu', 'Počet objednávek', 'Nejprodávanější produkty'] as $heading) {
             self::assertSelectorTextContains('main', $heading);
         }
 
         self::assertCount(2, $crawler->filter('canvas[data-controller~="symfony--ux-chartjs--chart"]'));
-        self::assertCount(1, $crawler->filter('[data-live-name-value="Admin:DashboardOperations"]'));
     }
 
-    public function testQueryCountDoesNotGrowWithData(): void
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function dashboardUrls(): iterable
+    {
+        yield 'home' => ['/admin'];
+        yield 'preparation' => ['/admin/co-pripravit'];
+        yield 'recurring orders' => ['/admin/pravidelne-objednavky'];
+        yield 'statistics' => ['/admin/statistiky'];
+    }
+
+    #[DataProvider('dashboardUrls')]
+    public function testQueryCountDoesNotGrowWithData(string $url): void
     {
         $this->loginAsAdmin();
         DashboardOrdersFixture::insert($this->connection());
         $this->recurringOrderForToday(4004);
-        $this->dashboardQueryCount(); // warm-up: login and arrange queries are logged in the same kernel
-        $before = $this->dashboardQueryCount();
+        $this->dashboardQueryCount($url); // warm-up: login and arrange queries are logged in the same kernel
+        $before = $this->dashboardQueryCount($url);
 
         // More orders on many days/places and more recurring customers must not add queries (no N+1)
         for ($i = 0; $i < 5; $i++) {
@@ -49,13 +98,13 @@ final class DashboardPageTest extends AdminWebTestCase
             $this->recurringOrderForToday($userId);
         }
 
-        self::assertSame($before, $this->dashboardQueryCount());
+        self::assertSame($before, $this->dashboardQueryCount($url));
     }
 
     public function testLiveComponentsAreBehindTheAdminFirewall(): void
     {
         $this->loginAsAdmin();
-        $crawler = $this->client->request('GET', '/admin');
+        $crawler = $this->client->request('GET', '/admin/co-pripravit');
         $url = $crawler->filter('[data-live-name-value="Admin:DashboardOperations"]')->attr('data-live-url-value');
 
         self::assertStringStartsWith('/admin/_components/Admin:DashboardOperations', (string) $url);
@@ -120,10 +169,10 @@ final class DashboardPageTest extends AdminWebTestCase
         return $uuid;
     }
 
-    private function dashboardQueryCount(): int
+    private function dashboardQueryCount(string $url): int
     {
         $this->client->enableProfiler();
-        $this->client->request('GET', '/admin');
+        $this->client->request('GET', $url);
         self::assertResponseIsSuccessful();
 
         $profile = $this->client->getProfile();

@@ -8,11 +8,18 @@ use CeskaKruta\Web\Tests\Support\AdminWebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
- * PLAN §2.18 — navigation in the order of the old navbar.
+ * PLAN §2.18 — dashboards first, then the sections of the old navbar with the "Prodej" group (daily work) on top.
  */
 final class AdminLayoutTest extends AdminWebTestCase
 {
     private const SECTIONS = [
+        'Přehled' => '/admin',
+        'Co připravit' => '/admin/co-pripravit',
+        'Pravidelné objednávky' => '/admin/pravidelne-objednavky',
+        'Statistiky' => '/admin/statistiky',
+        'Objednávky' => '/admin/objednavky',
+        'Uživatelé' => '/admin/uzivatele',
+        'Prodejny' => '/admin/prodejny',
         'Aktuality' => '/admin/aktuality',
         'Rozkrmená krůťata' => '/admin/rozkrmena-krutata',
         'Chlazené krůty' => '/admin/chlazene-kruty',
@@ -21,9 +28,6 @@ final class AdminLayoutTest extends AdminWebTestCase
         'Texty' => '/admin/texty',
         'Prodejci' => '/admin/prodejci',
         'Emaily' => '/admin/emaily',
-        'Prodejny' => '/admin/prodejny',
-        'Uživatelé' => '/admin/uzivatele',
-        'Objednávky' => '/admin/objednavky',
     ];
 
     public function testNavigationContainsAllSectionsInOrder(): void
@@ -63,7 +67,7 @@ final class AdminLayoutTest extends AdminWebTestCase
         $crawler = $this->client->request('GET', '/admin');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextSame('nav a[href="/admin/zmena-hesla"]', 'Admin Testovací');
+        self::assertSelectorTextSame('nav a[href="/admin/zmena-hesla"]', self::ADMIN_EMAIL);
         self::assertSelectorTextSame('nav a[href="/admin/logout"]', 'Odhlásit');
     }
 

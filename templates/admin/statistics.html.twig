@@ -1,0 +1,65 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Statistiky{% endblock %}
+
+{% block content %}
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Statistiky</h1>
+            <p class="admin-page-subtitle">Vývoj tržeb a objednávek, nejprodávanější produkty.</p>
+        </div>
+    </div>
+
+    <div class="admin-dash-charts">
+        <section class="card admin-dash-section">
+            <div class="card-body">
+                <h2 class="admin-dash-section-title">Tržby podle kanálu</h2>
+                <p class="admin-dash-section-text">Podle data vytvoření objednávky, včetně dopravy a balení, po slevě.</p>
+                <div class="admin-dash-chart">{{ render_chart(revenue_chart, {'aria-label': 'Tržby po měsících podle prodejního kanálu', role: 'img'}) }}</div>
+            </div>
+        </section>
+        <section class="card admin-dash-section">
+            <div class="card-body">
+                <h2 class="admin-dash-section-title">Počet objednávek</h2>
+                <p class="admin-dash-section-text">Po měsících, ve srovnání se stejným měsícem o rok dříve.</p>
+                <div class="admin-dash-chart">{{ render_chart(orders_chart, {'aria-label': 'Počet objednávek po měsících ve srovnání s předchozím rokem', role: 'img'}) }}</div>
+            </div>
+        </section>
+    </div>
+
+    <details class="card admin-dash-section admin-dash-table-view">
+        <summary class="card-body">Tabulka tržeb po měsících</summary>
+        <div class="admin-table-wrap">
+            <table class="table table-sm align-middle admin-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Měsíc</th>
+                        {% for channel in channels %}<th class="text-end">{{ channel.label }}</th>{% endfor %}
+                        <th class="text-end">Celkem</th>
+                        <th class="text-end">Objednávek</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for month in months|reverse %}
+                        {% set totals = monthly[month|date('Y-m', false)] ?? {} %}
+                        <tr>
+                            <td>{{ month|date('n/Y', false) }}</td>
+                            {% set revenue = 0 %}
+                            {% set count = 0 %}
+                            {% for channel in channels %}
+                                {% set channel_totals = totals[channel.value] ?? null %}
+                                {% set revenue = revenue + (channel_totals.revenue ?? 0) %}
+                                {% set count = count + (channel_totals.ordersCount ?? 0) %}
+                                <td class="text-end">{{ (channel_totals.revenue ?? 0)|number_format(0, '', '.') }} Kč</td>
+                            {% endfor %}
+                            <td class="text-end"><strong>{{ revenue|number_format(0, '', '.') }} Kč</strong></td>
+                            <td class="text-end">{{ count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+
+    <twig:Admin:DashboardTopProducts />
+{% endblock %}

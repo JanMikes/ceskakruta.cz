@@ -19,6 +19,9 @@ final class AdminPages
     {
         return [
             '/admin' => 'Přehled',
+            '/admin/co-pripravit' => 'Co připravit',
+            '/admin/pravidelne-objednavky' => 'Pravidelné objednávky',
+            '/admin/statistiky' => 'Statistiky',
             '/admin/zmena-hesla' => 'Změna hesla',
 
             '/admin/aktuality' => 'Aktuality',

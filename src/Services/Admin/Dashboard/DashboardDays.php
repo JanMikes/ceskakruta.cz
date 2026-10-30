@@ -32,6 +32,21 @@ readonly final class DashboardDays
     }
 
     /**
+     * Next day the business works = tomorrow, Sunday skipped.
+     */
+    public static function nextDay(\DateTimeImmutable $today): \DateTimeImmutable
+    {
+        $next = $today->modify('+1 day');
+
+        return $next->format('N') === '7' ? $next->modify('+1 day') : $next;
+    }
+
+    public static function nextDayTitle(\DateTimeImmutable $today): string
+    {
+        return self::nextDay($today) == $today->modify('+1 day') ? 'Zítra' : 'Pondělí';
+    }
+
+    /**
      * Every day of the range is present (empty days included), keyed by `Y-m-d`.
      *
      * @return array<string, DayStats>

@@ -1,0 +1,14 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Co připravit{% endblock %}
+
+{% block content %}
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <h1 class="admin-page-title">Co připravit</h1>
+            <p class="admin-page-subtitle">Objednávky po dnech podle expedice nebo dne vyzvednutí / doručení, součet položek a objednávky vybraného dne.</p>
+        </div>
+    </div>
+
+    <twig:Admin:DashboardOperations />
+{% endblock %}

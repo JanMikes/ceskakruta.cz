@@ -25,7 +25,7 @@ final class DashboardOperations
 {
     use DefaultActionTrait;
 
-    private const STRIP_DAYS = 7;
+    public const STRIP_DAYS = 7;
 
     #[LiveProp(writable: true, url: true)]
     public DateBasis $basis = DateBasis::Expedition;
@@ -71,19 +71,14 @@ final class DashboardOperations
         return $this->clock->now()->setTime(0, 0);
     }
 
-    /**
-     * Next day the business works = tomorrow, Sunday skipped.
-     */
     public function nextDay(): \DateTimeImmutable
     {
-        $next = $this->today()->modify('+1 day');
-
-        return $next->format('N') === '7' ? $next->modify('+1 day') : $next;
+        return DashboardDays::nextDay($this->today());
     }
 
     public function nextDayTitle(): string
     {
-        return $this->nextDay() == $this->today()->modify('+1 day') ? 'Zítra' : 'Pondělí';
+        return DashboardDays::nextDayTitle($this->today());
     }
 
     /**

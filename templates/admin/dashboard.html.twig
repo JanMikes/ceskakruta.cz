@@ -19,7 +19,7 @@
     <div class="admin-page-header">
         <div class="admin-page-heading">
             <h1 class="admin-page-title">Přehled</h1>
-            <p class="admin-page-subtitle">Vítejte v administraci{% if app.user.name ?? false %}, {{ app.user.name }}{% endif %}.</p>
+            <p class="admin-page-subtitle">Vítejte v administraci.</p>
         </div>
     </div>
 
@@ -37,7 +37,7 @@
     <div class="admin-dash-attention">
         {{ dashboard.attention('Pohoda', 'send', sync.pohodaOverdue, sync.pohodaUpcoming, path('admin_orders', {missing: 'pohoda', date_from: sync_since})) }}
         {{ dashboard.attention('Boxxi (CoolBalík)', 'box', sync.boxxiOverdue, sync.boxxiUpcoming, path('admin_orders', {missing: 'boxxi', date_from: sync_since})) }}
-        <a class="admin-dash-check{{ missing_expected|length > 0 ? ' is-danger' : ' is-ok' }}" href="#pravidelne-objednavky">
+        <a class="admin-dash-check{{ missing_expected|length > 0 ? ' is-danger' : ' is-ok' }}" href="{{ path('admin_recurring_orders') }}">
             <span class="admin-tile-icon">{{ icons.icon('users') }}</span>
             <span>
                 <span class="admin-dash-check-title">Pravidelné objednávky</span>
@@ -58,106 +58,14 @@
         {{ dashboard.kpi('Letos', 'oproti stejnému období loni', kpis.year, kpis.year_previous) }}
     </div>
 
-    <twig:Admin:DashboardOperations />
-
-    <section class="card admin-dash-section" id="pravidelne-objednavky">
-        <div class="card-body">
-            <div class="admin-dash-section-head">
-                <div>
-                    <h2 class="admin-dash-section-title">Pravidelné objednávky – příštích 7 dní</h2>
-                    <p class="admin-dash-section-text">Objednávky, které má vytvořit cron po uzávěrce. Chybějící je potřeba dořešit ručně.</p>
-                </div>
-            </div>
-
-            {% if expected_orders is empty %}
-                <p class="admin-dash-empty">Žádné pravidelné objednávky.</p>
-            {% else %}
-                <div class="admin-table-wrap admin-table-stack">
-                    <table class="table table-sm align-middle admin-table">
-                        <thead>
-                            <tr>
-                                <th>Den</th>
-                                <th>Zákazník</th>
-                                <th>Místo</th>
-                                <th>Uzávěrka</th>
-                                <th>Stav</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for expected in expected_orders %}
-                                <tr class="{{ expected.status.value == 'missing' ? 'admin-dash-row-danger' }}">
-                                    <td class="text-nowrap" data-label="Den">{{ dashboard.weekday(expected.date) }} {{ expected.date|date('j. n.', false) }}</td>
-                                    <td class="admin-cell-primary" data-label="Zákazník">
-                                        <a class="admin-link-plain" href="{{ path('admin_user_edit', {id: expected.userId}) }}"><strong>{{ expected.customerName }}</strong></a>
-                                        {% if expected.isWholesale %}<span class="badge admin-badge-soft ms-1">Velkoodběratel</span>{% endif %}
-                                    </td>
-                                    <td data-label="Místo">{{ expected.placeName }}</td>
-                                    <td class="text-nowrap" data-label="Uzávěrka">{{ expected.deadline ? dashboard.weekday(expected.deadline) ~ ' ' ~ expected.deadline|date('j. n. H:i', false) : '–' }}</td>
-                                    <td data-label="Stav">
-                                        <span class="admin-pill {{ expected.status.pillClass }}">{{ expected.status.label }}</span>
-                                        {% if expected.orderId %}<a class="ms-1" href="{{ path('admin_order_detail', {id: expected.orderId}) }}">#{{ expected.orderId }}</a>{% endif %}
-                                        {% if expected.problem %}<div class="admin-dash-problem">{{ expected.problem }}</div>{% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-        </div>
-    </section>
-
-    <h2 class="admin-tiles-heading">Vývoj</h2>
-    <div class="admin-dash-charts">
-        <section class="card admin-dash-section">
-            <div class="card-body">
-                <h2 class="admin-dash-section-title">Tržby podle kanálu</h2>
-                <p class="admin-dash-section-text">Podle data vytvoření objednávky, včetně dopravy a balení, po slevě.</p>
-                <div class="admin-dash-chart">{{ render_chart(revenue_chart, {'aria-label': 'Tržby po měsících podle prodejního kanálu', role: 'img'}) }}</div>
-            </div>
-        </section>
-        <section class="card admin-dash-section">
-            <div class="card-body">
-                <h2 class="admin-dash-section-title">Počet objednávek</h2>
-                <p class="admin-dash-section-text">Po měsících, ve srovnání se stejným měsícem o rok dříve.</p>
-                <div class="admin-dash-chart">{{ render_chart(orders_chart, {'aria-label': 'Počet objednávek po měsících ve srovnání s předchozím rokem', role: 'img'}) }}</div>
-            </div>
-        </section>
+    <div class="admin-dash-ops-head">
+        <h2 class="admin-tiles-heading mb-0">Expedice</h2>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ path('admin_preparation') }}">Co připravit {{ icons.icon('arrow_right') }}</a>
     </div>
-
-    <details class="card admin-dash-section admin-dash-table-view">
-        <summary class="card-body">Tabulka tržeb po měsících</summary>
-        <div class="admin-table-wrap">
-            <table class="table table-sm align-middle admin-table mb-0">
-                <thead>
-                    <tr>
-                        <th>Měsíc</th>
-                        {% for channel in channels %}<th class="text-end">{{ channel.label }}</th>{% endfor %}
-                        <th class="text-end">Celkem</th>
-                        <th class="text-end">Objednávek</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for month in months|reverse %}
-                        {% set totals = monthly[month|date('Y-m', false)] ?? {} %}
-                        <tr>
-                            <td>{{ month|date('n/Y', false) }}</td>
-                            {% set revenue = 0 %}
-                            {% set count = 0 %}
-                            {% for channel in channels %}
-                                {% set channel_totals = totals[channel.value] ?? null %}
-                                {% set revenue = revenue + (channel_totals.revenue ?? 0) %}
-                                {% set count = count + (channel_totals.ordersCount ?? 0) %}
-                                <td class="text-end">{{ (channel_totals.revenue ?? 0)|number_format(0, '', '.') }} Kč</td>
-                            {% endfor %}
-                            <td class="text-end"><strong>{{ revenue|number_format(0, '', '.') }} Kč</strong></td>
-                            <td class="text-end">{{ count }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </details>
-
-    <twig:Admin:DashboardTopProducts />
+    {% set day_url = path('admin_preparation') ~ '?day=' %}
+    <div class="admin-dash-days">
+        {{ dashboard.day_card('Dnes', today_stats, 'expedice', null, day_url) }}
+        {{ dashboard.day_card(next_day_title, next_day_stats, 'expedice', null, day_url) }}
+    </div>
+    {{ dashboard.strip(days, null, day_url) }}
 {% endblock %}
