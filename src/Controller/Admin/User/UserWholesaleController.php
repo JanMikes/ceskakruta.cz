@@ -7,6 +7,7 @@ namespace CeskaKruta\Web\Controller\Admin\User;
 use CeskaKruta\Web\Exceptions\RecordNotFound;
 use CeskaKruta\Web\Message\Admin\User\SetUserWholesale;
 use CeskaKruta\Web\Query\Admin\GetAdminUsers;
+use CeskaKruta\Web\Services\Admin\UserListTarget;
 use CeskaKruta\Web\Value\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,6 +46,6 @@ final class UserWholesaleController extends AbstractController
             $user->email,
         ));
 
-        return $this->redirect($this->generateUrl('admin_users') . '#item-' . $id);
+        return $this->redirect(UserListTarget::fromRequest($request) . '#item-' . $id);
     }
 }

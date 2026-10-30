@@ -14,7 +14,7 @@ final class UserListTest extends UserTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextSame('h1', 'Uživatelé');
 
-        // Sorted id DESC
+        // Newest registration first (ins_dt DESC)
         $this->assertListedInOrder($crawler, [
             self::USER_EDIT, self::USER_WHOLESALE, self::USER_PLAIN, self::USER_ADMIN, self::USER_WITH_ORDERS,
             self::WHOLESALE_ID, self::CUSTOMER_ID, self::ADMIN_ID,

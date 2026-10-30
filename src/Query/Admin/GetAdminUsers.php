@@ -6,9 +6,11 @@ namespace CeskaKruta\Web\Query\Admin;
 
 use CeskaKruta\Web\Exceptions\RecordNotFound;
 use CeskaKruta\Web\Value\Admin\AdminUser;
+use CeskaKruta\Web\Value\Admin\AdminUserFilter;
 use CeskaKruta\Web\Value\Admin\AdminUserListItem;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 readonly final class GetAdminUsers
 {
@@ -18,27 +20,25 @@ readonly final class GetAdminUsers
     }
 
     /**
-     * Orders count = non-deleted orders, banned count = active & non-deleted bans.
+     * Newest registrations first, orders count = non-deleted orders, banned count = active & non-deleted bans.
      *
      * @return list<AdminUserListItem>
      */
-    public function all(): array
+    public function filtered(AdminUserFilter $filter, int $offset, int $limit): array
     {
-        $rows = $this->connection
-            ->executeQuery(<<<SQL
-SELECT user.id, user.ins_dt, user.email, user.name, user.allow_wholesale, user.is_admin,
-    COALESCE(orders.orders_count, 0) AS orders_count,
-    COALESCE(bans.banned_count, 0) AS banned_count
-FROM user
-LEFT JOIN (
-    SELECT user_id, COUNT(*) AS orders_count FROM `order` WHERE del_flag = 0 AND user_id IS NOT NULL GROUP BY user_id
-) orders ON orders.user_id = user.id
-LEFT JOIN (
-    SELECT user_id, COUNT(*) AS banned_count FROM user_banned_product WHERE active_flag = 1 AND del_flag = 0 GROUP BY user_id
-) bans ON bans.user_id = user.id
-WHERE user.del_flag = 0
-ORDER BY user.id DESC
-SQL)
+        $rows = $this->filteredQuery($filter)
+            ->select(
+                'u.id', 'u.ins_dt', 'u.email', 'u.name', 'u.allow_wholesale', 'u.is_admin',
+                'COALESCE(orders.orders_count, 0) AS orders_count',
+                'COALESCE(bans.banned_count, 0) AS banned_count',
+            )
+            ->leftJoin('u', '(SELECT user_id, COUNT(*) AS orders_count FROM `order` WHERE del_flag = 0 AND user_id IS NOT NULL GROUP BY user_id)', 'orders', 'orders.user_id = u.id')
+            ->leftJoin('u', '(SELECT user_id, COUNT(*) AS banned_count FROM user_banned_product WHERE active_flag = 1 AND del_flag = 0 GROUP BY user_id)', 'bans', 'bans.user_id = u.id')
+            ->orderBy('u.ins_dt', 'DESC')
+            ->addOrderBy('u.id', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->executeQuery()
             ->fetchAllAssociative();
 
         return array_map(static function (array $row): AdminUserListItem {
@@ -66,6 +66,17 @@ SQL)
                 isAdmin: (bool) $row['is_admin'],
             );
         }, $rows);
+    }
+
+    public function count(AdminUserFilter $filter): int
+    {
+        $count = $this->filteredQuery($filter)
+            ->select('COUNT(*)')
+            ->executeQuery()
+            ->fetchOne();
+        assert(is_numeric($count));
+
+        return (int) $count;
     }
 
     /**
@@ -124,5 +135,23 @@ SQL)
             isCeskakruta: (bool) $row['is_ceskakruta'],
             isAdmin: (bool) $row['is_admin'],
         );
+    }
+
+    private function filteredQuery(AdminUserFilter $filter): QueryBuilder
+    {
+        $query = $this->connection->createQueryBuilder()
+            ->from('user', 'u')
+            ->where('u.del_flag = 0');
+
+        if ($filter->search !== null) {
+            $query->andWhere('u.email LIKE :search OR u.name LIKE :search OR u.phone LIKE :search OR u.company_name LIKE :search')
+                ->setParameter('search', '%' . $filter->search . '%');
+        }
+
+        if ($filter->wholesale !== null) {
+            $query->andWhere('u.allow_wholesale = :wholesale')->setParameter('wholesale', (int) $filter->wholesale);
+        }
+
+        return $query;
     }
 }

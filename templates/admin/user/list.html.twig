@@ -5,12 +5,42 @@
 {% block title %}Uživatelé{% endblock %}
 
 {% block content %}
+    {% set query = filter.toQuery %}
+    {% set filter_active = filter.search is not null or filter.wholesale is not null %}
+
     <div class="admin-page-header">
         <div class="admin-page-heading">
             <h1 class="admin-page-title">Uživatelé</h1>
-            <p class="admin-page-subtitle">Zákaznické účty, nejnovější registrace nahoře.</p>
+            <p class="admin-page-subtitle">Zákaznické účty, nejnovější registrace nahoře. <span class="admin-count">Celkem {{ total }}</span></p>
         </div>
     </div>
+
+    <button class="btn btn-light btn-with-icon w-100 admin-filter-toggle d-md-none{{ filter_active ? '' : ' collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#admin-user-filter" aria-expanded="{{ filter_active ? 'true' : 'false' }}" aria-controls="admin-user-filter">
+        {{ icons.icon('filter') }}<span>Filtry{% if filter_active %} (aktivní){% endif %}</span>
+    </button>
+
+    <form method="get" action="{{ path('admin_users') }}" class="card admin-filter collapse d-md-block{{ filter_active ? ' show' }}" id="admin-user-filter">
+        <div class="card-body">
+            <div class="row g-2 g-md-3 align-items-end">
+                <div class="col-12 col-md-6 col-lg-5">
+                    <label class="form-label" for="filter-search">Hledat</label>
+                    <input class="form-control" type="search" id="filter-search" name="search" value="{{ filter.search }}" placeholder="E-mail, jméno, telefon nebo firma" autocomplete="off">
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label class="form-label" for="filter-wholesale">Velkoobchod</label>
+                    <select class="form-select" id="filter-wholesale" name="wholesale">
+                        <option value=""{{ filter.wholesale is null ? ' selected' }}>Všichni</option>
+                        <option value="1"{{ filter.wholesale is same as(true) ? ' selected' }}>Povolen</option>
+                        <option value="0"{{ filter.wholesale is same as(false) ? ' selected' }}>Nepovolen</option>
+                    </select>
+                </div>
+                <div class="col-12 col-lg-4 d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary btn-with-icon flex-grow-1 flex-md-grow-0" type="submit">{{ icons.icon('filter') }}<span>Filtrovat</span></button>
+                    <a class="btn btn-link text-muted" href="{{ path('admin_users') }}">Resetovat</a>
+                </div>
+            </div>
+        </div>
+    </form>
 
     <div class="card">
         <div class="admin-table-wrap admin-table-stack">
@@ -44,6 +74,7 @@
                             <td data-label="Velkoobchod">
                                 <form method="post" action="{{ path('admin_user_wholesale', {id: user.id}) }}" class="admin-wholesale">
                                     <input type="hidden" name="_token" value="{{ csrf_token('admin-action') }}">
+                                    <input type="hidden" name="_target" value="{{ app.request.requestUri }}">
                                     {% if user.allowWholesale %}
                                         <span class="admin-pill is-yes">Povolen</span>
                                         <input type="hidden" name="allow" value="0">
@@ -62,10 +93,12 @@
                             </td>
                         </tr>
                     {% else %}
-                        {{ grid.empty_row(8, 'Žádní uživatelé.') }}
+                        {{ grid.empty_row(8, filter_active ? 'Filtru neodpovídá žádný uživatel.' : 'Žádní uživatelé.') }}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    {% include 'admin/_pagination.html.twig' with {route: 'admin_users', query: query, page: page, pages: pages} only %}
 {% endblock %}
