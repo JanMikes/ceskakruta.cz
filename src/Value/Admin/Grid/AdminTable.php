@@ -16,6 +16,7 @@ enum AdminTable: string
     case Product = 'product';
     case Recipe = 'recipe';
     case Sortiment = 'sortiment';
+    case SortimentCategory = 'sortiment_category';
     case Vendor = 'vendor';
     case Newsletter = 'newsletter';
     case Place = 'place';
@@ -42,7 +43,7 @@ enum AdminTable: string
     public function isOrderable(): bool
     {
         return match ($this) {
-            self::Product, self::Sortiment, self::Vendor, self::Place => true,
+            self::Product, self::Sortiment, self::SortimentCategory, self::Vendor, self::Place => true,
             default => false,
         };
     }
@@ -103,6 +104,11 @@ enum AdminTable: string
 
         if ($this === self::Sortiment && $action === GridAction::Delete) {
             return !in_array(self::intValue($row, 'id'), self::PROTECTED_SORTIMENT_IDS, true);
+        }
+
+        // Deleting a category would hide its items, empty it first (`items_count` comes from GridRecordRepository::get())
+        if ($this === self::SortimentCategory && $action === GridAction::Delete) {
+            return self::intValue($row, 'items_count') === 0;
         }
 
         return true;

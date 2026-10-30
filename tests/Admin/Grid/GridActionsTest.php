@@ -26,6 +26,7 @@ final class GridActionsTest extends AdminWebTestCase
         yield 'product' => ['product', '/admin/produkty', 100];
         yield 'recipe' => ['recipe', '/admin/produkty/100/recepty', 1];
         yield 'sortiment' => ['sortiment', '/admin/sortiment/1', 3];
+        yield 'sortiment_category' => ['sortiment_category', '/admin/sortiment', 2];
         yield 'vendor' => ['vendor', '/admin/prodejci', 1];
         yield 'place' => ['place', '/admin/prodejny', 7];
     }
@@ -41,6 +42,8 @@ final class GridActionsTest extends AdminWebTestCase
         yield 'product' => ['product', '/admin/produkty', 100];
         yield 'recipe' => ['recipe', '/admin/produkty/100/recepty', 1];
         yield 'sortiment' => ['sortiment', '/admin/sortiment/1', 3];
+        // empty category (items in categories 1 and 4 only)
+        yield 'sortiment_category' => ['sortiment_category', '/admin/sortiment', 2];
         yield 'vendor' => ['vendor', '/admin/prodejci', 1];
         yield 'newsletter' => ['newsletter', '/admin/emaily', 1];
         yield 'place_closed_day' => ['place_closed_day', '/admin/prodejny', 1];
@@ -119,6 +122,9 @@ final class GridActionsTest extends AdminWebTestCase
 
         yield 'sortiment 1 delete' => ['sortiment', '/admin/sortiment/1', 1, 'delete'];
         yield 'sortiment 2 delete' => ['sortiment', '/admin/sortiment/1', 2, 'delete'];
+        // categories with items can not be deleted
+        yield 'sortiment_category 1 delete' => ['sortiment_category', '/admin/sortiment', 1, 'delete'];
+        yield 'sortiment_category 4 delete' => ['sortiment_category', '/admin/sortiment', 4, 'delete'];
         yield 'place delete' => ['place', '/admin/prodejny', 7, 'delete'];
     }
 

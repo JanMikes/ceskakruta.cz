@@ -35,6 +35,13 @@ readonly final class GridRecordRepository
             throw new RecordNotFound();
         }
 
+        if ($table === AdminTable::SortimentCategory) {
+            $row['items_count'] = $this->connection->fetchOne(
+                'SELECT COUNT(*) FROM sortiment WHERE category_id = :id AND del_flag = 0',
+                ['id' => $id],
+            );
+        }
+
         return $row;
     }
 

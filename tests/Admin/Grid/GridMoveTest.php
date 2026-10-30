@@ -21,6 +21,7 @@ final class GridMoveTest extends AdminWebTestCase
     public static function orderableTables(): \Generator
     {
         yield 'vendor' => ['vendor', '/admin/prodejci', ['name' => 'Prodejce']];
+        yield 'sortiment_category' => ['sortiment_category', '/admin/sortiment', ['name' => 'Kategorie']];
         yield 'product' => ['product', '/admin/produkty', ['name' => 'Produkt', 'type' => 1, 'unit' => 'kg', 'price' => 100, 'packages_size' => '[]']];
         yield 'place' => ['place', '/admin/prodejny', ['name' => 'Prodejna', 'title' => 'Prodejna', 'force_delivery_address' => 0, 'hide_in_admin' => 0]];
     }

@@ -22,6 +22,7 @@ final class GridActivateAllTest extends AdminWebTestCase
         yield 'calendar_dead' => ['calendar_dead', '/admin/rozkrmena-krutata'];
         yield 'calendar_cold' => ['calendar_cold', '/admin/chlazene-kruty'];
         yield 'product' => ['product', '/admin/produkty'];
+        yield 'sortiment_category' => ['sortiment_category', '/admin/sortiment'];
         yield 'vendor' => ['vendor', '/admin/prodejci'];
         yield 'place' => ['place', '/admin/prodejny'];
     }

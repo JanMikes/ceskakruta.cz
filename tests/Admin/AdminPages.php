@@ -47,6 +47,8 @@ final class AdminPages
             '/admin/sortiment/1' => 'Mouky',
             '/admin/sortiment/1/pridat' => null,
             '/admin/sortiment/1/1' => null,
+            '/admin/sortiment/kategorie/pridat' => null,
+            '/admin/sortiment/kategorie/1' => null,
 
             '/admin/texty' => 'Texty',
             '/admin/texty/1' => null,

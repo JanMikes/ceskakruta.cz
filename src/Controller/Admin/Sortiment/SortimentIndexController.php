@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Controller\Admin\Sortiment;
 
+use CeskaKruta\Web\Query\Admin\CountInactiveRecords;
 use CeskaKruta\Web\Query\Admin\GetSortimentCategories;
+use CeskaKruta\Web\Value\Admin\Grid\AdminTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,6 +15,7 @@ final class SortimentIndexController extends AbstractController
 {
     public function __construct(
         readonly private GetSortimentCategories $getSortimentCategories,
+        readonly private CountInactiveRecords $countInactiveRecords,
     ) {
     }
 
@@ -21,6 +24,7 @@ final class SortimentIndexController extends AbstractController
     {
         return $this->render('admin/sortiment/index.html.twig', [
             'categories' => $this->getSortimentCategories->all(),
+            'inactive_count' => $this->countInactiveRecords->count(AdminTable::SortimentCategory),
         ]);
     }
 }

@@ -10,6 +10,8 @@ readonly final class SortimentCategory
         public int $id,
         public string $name,
         public bool $active,
+        /** Non-deleted items in the category, a category with items can not be deleted */
+        public int $itemsCount = 0,
     ) {
     }
 }

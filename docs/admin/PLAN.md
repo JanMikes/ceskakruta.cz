@@ -179,7 +179,7 @@ Each run:
   (Old app also generated thumbnails `admin`, `recipe`, `recipe-list`; the new frontend only uses the original → thumbnails not needed.)
 
 ### 2.11 Doplňkový sortiment (`sortiment`, `sortiment_category`)
-- Index: buttons for each category (categories also listed in navbar dropdown). No category management.
+- Index (2026-10-30: category management added): categories sorted `order DESC` (also listed in navbar dropdown): Kategorie (link to its items), N položek, Edit (`/admin/sortiment/kategorie/{id}`, form `name` required), [A]/[D], [M], [X] (**only for categories without non-deleted items**), [AA], Přidat (`/admin/sortiment/kategorie/pridat`).
 - Per category list sorted `order DESC`: Název; [A]/[D], [M] (**up arrow hidden for first 3 rows**), Edit, [X] (**hidden for ids 1, 2**), [AA].
 - Form: `name` (required), `text` (WYSIWYG); `category_id` from URL.
 

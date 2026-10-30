@@ -1,0 +1,25 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
+
+{% set heading = category ? 'Upravit kategorii' : 'Přidat kategorii' %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_sortiment') }}">{{ icons.icon('arrow_left') }}Kategorie sortimentu</a>
+            <h1 class="admin-page-title">{{ heading }}{% if category %} <small class="text-muted">{{ category.name }}</small>{% endif %}</h1>
+        </div>
+    </div>
+
+    <div class="card admin-form-card">
+        <div class="card-body">
+            {{ form_start(form) }}
+                {{ form_row(form.name) }}
+
+                {{ include('admin/_form_buttons.html.twig', {is_edit: category is not null, back_url: path('admin_sortiment')}) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

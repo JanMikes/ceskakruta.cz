@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Tests\Admin\Sortiment;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 /**
- * PLAN §2.11: index = one button per category linking to its list; no category management.
+ * Index = category management: rows `item-{id}` sorted `order DESC`, link to the items, items count, edit,
+ * grid actions (activate/deactivate, move, delete only when the category has no items).
  */
 final class SortimentIndexTest extends SortimentTestCase
 {
@@ -18,16 +17,35 @@ final class SortimentIndexTest extends SortimentTestCase
         $crawler = $this->openPage('/admin/sortiment');
 
         self::assertSelectorTextSame('h1', 'Doplňkový sortiment');
+        $this->assertListedInOrder($crawler, [1, 2, 3, 4]);
+        self::assertNotContains($deleted, $this->listedIds($crawler));
 
-        // (the navbar dropdown links the categories too, so look for a link with the category name anywhere)
         foreach ([1 => 'Mouky', 2 => 'Oleje', 3 => 'Koření', 4 => 'Ostatní'] as $id => $name) {
-            $links = $crawler->filter(sprintf('a[href="/admin/sortiment/%d"]', $id))->reduce(
-                static fn (Crawler $link): bool => trim($link->text('')) === $name,
-            );
-            self::assertGreaterThanOrEqual(1, $links->count(), sprintf('Link "%s" to category %d missing.', $name, $id));
+            $row = $crawler->filter(sprintf('#item-%d', $id));
+            self::assertSame($name, trim($row->filter(sprintf('a[href="/admin/sortiment/%d"]', $id))->first()->text()));
+            self::assertCount(1, $row->filter(sprintf('a[href="/admin/sortiment/kategorie/%d"]', $id)), 'Edit link');
         }
 
-        self::assertCount(0, $crawler->filter(sprintf('a[href="/admin/sortiment/%d"]', $deleted)));
-        self::assertCount(0, $crawler->filter('form[action^="/admin/record/sortiment_category"]'), 'No category management.');
+        // Items count: category 1 has 3 base items, 4 the catalog fixture, 2 is empty
+        self::assertStringContainsString('3 položek', $crawler->filter('#item-1')->text());
+        self::assertStringContainsString('1 položek', $crawler->filter('#item-4')->text());
+        self::assertStringContainsString('0 položek', $crawler->filter('#item-2')->text());
+
+        // Delete only for empty categories
+        $this->gridActionForm($crawler, 'sortiment_category', 2, 'delete');
+        $this->assertNoGridAction($crawler, 'sortiment_category', 1, 'delete');
+        $this->gridActionForm($crawler, 'sortiment_category', 1, 'deactivate');
+
+        self::assertCount(1, $crawler->filter('a[href="/admin/sortiment/kategorie/pridat"]'));
+    }
+
+    public function testDeletedItemsDoNotBlockDelete(): void
+    {
+        $category = $this->insertCategory();
+        $this->insert('sortiment', ['category_id' => $category, 'order' => 1, 'name' => 'Smazaná', 'del_flag' => 1]);
+
+        $crawler = $this->openPage('/admin/sortiment');
+
+        $this->gridActionForm($crawler, 'sortiment_category', $category, 'delete');
     }
 }

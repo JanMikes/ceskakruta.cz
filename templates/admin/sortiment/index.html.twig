@@ -1,4 +1,5 @@
 {% extends 'admin/base.html.twig' %}
+{% import 'admin/_grid.html.twig' as grid %}
 {% import 'admin/_icons.html.twig' as icons %}
 
 {% block title %}Doplňkový sortiment{% endblock %}
@@ -7,28 +8,45 @@
     <div class="admin-page-header">
         <div class="admin-page-heading">
             <h1 class="admin-page-title">Doplňkový sortiment</h1>
-            <p class="admin-page-subtitle">Vyberte kategorii:</p>
+            <p class="admin-page-subtitle">Kategorie sortimentu, položky spravujete po otevření kategorie.</p>
+        </div>
+        <div class="admin-page-actions">
+            {{ grid.activate_all('sortiment_category', inactive_count) }}
+            {{ grid.add_link(path('admin_sortiment_category_create'), 'Přidat kategorii') }}
         </div>
     </div>
 
-    {% if categories is empty %}
-        <div class="card">
-            <div class="admin-empty">
-                <span class="admin-empty-icon">{{ icons.icon('inbox') }}</span>
-                <p class="admin-empty-title">Žádné kategorie.</p>
-            </div>
+    <div class="card">
+        <div class="admin-table-wrap admin-table-stack">
+            <table class="table table-hover align-middle admin-table">
+                <thead>
+                    <tr>
+                        <th>Kategorie</th>
+                        <th>Položky</th>
+                        <th class="text-end">Akce</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                        <tr id="item-{{ category.id }}"{% if not category.active %} class="admin-row-inactive"{% endif %}>
+                            <td class="admin-cell-primary">
+                                <a class="admin-link-plain" href="{{ path('admin_sortiment_category', {categoryId: category.id}) }}">{{ category.name }}</a>
+                            </td>
+                            <td class="text-nowrap" data-label="Položky">
+                                <a class="btn btn-sm btn-light btn-with-icon" href="{{ path('admin_sortiment_category', {categoryId: category.id}) }}">{{ icons.icon('grid') }}<span>{{ category.itemsCount }} položek</span></a>
+                            </td>
+                            <td class="admin-cell-actions">
+                                <div class="admin-actions">
+                                    {{ grid.edit_link(path('admin_sortiment_category_edit', {id: category.id})) }}
+                                    {{ grid.row_actions('sortiment_category', {id: category.id, active: category.active, items_count: category.itemsCount}, {first: loop.first, last: loop.last}) }}
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        {{ grid.empty_row(3, 'Žádné kategorie.') }}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    {% else %}
-        <div class="admin-tiles">
-            {% for category in categories %}
-                <a class="admin-tile admin-category-tile{{ category.active ? '' : ' is-inactive' }}" href="{{ path('admin_sortiment_category', {categoryId: category.id}) }}">
-                    <span class="admin-tile-icon">{{ icons.icon('grid') }}</span>
-                    <span>
-                        <span class="admin-tile-title">{{ category.name }}</span>
-                        {% if not category.active %}<span class="admin-tile-text">Kategorie není aktivní</span>{% endif %}
-                    </span>
-                </a>
-            {% endfor %}
-        </div>
-    {% endif %}
+    </div>
 {% endblock %}

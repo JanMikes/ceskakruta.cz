@@ -27,7 +27,13 @@ final class GetSortimentCategories
     {
         if ($this->categories === null) {
             $rows = $this->connection
-                ->executeQuery('SELECT id, name, active_flag FROM sortiment_category WHERE del_flag = 0 ORDER BY `order` DESC, id')
+                ->executeQuery(<<<'SQL'
+SELECT c.id, c.name, c.active_flag,
+    (SELECT COUNT(*) FROM sortiment s WHERE s.category_id = c.id AND s.del_flag = 0) AS items_count
+FROM sortiment_category c
+WHERE c.del_flag = 0
+ORDER BY c.`order` DESC, c.id
+SQL)
                 ->fetchAllAssociative();
 
             $categories = [];
@@ -38,6 +44,7 @@ final class GetSortimentCategories
                  *     id: int,
                  *     name: string,
                  *     active_flag: int,
+                 *     items_count: int|string,
                  * } $row
                  */
 
@@ -45,6 +52,7 @@ final class GetSortimentCategories
                     id: $row['id'],
                     name: $row['name'],
                     active: (bool) $row['active_flag'],
+                    itemsCount: (int) $row['items_count'],
                 );
             }
 
