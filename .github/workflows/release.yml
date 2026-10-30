@@ -32,6 +32,9 @@ jobs:
             -   run: npm install
             -   run: npm run build
 
+            # FTP deploy has no .git, so tell Sentry which commit is live
+            -   run: echo "SENTRY_RELEASE=${{ github.sha }}" >> .env
+
             -   name: 📂 Upload files
                 uses: SamKirkland/FTP-Deploy-Action@v4.3.5
                 with:
@@ -43,14 +46,14 @@ jobs:
                         **/.git*
                         **/.git*/**
                         **/node_modules/**
-                        **/vendor/**
+                        vendor/**
                         **/.docker/**
                         **/.github/**
-                        **/assets/**
-                        **/var/**
+                        assets/**
+                        var/**
                         **/public/upload/**
-                        **/tests/**
-                        **/docs/**
+                        tests/**
+                        docs/**
                         .env.test
                         phpunit.dist.xml
                         bin/phpunit
