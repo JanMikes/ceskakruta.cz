@@ -7,12 +7,12 @@ namespace CeskaKruta\Web\Tests\Admin\Newsletter;
 use CeskaKruta\Web\Tests\Support\AdminWebTestCase;
 
 /**
- * PLAN §2.14: subscribers list sorted by email ASC, columns Email + Přidáno (d.m.Y H:i:s), only [X] delete.
+ * PLAN §2.14: subscribers list sorted newest first (ins_dt DESC, id DESC), columns Email + Přidáno (d.m.Y H:i:s), only [X] delete.
  * Fixtures: tests/database/fixtures/10-newsletter.sql.
  */
 final class NewsletterEmailsListTest extends AdminWebTestCase
 {
-    public function testListsSortedByEmail(): void
+    public function testListsNewestFirst(): void
     {
         $this->loginAsAdmin();
 
@@ -21,8 +21,8 @@ final class NewsletterEmailsListTest extends AdminWebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextSame('h1', 'Emaily');
 
-        // adam, inactive (inactive rows are listed), marek, base subscriber@, zuzana
-        $this->assertListedInOrder($crawler, [1001, 1003, 1002, 1, 1000]);
+        // inactive (inactive rows are listed) 04-02, marek 04-01, adam 03-05, zuzana 02-01, base subscriber@ 2024-01-01
+        $this->assertListedInOrder($crawler, [1003, 1002, 1001, 1000, 1]);
         self::assertNotContains(1004, $this->listedIds($crawler), 'Deleted subscribers are not listed.');
 
         $row = $crawler->filter('#item-1001');
@@ -40,7 +40,7 @@ final class NewsletterEmailsListTest extends AdminWebTestCase
 
     public function testPaginatesFiftyPerPage(): void
     {
-        // 55 extra subscribers sorted after the fixtures → 60 rows = 2 pages
+        // 55 extra subscribers older than the fixtures (same ins_dt → id DESC) → 60 rows = 2 pages
         for ($i = 1; $i <= 55; $i++) {
             $this->insert('newsletter', [
                 'email' => sprintf('zz-paging-%02d@example.test', $i),
@@ -62,7 +62,7 @@ final class NewsletterEmailsListTest extends AdminWebTestCase
         $crawler = $this->client->request('GET', '/admin/emaily?page=2');
         self::assertResponseIsSuccessful();
         self::assertCount(10, $this->listedIds($crawler));
-        self::assertStringContainsString('zz-paging-55@example.test', $crawler->filter('body')->text());
+        self::assertStringContainsString('zz-paging-01@example.test', $crawler->filter('body')->text());
 
         // Deleting returns to the same page
         $id = $this->listedIds($crawler)[0];

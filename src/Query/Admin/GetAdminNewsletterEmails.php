@@ -23,7 +23,7 @@ readonly final class GetAdminNewsletterEmails
     }
 
     /**
-     * Inactive (unsubscribed) included like in the old list.
+     * Newest first, inactive (unsubscribed) included like in the old list.
      *
      * @return list<AdminNewsletterEmail>
      */
@@ -34,8 +34,8 @@ readonly final class GetAdminNewsletterEmails
             ->select('id', 'email', 'ins_dt')
             ->from('newsletter')
             ->where('del_flag = 0')
-            ->orderBy('email', 'ASC')
-            ->addOrderBy('id', 'ASC')
+            ->orderBy('ins_dt', 'DESC')
+            ->addOrderBy('id', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit)
             ->executeQuery()

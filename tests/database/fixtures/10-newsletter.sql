@@ -7,7 +7,7 @@ INSERT INTO `actuality` (`id`, `date`, `name`, `text`, `text_full`, `ins_dt`, `a
 (1002, '2025-01-01', 'Smazaná aktualita', '<p>Smazáno</p>', '<p>Smazáno</p>', '2025-01-01 08:00:00', 1, 1),
 (1003, '2023-12-20', 'Vánoce 2023', '<p>Vánoční email</p>', '<p>Vánoční web</p>', '2023-12-20 08:00:00', 0, 0);
 
--- Subscribers: list sorted by email ASC → adam (1001), inactive (1003), marek (1002), [base subscriber (1)], zuzana (1000); 1004 is deleted
+-- Subscribers: list sorted ins_dt DESC → inactive (1003), marek (1002), adam (1001), zuzana (1000), [base subscriber (1)]; 1004 is deleted
 INSERT INTO `newsletter` (`id`, `email`, `ins_dt`, `active_flag`, `del_flag`) VALUES
 (1000, 'zuzana@example.test', '2024-02-01 10:00:00', 1, 0),
 (1001, 'adam@example.test', '2024-03-05 12:34:56', 1, 0),
