@@ -25,7 +25,8 @@ final class OrderDetailTest extends OrderAdminTestCase
         self::assertResponseIsSuccessful();
         $text = $this->pageText($crawler);
 
-        self::assertMatchesRegularExpression('/Č\.:?\s*5903\s*Nový web/u', $text);
+        self::assertMatchesRegularExpression('/Č\.:?\s*5903\s*Datum provedení/u', $text);
+        self::assertStringNotContainsString('Nový web', $text);
         self::assertMatchesRegularExpression('/Datum provedení:?\s*14\.06\.2024 07:05/u', $text);
         foreach (['Marie Dvořáková', '+420600500600', 'marie.dvorakova@example.test', 'Školní 7', 'Olomouc 77900'] as $customer) {
             self::assertStringContainsString($customer, $text);
@@ -69,10 +70,17 @@ final class OrderDetailTest extends OrderAdminTestCase
         self::assertMatchesRegularExpression('/Cena celkem:?\s*520 Kč/u', $text);
         self::assertMatchesRegularExpression('/Platba kartou:?\s*Ne/u', $text);
         self::assertMatchesRegularExpression('/Místo:?\s*Rychvald - Prodejna/u', $text);
-        self::assertMatchesRegularExpression('/Č\.:?\s*5904\s*Nový web/u', $text);
+        self::assertStringNotContainsString('Velkoodběratel', $text, 'No badge for an order to a retail place.');
+    }
 
-        $crawler = $this->client->request('GET', '/admin/objednavky/5902');
-        self::assertStringNotContainsString('Nový web', $this->pageText($crawler), 'No badge when source is NULL.');
+    public function testWholesaleBadge(): void
+    {
+        // Place 22 = wholesale-only delivery place
+        $this->connection()->executeStatement('UPDATE `order` SET place_id = 22 WHERE id = 5904');
+
+        $crawler = $this->client->request('GET', '/admin/objednavky/5904');
+        self::assertResponseIsSuccessful();
+        self::assertMatchesRegularExpression('/Č\.:?\s*5904\s*Velkoodběratel/u', $this->pageText($crawler));
     }
 
     public function testUnknownIdRedirects(): void

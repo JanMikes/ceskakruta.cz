@@ -39,10 +39,11 @@ final class OrderListTest extends OrderAdminTestCase
     {
         $crawler = $this->requestList();
 
-        // Č. + "Nový web" badge (source set), Datum provedení (ins_dt), Zákazník, Cena, Místo, Datum, Poznámka, Pohoda unsynced
+        // Č. (no badge for a retail place), Datum provedení (ins_dt), Zákazník, Cena, Místo, Datum, Poznámka, Pohoda unsynced
         $shop = $this->row($crawler, self::SHOP_ORDER)->text();
         self::assertStringContainsString('5901', $shop);
-        self::assertStringContainsString('Nový web', $shop);
+        self::assertStringNotContainsString('Velkoodběratel', $shop);
+        self::assertStringNotContainsString('Nový web', $shop);
         self::assertStringContainsString('10.06.2024 08:15', $shop);
         self::assertStringContainsString('Jana Nováková', $shop);
         self::assertStringContainsString('845 Kč', $shop);
@@ -52,11 +53,12 @@ final class OrderListTest extends OrderAdminTestCase
         self::assertStringContainsString('Nepropsáno', $shop);
         self::assertStringNotContainsString('Sleva', $shop);
         self::assertCount(1, $this->row($crawler, self::SHOP_ORDER)->filter('form[action="/admin/objednavky/5901/pohoda"]'));
-        self::assertCount(1, $this->row($crawler, self::SHOP_ORDER)->filter('a[href="/admin/objednavky/5901"]'), 'Detail link');
+        // Order number, customer name and the Detail button all link to the detail
+        $detailLinks = $this->row($crawler, self::SHOP_ORDER)->filter('a[href="/admin/objednavky/5901"]');
+        self::assertSame(['5901', 'Jana Nováková', 'Detail'], $detailLinks->each(static fn ($link): string => trim($link->text())));
 
-        // No badge without source; delivery address street + "city zip"
+        // Delivery address street + "city zip"
         $delivery = $this->row($crawler, self::DELIVERY_ORDER)->text();
-        self::assertStringNotContainsString('Nový web', $delivery);
         self::assertStringContainsString('Petr Svoboda', $delivery);
         self::assertStringContainsString('Hlavní 12', $delivery);
         self::assertStringContainsString('Přerov 75002', $delivery);
@@ -120,6 +122,18 @@ final class OrderListTest extends OrderAdminTestCase
 
         self::assertContains(self::SHOP_ORDER, $this->listedIds($crawler));
         self::assertSame('', $this->inputValue($crawler, 'input[name="customer_name"]'));
+    }
+
+    public function testWholesaleBadgeOnlyForWholesalePlaceOrders(): void
+    {
+        // Place 22 = wholesale-only delivery place; the customer's own wholesale permission does not matter
+        $this->connection()->executeStatement('UPDATE `order` SET place_id = 22 WHERE id = :id', ['id' => self::SHOP_ORDER]);
+        $this->connection()->executeStatement('UPDATE `order` SET user_id = :userId WHERE id = :id', ['userId' => self::WHOLESALE_ID, 'id' => self::DELIVERY_ORDER]);
+
+        $crawler = $this->requestList();
+
+        self::assertStringContainsString('Velkoodběratel', $this->row($crawler, self::SHOP_ORDER)->text());
+        self::assertStringNotContainsString('Velkoodběratel', $this->row($crawler, self::DELIVERY_ORDER)->text());
     }
 
     public function testCheckboxOnlyForUnsynced(): void

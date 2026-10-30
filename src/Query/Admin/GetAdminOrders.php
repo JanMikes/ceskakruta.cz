@@ -29,7 +29,7 @@ readonly final class GetAdminOrders
     public function filtered(AdminOrderFilter $filter, int $offset = 0, null|int $limit = null): array
     {
         $rows = $this->filteredQuery($filter)
-            ->select('o.*', 'p.name AS place_name', 'p.is_cool_balik AS place_is_cool_balik', 'p.force_delivery_address AS place_force_delivery_address')
+            ->select('o.*', 'p.name AS place_name', 'p.is_cool_balik AS place_is_cool_balik', 'p.force_delivery_address AS place_force_delivery_address', 'p.allow_only_wholesale AS place_allow_only_wholesale')
             ->orderBy('o.id', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit)
@@ -57,7 +57,8 @@ readonly final class GetAdminOrders
     {
         $row = $this->connection
             ->executeQuery('
-                SELECT o.*, p.name AS place_name, p.is_cool_balik AS place_is_cool_balik, p.force_delivery_address AS place_force_delivery_address
+                SELECT o.*, p.name AS place_name, p.is_cool_balik AS place_is_cool_balik, p.force_delivery_address AS place_force_delivery_address,
+                    p.allow_only_wholesale AS place_allow_only_wholesale
                 FROM `order` o
                 LEFT JOIN place p ON p.id = o.place_id
                 WHERE o.id = :id AND o.del_flag = 0
@@ -193,7 +194,7 @@ readonly final class GetAdminOrders
          *     coupon_percent_value: null|int,
          *     coupon_code: null|string,
          *     price_total: float|string,
-         *     source: null|string,
+         *     place_allow_only_wholesale: null|int,
          *     pohoda_sync_dt: null|string,
          *     boxxi_sync_dt: null|string,
          *     cool_balik_price: null|float|string,
@@ -225,7 +226,7 @@ readonly final class GetAdminOrders
         return new AdminOrderRecord(
             order: $order,
             priceTotal: (float) $row['price_total'],
-            source: $row['source'],
+            isWholesale: (bool) $row['place_allow_only_wholesale'],
             couponCode: $row['coupon_code'],
             pohodaSyncedAt: $row['pohoda_sync_dt'] !== null ? new \DateTimeImmutable($row['pohoda_sync_dt']) : null,
             boxxiSyncedAt: $row['boxxi_sync_dt'] !== null ? new \DateTimeImmutable($row['boxxi_sync_dt']) : null,

@@ -88,12 +88,12 @@
                                 {% endif %}
                             </td>
                             <td class="text-nowrap" data-label="Č.">
-                                <strong>{{ order.id }}</strong>
-                                {% if record.source is not null %}<br><span class="badge admin-badge-soft">Nový web</span>{% endif %}
+                                <a class="admin-link-plain" href="{{ path('admin_order_detail', {id: order.id}) }}"><strong>{{ order.id }}</strong></a>
+                                {% if record.isWholesale %}<br><span class="badge admin-badge-soft">Velkoodběratel</span>{% endif %}
                             </td>
                             <td class="admin-cell-date" data-label="Datum provedení">{{ order.insertedAt|date('d.m.Y H:i', false) }}</td>
                             <td class="admin-cell-primary admin-cell-customer">
-                                <strong>{{ order.name }}</strong><br>
+                                <a class="admin-link-plain" href="{{ path('admin_order_detail', {id: order.id}) }}"><strong>{{ order.name }}</strong></a><br>
                                 <span class="admin-cell-muted">{{ order.deliveryStreet }}<br>
                                 {{ order.deliveryCity }} {{ order.deliveryPostalCode }}</span>
                             </td>

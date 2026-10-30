@@ -9,7 +9,7 @@
                 <th>Č.:</th>
                 <td>
                     <strong>{{ order.id }}</strong>
-                    {% if record.source is not null %} <span class="badge admin-badge-soft">Nový web</span>{% endif %}
+                    {% if record.isWholesale %} <span class="badge admin-badge-soft">Velkoodběratel</span>{% endif %}
                 </td>
             </tr>
             <tr><th>Datum provedení:</th><td>{{ order.insertedAt|date('d.m.Y H:i', false) }}</td></tr>

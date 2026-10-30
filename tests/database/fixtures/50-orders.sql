@@ -1,7 +1,7 @@
 -- Orders section fixtures (id range 5000–5999, PLAN §4.6). Synthetic data only.
 -- 5901–5906: hand-made orders, the SAME data the Pohoda/Boxxi golden files were rendered from with the old app
 --            (tests/fixtures/pohoda/_renderer/orders.json) → keep both in sync.
---   5901 shop place 1, cash, 2 items, source set ("Nový web")
+--   5901 shop place 1, cash, 2 items, source set
 --   5902 delivery place 7, cash, empty note, half turkey (no split outside CoolBalík), source NULL
 --   5903 CoolBalík place 21, card, Fri 2024-06-21 → expedition Thu → split WEB5903 + WEB5903K; items inserted in reverse of detail sort order
 --   5904 shop place 1, coupon LETO10 -10 %

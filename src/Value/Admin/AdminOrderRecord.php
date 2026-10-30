@@ -12,8 +12,8 @@ readonly final class AdminOrderRecord
     public function __construct(
         public AdminOrder $order,
         public float $priceTotal,
-        /** `order.source` set = ordered on the new web ("Nový web") */
-        public null|string $source,
+        /** Ordered to a wholesale-only place (`place.allow_only_wholesale`) = wholesale order ("Velkoodběratel") */
+        public bool $isWholesale,
         public null|string $couponCode,
         public null|\DateTimeImmutable $pohodaSyncedAt,
         public null|\DateTimeImmutable $boxxiSyncedAt,

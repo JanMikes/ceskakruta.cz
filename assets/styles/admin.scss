@@ -1038,6 +1038,16 @@ body.admin {
     line-height: 1.4;
 }
 
+// Text links inside table cells (order number, customer name → detail): keep the cell colour, highlight on hover
+.admin-link-plain {
+    color: inherit;
+
+    &:hover,
+    &:focus-visible {
+        color: $primary;
+    }
+}
+
 .admin-orders-table {
     font-size: .8125rem;
 
