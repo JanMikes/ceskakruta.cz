@@ -33,8 +33,17 @@
     }
 }
 
+// HTML mode: the textarea sits right below the wrapper (it is never moved inside it), so join the two boxes
+.wysiwyg.wysiwyg-raw-mode {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
 .wysiwyg-raw {
     display: block;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     width: 100%;
     min-height: 14rem;
     font-family: var(--bs-font-monospace);

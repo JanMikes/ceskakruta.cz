@@ -44,17 +44,19 @@ export default class extends Controller {
         this.textarea = this.element;
         this.rawMode = false;
 
+        // The textarea (= the controller element) must never be moved in the DOM: Stimulus treats a move as
+        // remove + add, i.e. disconnect() + connect(), which would rebuild the editor in an endless loop.
+        // So the editor goes into a wrapper inserted *before* the textarea, the textarea is only hidden/shown.
         this.wrapper = document.createElement('div');
         this.wrapper.className = 'wysiwyg border rounded';
-        this.textarea.parentNode.insertBefore(this.wrapper, this.textarea);
 
         this.toolbar = this.buildToolbar();
         this.content = document.createElement('div');
         this.content.className = 'wysiwyg-content';
 
         this.wrapper.append(this.toolbar, this.content);
-        this.wrapper.appendChild(this.textarea);
-        this.textarea.classList.add('wysiwyg-raw', 'border-0', 'rounded-0');
+        this.textarea.before(this.wrapper);
+        this.textarea.classList.add('wysiwyg-raw');
         this.textarea.hidden = true;
 
         this.editor = new Editor({
@@ -74,13 +76,12 @@ export default class extends Controller {
 
     disconnect() {
         this.editor?.destroy();
+        this.editor = null;
 
-        if (this.wrapper) {
-            this.wrapper.parentNode.insertBefore(this.textarea, this.wrapper);
-            this.wrapper.remove();
-            this.textarea.hidden = false;
-            this.textarea.classList.remove('wysiwyg-raw', 'border-0', 'rounded-0');
-        }
+        this.wrapper?.remove();
+        this.wrapper = null;
+        this.textarea.hidden = false;
+        this.textarea.classList.remove('wysiwyg-raw');
     }
 
     buildToolbar() {
@@ -173,6 +174,7 @@ export default class extends Controller {
 
         this.textarea.hidden = !this.rawMode;
         this.content.hidden = this.rawMode;
+        this.wrapper.classList.toggle('wysiwyg-raw-mode', this.rawMode);
         this.rawButton.classList.toggle('active', this.rawMode);
         this.rawButton.setAttribute('aria-pressed', String(this.rawMode));
         this.buttons.forEach(({ button }) => { button.disabled = this.rawMode; });
