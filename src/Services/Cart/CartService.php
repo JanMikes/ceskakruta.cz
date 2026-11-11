@@ -369,6 +369,13 @@ readonly final class CartService
             7 => $place->day7AllowedDaysBefore,
         ];
 
+        // "Otevřeno navíc": a date exception opens a weekday the place normally does not serve
+        $extraOpenDaysBefore = $this->getPlaceClosedDays->openForPlace($placeId)[$date->format('Y-m-d')] ?? null;
+
+        if ($extraOpenDaysBefore !== null && $allowDaysBefore[$weekDay] === null) {
+            $allowDaysBefore[$weekDay] = $extraOpenDaysBefore;
+        }
+
         $postalCode = $this->getDeliveryAddress()?->postalCode;
 
         if ($postalCode !== null && $placeId === $this->ceskaKrutaDelivery::DELIVERY_PLACE_ID) {

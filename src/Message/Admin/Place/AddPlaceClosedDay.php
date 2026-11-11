@@ -14,6 +14,10 @@ readonly final class AddPlaceClosedDay
         public DateTimeImmutable $date,
         /** null = all places */
         public null|int $placeId,
+        /** false = closed, true = extra opening day */
+        public bool $isOpen = false,
+        /** only for an extra opening day */
+        public null|int $daysBefore = null,
     ) {
     }
 
@@ -25,6 +29,8 @@ readonly final class AddPlaceClosedDay
             adminId: $adminId,
             date: $formData->date,
             placeId: $formData->placeId,
+            isOpen: $formData->isOpen,
+            daysBefore: $formData->isOpen ? $formData->daysBefore : null,
         );
     }
 }

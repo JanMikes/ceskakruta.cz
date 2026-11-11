@@ -428,6 +428,8 @@ CREATE TABLE `place_closed_day` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `place_id` int(11) unsigned DEFAULT NULL,
   `date` date NOT NULL,
+  `is_open` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `days_before` tinyint(2) unsigned DEFAULT NULL,
   `ins_dt` datetime NOT NULL,
   `ins_process` varchar(255) DEFAULT NULL,
   `ins_user_id` varchar(100) DEFAULT NULL,

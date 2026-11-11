@@ -24,6 +24,8 @@ readonly final class AddPlaceClosedDayHandler
         return $this->repository->insert('place_closed_day', [
             'date' => $message->date->format('Y-m-d'),
             'place_id' => $message->placeId,
+            'is_open' => $message->isOpen ? 1 : 0,
+            'days_before' => $message->daysBefore,
         ], $message->adminId);
     }
 }

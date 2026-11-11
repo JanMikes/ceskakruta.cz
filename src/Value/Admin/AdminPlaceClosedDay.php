@@ -14,6 +14,9 @@ readonly final class AdminPlaceClosedDay
         /** null = closed for all places */
         public null|int $placeId,
         public null|string $placeName,
+        /** false = closed, true = extra opening day */
+        public bool $isOpen = false,
+        public null|int $daysBefore = null,
     ) {
     }
 }

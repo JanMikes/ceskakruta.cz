@@ -7,17 +7,23 @@
     <div class="admin-page-header">
         <div class="admin-page-heading">
             <a class="admin-back" href="{{ path('admin_places') }}">{{ icons.icon('arrow_left') }}Prodejny</a>
-            <h1 class="admin-page-title">Přidat výjimku <small class="text-muted">zavřeno</small></h1>
-            <p class="admin-page-subtitle">V zadaný den nebude možné vyzvednutí na vybrané prodejně (nebo na všech).</p>
+            <h1 class="admin-page-title">Přidat výjimku</h1>
+            <p class="admin-page-subtitle">Zavřeno: v zadaný den nebude možné vyzvednutí. Otevřeno navíc: v zadaný den bude možné vyzvednutí, i když je jinak zavřeno. Platí pro vybranou prodejnu (nebo pro všechny).</p>
         </div>
     </div>
 
     <div class="card admin-form-card">
         <div class="card-body">
             {{ form_start(form) }}
+                {{ form_row(form.is_open) }}
+
                 <div class="row">
                     <div class="col-sm-5 col-md-4">{{ form_row(form.date) }}</div>
                     <div class="col-sm-7 col-md-8">{{ form_row(form.place_id) }}</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-5 col-md-4">{{ form_row(form.days_before) }}</div>
                 </div>
 
                 {{ include('admin/_form_buttons.html.twig', {back_url: path('admin_places')}) }}

@@ -19,7 +19,7 @@
 
     <section class="card admin-section">
         <div class="admin-card-header">
-            <h2 class="admin-card-title">{{ icons.icon('calendar_x') }}Zavřeno (výjimky)</h2>
+            <h2 class="admin-card-title">{{ icons.icon('calendar_x') }}Výjimky (zavřeno / otevřeno navíc)</h2>
             <div class="admin-card-actions">
                 <a class="btn btn-sm btn-outline-primary btn-with-icon" href="{{ path('admin_place_closed_day_add') }}">{{ icons.icon('plus') }}<span>Přidat výjimku</span></a>
             </div>
@@ -28,7 +28,8 @@
             <table class="table table-hover align-middle admin-table">
                 <thead>
                     <tr>
-                        <th>Datum zavřeno</th>
+                        <th>Datum</th>
+                        <th>Výjimka</th>
                         <th>Prodejna</th>
                         <th class="text-end">Akce</th>
                     </tr>
@@ -37,6 +38,14 @@
                     {% for closed_day in closed_days %}
                         <tr id="closed-day-{{ closed_day.id }}">
                             <td class="admin-cell-primary text-nowrap">{{ closed_day.date|date('d.m.Y', false) }}</td>
+                            <td data-label="Výjimka">
+                                {% if closed_day.isOpen %}
+                                    <span class="admin-pill is-success">Otevřeno navíc</span>
+                                    <small class="text-muted text-nowrap">objednat {{ closed_day.daysBefore }} {{ closed_day.daysBefore == 1 ? 'den' : (closed_day.daysBefore in 2..4 ? 'dny' : 'dní') }} předem</small>
+                                {% else %}
+                                    <span class="admin-pill is-danger">Zavřeno</span>
+                                {% endif %}
+                            </td>
                             <td data-label="Prodejna">
                                 {% if closed_day.placeId is null %}
                                     <span class="admin-pill is-danger">Všechny</span>
@@ -51,7 +60,7 @@
                             </td>
                         </tr>
                     {% else %}
-                        {{ grid.empty_row(3, 'Žádné výjimky.') }}
+                        {{ grid.empty_row(4, 'Žádné výjimky.') }}
                     {% endfor %}
                 </tbody>
             </table>
