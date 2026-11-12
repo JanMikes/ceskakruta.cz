@@ -59,12 +59,5 @@ jobs:
                         bin/phpunit
                         .env.local
 
-            -   name: Clear cache
-                uses: joutvhu/ftp-transfer@v1
-                with:
-                    host: ${{ secrets.FTP_SERVER }}
-                    username: ${{ secrets.FTP_USERNAME }}
-                    password: ${{ secrets.FTP_PASSWORD }}
-                    commands: |
-                        rename ./web/var/cache/prod ./web/var/cache/prod_old
-                        delete ./web/var/cache/prod_old
+            # No FTP cache clearing: PHP owns var/cache files (FTP user can't delete them). Each release gets its
+            # own cache dir from SENTRY_RELEASE and PHP removes the old ones (CeskaKrutaKernel, RemoveStaleCacheDirsWarmer).
