@@ -55,10 +55,37 @@ final readonly class RemoveStaleCacheDirsWarmer implements CacheWarmerInterface
             try {
                 $filesystem->remove($dir);
             } catch (IOExceptionInterface) {
-                // Partially removed, retried on next deploy
+                // Something inside is not deletable by PHP (e.g. owned by the FTP user) → open up everything
+                // PHP owns, so the FTP user can delete the rest manually; also retried on next deploy
+                $this->makeWritableForEveryone($dir);
             }
         }
 
         return [];
+    }
+
+    private function makeWritableForEveryone(string $dir): void
+    {
+        @chmod($dir, 0777);
+
+        $items = @scandir($dir);
+
+        if ($items === false) {
+            return;
+        }
+
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+
+            $path = $dir . '/' . $item;
+
+            if (is_dir($path) && !is_link($path)) {
+                $this->makeWritableForEveryone($path);
+            } else {
+                @chmod($path, 0666);
+            }
+        }
     }
 }
