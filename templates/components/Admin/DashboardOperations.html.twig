@@ -100,7 +100,7 @@
                                     </thead>
                                     <tbody>
                                         {% for item in group.items %}
-                                            <tr{{ item.isHalf ? ' class="is-half"' }}>
+                                            <tr>
                                                 <td>{{ item.name }}</td>
                                                 <td class="text-nowrap">{{ item.weightFrom is not null ? dashboard.amount(item.weightFrom) ~ '–' ~ dashboard.amount(item.weightTo) ~ ' kg' : '–' }}</td>
                                                 <td class="text-end text-nowrap"><strong>{{ dashboard.amount(item.amount) }} {{ item.unit }}</strong></td>
