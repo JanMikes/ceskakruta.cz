@@ -141,6 +141,7 @@
                             <td class="admin-cell-actions">
                                 <div class="admin-actions">
                                     <a class="btn btn-sm btn-light btn-with-icon admin-btn-detail" href="{{ path('admin_order_detail', {id: order.id}) }}" title="Detail objednávky {{ order.id }}">{{ icons.icon('eye') }}<span class="admin-btn-detail-text">Detail</span></a>
+                                    <a class="btn btn-sm btn-light btn-with-icon admin-btn-detail" href="{{ path('admin_order_edit', {id: order.id}) }}" title="Upravit objednávku {{ order.id }}">{{ icons.icon('edit') }}<span class="admin-btn-detail-text">Upravit</span></a>
                                 </div>
                             </td>
                         </tr>

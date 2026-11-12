@@ -20,6 +20,9 @@ readonly final class AdminOrderRecord
         public null|float $coolBalikPrice,
         /** `order.boxxi_shipment_number` from the create response, NULL for orders sent before it was stored */
         public null|string $boxxiShipmentNumber,
+        /** `order.source` ("Web 2.0", "Opakovaná objednávka", NULL = old web) */
+        public null|string $source = null,
+        public null|float $priceTotalBeforeDiscount = null,
     ) {
     }
 }

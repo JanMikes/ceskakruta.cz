@@ -18,8 +18,13 @@
                 {% for row in items %}
                     {% set item = row.item %}
                     <tr>
-                        <td class="admin-cell-primary">{{ item.productName }}</td>
-                        <td class="text-nowrap" data-label="Cena j.">{{ item.pricePerUnit }} Kč / {{ item.weightFrom is not null ? 'kg' : item.productUnit }}</td>
+                        <td class="admin-cell-primary">
+                            {{ item.productName }}
+                            {% if item.isSliced %} <span class="admin-pill is-info">nakrájet</span>{% endif %}
+                            {% if item.isPacked %} <span class="admin-pill is-info">vakuovat</span>{% endif %}
+                            {% if item.note %}<br><small class="text-muted">{{ item.note }}</small>{% endif %}
+                        </td>
+                        <td class="text-nowrap" data-label="Cena j.">{{ item.pricePerUnit }} Kč / {{ item.weightFrom is not null and (row.priceTotal - item.pricePerUnit * item.amount)|abs > 1 ? 'kg' : item.productUnit }}</td>
                         <td class="text-nowrap" data-label="Počet">
                             {{ item.amount }} {{ item.productUnit }}
                             {% if (weight_hint ?? false) and item.weightFrom is null and item.productUnit == 'ks' %}

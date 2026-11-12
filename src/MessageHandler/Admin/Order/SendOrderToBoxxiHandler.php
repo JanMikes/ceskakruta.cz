@@ -10,11 +10,10 @@ use CeskaKruta\Web\Message\Admin\Order\SendOrderToBoxxi;
 use CeskaKruta\Web\Query\Admin\GetAdminOrders;
 use CeskaKruta\Web\Repository\Admin\AdminRecordRepository;
 use CeskaKruta\Web\Services\Boxxi\BoxxiShipmentFactory;
+use CeskaKruta\Web\Services\Boxxi\BoxxiShipments;
 use CeskaKruta\Web\Value\Admin\BoxxiSyncResult;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * Old `CoolBalikFormFactory::process` + `Boxxi::sendOrderRequest`. A failed request (transport error, non-2xx) throws,
@@ -30,7 +29,7 @@ readonly final class SendOrderToBoxxiHandler
         private GetAdminOrders $getAdminOrders,
         private AdminRecordRepository $repository,
         private BoxxiShipmentFactory $shipmentFactory,
-        private HttpClientInterface $coolbalikClient,
+        private BoxxiShipments $shipments,
         private LoggerInterface $logger,
     ) {
     }
@@ -50,12 +49,12 @@ readonly final class SendOrderToBoxxiHandler
                 return BoxxiSyncResult::NotSent;
             }
 
-            $this->request('/v1/shipments/' . rawurlencode($record->boxxiShipmentNumber) . '/update', $this->shipmentFactory->updatePayload($message->shipment));
+            $this->shipments->update($record->boxxiShipmentNumber, $this->shipmentFactory->updatePayload($record->order, $message->shipment));
 
             return BoxxiSyncResult::Updated;
         }
 
-        $response = $this->request('/v1/shipments', $this->shipmentFactory->payload($record->order, $message->shipment));
+        $response = $this->shipments->create($this->shipmentFactory->payload($record->order, $message->shipment));
 
         $this->repository->update('order', $message->orderId, [
             'boxxi_sync_dt' => date('Y-m-d H:i:s'),
@@ -63,25 +62,6 @@ readonly final class SendOrderToBoxxiHandler
         ], $message->adminId);
 
         return BoxxiSyncResult::Created;
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     * @throws BoxxiRequestFailed
-     */
-    private function request(string $path, array $payload): string
-    {
-        try {
-            return $this->coolbalikClient->request('POST', $path, [
-                'headers' => ['Content-Type' => 'application/json'],
-                // Plain json_encode like the old app (HttpClient's `json` option would send 22.0 instead of 22)
-                'body' => json_encode($payload, JSON_THROW_ON_ERROR),
-            ])->getContent();
-        } catch (ExceptionInterface $exception) {
-            $this->logger->error('Boxxi request {path} failed: {message}', ['path' => $path, 'message' => $exception->getMessage(), 'exception' => $exception]);
-
-            throw new BoxxiRequestFailed('Boxxi request failed.', previous: $exception);
-        }
     }
 
     /**

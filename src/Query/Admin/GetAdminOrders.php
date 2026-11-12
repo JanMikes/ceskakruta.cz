@@ -106,7 +106,7 @@ readonly final class GetAdminOrders
                 SELECT oi.*, pr.name AS product_name, pr.code AS product_code, pr.unit AS product_unit, pr.weight_per_unit AS product_weight_per_unit
                 FROM order_item oi
                 JOIN product pr ON pr.id = oi.product_id
-                WHERE oi.order_id = :orderId
+                WHERE oi.order_id = :orderId AND oi.del_flag = 0
                 ORDER BY ' . $orderBy, ['orderId' => $orderId])
             ->fetchAllAssociative();
 
@@ -125,6 +125,10 @@ readonly final class GetAdminOrders
              *     price_total: int,
              *     weight_from: null|float|string,
              *     weight_to: null|float|string,
+             *     is_sliced: null|int,
+             *     is_packed: null|int,
+             *     price_packing: int,
+             *     note: null|string,
              * } $row
              */
 
@@ -141,6 +145,10 @@ readonly final class GetAdminOrders
                     pricePerUnit: $row['price_per_unit'],
                     weightFrom: $row['weight_from'] !== null ? (float) $row['weight_from'] : null,
                     weightTo: $row['weight_to'] !== null ? (float) $row['weight_to'] : null,
+                    isSliced: (bool) $row['is_sliced'],
+                    isPacked: (bool) $row['is_packed'],
+                    pricePacking: $row['price_packing'],
+                    note: $row['note'],
                 ),
                 $row['price_total'],
             );
@@ -207,6 +215,8 @@ readonly final class GetAdminOrders
          *     boxxi_sync_dt: null|string,
          *     cool_balik_price: null|float|string,
          *     boxxi_shipment_number: null|string,
+         *     source: null|string,
+         *     price_total_before_discount: null|float|string,
          * } $row
          */
 
@@ -240,6 +250,8 @@ readonly final class GetAdminOrders
             boxxiSyncedAt: $row['boxxi_sync_dt'] !== null ? new \DateTimeImmutable($row['boxxi_sync_dt']) : null,
             coolBalikPrice: $row['cool_balik_price'] !== null ? (float) $row['cool_balik_price'] : null,
             boxxiShipmentNumber: $row['boxxi_shipment_number'],
+            source: $row['source'],
+            priceTotalBeforeDiscount: $row['price_total_before_discount'] !== null ? (float) $row['price_total_before_discount'] : null,
         );
     }
 }

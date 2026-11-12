@@ -62,18 +62,26 @@ final class BoxxiShipmentFactory
     }
 
     /**
-     * `POST /v1/shipments/{shipmentNumber}/update` payload: only the values editable in the Boxxi form,
-     * same formats as the create payload (COD as int, DeliverAt = delivery date 12:00:00).
+     * `POST /v1/shipments/{shipmentNumber}/update` payload (`UpdateShipmentTransportDataViewModel`): the Boxxi form values
+     * + the current recipient (editable in the order), same formats as the create payload (COD as int, DeliverAt = delivery
+     * date 12:00:00). The recipient is always sent in full – the spec does not say what a missing / null field does.
+     * The note cannot be updated (not in the schema).
      *
      * @return array<string, mixed> JSON-encodable payload
      */
-    public function updatePayload(BoxxiShipmentData $shipment): array
+    public function updatePayload(AdminOrder $order, BoxxiShipmentData $shipment): array
     {
         return [
             'PackageCount' => $shipment->boxCount,
             'Weight' => $shipment->weight,
             'Cod' => (int) $shipment->price,
             'DeliverAt' => $shipment->deliveryDate->setTime(12, 0)->format('Y-m-d H:i:s'),
+            'DeliveryContactName' => $order->name,
+            'DeliveryPhoneNumber' => $order->phone,
+            'DeliveryEmail' => $order->email,
+            'DeliveryStreet' => $order->deliveryStreet,
+            'DeliveryCity' => $order->deliveryCity,
+            'DeliveryPostalCode' => $order->deliveryPostalCode,
         ];
     }
 }

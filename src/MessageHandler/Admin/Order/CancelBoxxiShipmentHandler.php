@@ -10,10 +10,8 @@ use CeskaKruta\Web\Exceptions\RecordNotFound;
 use CeskaKruta\Web\Message\Admin\Order\CancelBoxxiShipment;
 use CeskaKruta\Web\Query\Admin\GetAdminOrders;
 use CeskaKruta\Web\Repository\Admin\AdminRecordRepository;
-use Psr\Log\LoggerInterface;
+use CeskaKruta\Web\Services\Boxxi\BoxxiShipments;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * `POST /v1/shipments/{shipmentNumber}/cancel`. A failed request throws and the order stays sent.
@@ -21,13 +19,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[AsMessageHandler]
 readonly final class CancelBoxxiShipmentHandler
 {
-    public const REASON = 'Zrušeno v administraci ceskakruta.cz';
+    public const REASON = BoxxiShipments::CANCEL_REASON;
 
     public function __construct(
         private GetAdminOrders $getAdminOrders,
         private AdminRecordRepository $repository,
-        private HttpClientInterface $coolbalikClient,
-        private LoggerInterface $logger,
+        private BoxxiShipments $shipments,
     ) {
     }
 
@@ -44,16 +41,7 @@ readonly final class CancelBoxxiShipmentHandler
             throw new BoxxiShipmentNumberMissing();
         }
 
-        try {
-            $this->coolbalikClient->request('POST', '/v1/shipments/' . rawurlencode($record->boxxiShipmentNumber) . '/cancel', [
-                'headers' => ['Content-Type' => 'application/json'],
-                'body' => json_encode(['Reason' => self::REASON], JSON_THROW_ON_ERROR),
-            ])->getContent();
-        } catch (ExceptionInterface $exception) {
-            $this->logger->error('Boxxi cancel of shipment {number} failed: {message}', ['number' => $record->boxxiShipmentNumber, 'message' => $exception->getMessage(), 'exception' => $exception]);
-
-            throw new BoxxiRequestFailed('Boxxi request failed.', previous: $exception);
-        }
+        $this->shipments->cancel($record->boxxiShipmentNumber);
 
         $this->repository->update('order', $message->orderId, [
             'boxxi_sync_dt' => null,

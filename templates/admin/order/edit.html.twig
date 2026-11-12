@@ -1,0 +1,123 @@
+{% extends 'admin/base.html.twig' %}
+{% import 'admin/_icons.html.twig' as icons %}
+
+{% set order = record.order %}
+
+{% block title %}Upravit objednávku {{ order.id }}{% endblock %}
+
+{# One item row; also rendered from the collection prototype by the admin--order-items controller #}
+{% macro item_row(item) %}
+    {% import 'admin/_icons.html.twig' as icons %}
+    <div class="admin-order-item" data-admin--order-items-target="row">
+        {{ form_widget(item.id) }}
+        {{ form_errors(item) }}
+        <div class="row g-2 align-items-end">
+            <div class="col-md-5">{{ form_row(item.product_id) }}</div>
+            <div class="col-6 col-md-2">{{ form_row(item.amount, {help: '<span data-unit></span>', help_html: true}) }}</div>
+            <div class="col-6 col-md-2" data-turkey-only>{{ form_row(item.weight_from) }}</div>
+            <div class="col-6 col-md-2" data-turkey-only>{{ form_row(item.weight_to) }}</div>
+            <div class="col-6 col-md-3">{{ form_row(item.price_per_unit, {help: 'Prázdné = cena z webu (krůty za kus).'}) }}</div>
+            <div class="col-md-6">{{ form_row(item.note) }}</div>
+            <div class="col-auto" data-option="slice">{{ form_row(item.is_sliced) }}</div>
+            <div class="col-auto" data-option="pack">{{ form_row(item.is_packed) }}</div>
+            <div class="col-auto ms-auto mb-3">
+                <button type="button" class="btn btn-sm btn-outline-danger btn-with-icon" data-action="admin--order-items#remove">{{ icons.icon('trash') }}<span>Odebrat</span></button>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block content %}
+    <div class="admin-page-header">
+        <div class="admin-page-heading">
+            <a class="admin-back" href="{{ path('admin_order_detail', {id: order.id}) }}">{{ icons.icon('arrow_left') }}Detail objednávky</a>
+            <h1 class="admin-page-title">Upravit objednávku <small class="text-muted">č. {{ order.id }}</small></h1>
+        </div>
+    </div>
+
+    {% if record.pohodaSyncedAt %}
+        <div class="alert alert-warning admin-alert" role="alert">
+            {{ icons.icon('alert', 'admin-alert-icon') }}
+            <div class="admin-alert-text">Objednávka už je propsaná v Pohodě ({{ record.pohodaSyncedAt|date('d.m.Y H:i', false) }}). Změny se tam nepropíšou – je potřeba je udělat v Pohodě ručně.</div>
+        </div>
+    {% endif %}
+
+    {% if record.boxxiSyncedAt %}
+        <div class="alert alert-info admin-alert" role="alert">
+            {{ icons.icon('info', 'admin-alert-icon') }}
+            <div class="admin-alert-text">
+                {% if record.boxxiShipmentNumber %}
+                    Objednávka je v Boxxi (zásilka {{ record.boxxiShipmentNumber }}). Po uložení zkontrolujete přepočítanou váhu, cenu a počet boxů a zásilku aktualizujete.
+                    Při změně místa mimo CoolBalík se zásilka zruší. Poznámku Boxxi změnit neumí.
+                {% else %}
+                    Objednávka byla do Boxxi propsána dříve bez čísla zásilky – změny je potřeba udělat v Boxxi ručně.
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+        {{ form_errors(form) }}
+
+        <div class="card admin-form-card mb-3">
+            <div class="card-body">
+                <div class="admin-form-section">
+                    <h2 class="admin-form-section-title">Zákazník a doručení</h2>
+                    <div class="row">
+                        <div class="col-md-8">{{ form_row(form.place_id) }}</div>
+                        <div class="col-md-4">{{ form_row(form.date) }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">{{ form_row(form.name) }}</div>
+                        <div class="col-md-4">{{ form_row(form.phone) }}</div>
+                        <div class="col-md-4">{{ form_row(form.email) }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">{{ form_row(form.delivery_street) }}</div>
+                        <div class="col-md-4">{{ form_row(form.delivery_city) }}</div>
+                        <div class="col-md-3">{{ form_row(form.delivery_postal_code) }}</div>
+                    </div>
+                    <p class="admin-form-section-hint">Adresa je povinná jen pro rozvoz.</p>
+                    {{ form_row(form.pay_by_card, {label_attr: {class: 'checkbox-switch'}}) }}
+                    {{ form_row(form.note) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card admin-form-card mb-3"
+            data-controller="admin--order-items"
+            data-admin--order-items-prototype-value="{{ _self.item_row(form.items.vars.prototype)|e('html_attr') }}"
+            data-admin--order-items-index-value="{{ form.items.children is empty ? 0 : max(form.items.children|keys) + 1 }}"
+            data-admin--order-items-products-value="{{ products|map(p => {turkey: p.isTurkey, unit: p.unit, slice: p.canBeSliced, pack: p.canBePacked})|json_encode|e('html_attr') }}">
+            <div class="card-body">
+                <div class="admin-form-section">
+                    <h2 class="admin-form-section-title">Položky</h2>
+                    <p class="admin-form-section-hint">
+                        Ceny se přepočítají podle webu (sleva z kupónu, krůty = cena za kg × průměrná váha, balné a doprava u rozvozu).
+                        Cena za jednotku přepíše cenu z webu. Krůtám bez váhy se doplní váha z kalendáře chlazených krůt pro týden objednávky.
+                    </p>
+                    {{ form_errors(form.items) }}
+
+                    <div data-admin--order-items-target="list">
+                        {% for item in form.items %}
+                            {{ _self.item_row(item) }}
+                        {% endfor %}
+                    </div>
+                    {% do form.items.setRendered %}
+
+                    <button type="button" class="btn btn-outline-primary btn-with-icon" data-action="admin--order-items#add">{{ icons.icon('plus') }}<span>Přidat položku</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card admin-form-card">
+            <div class="card-body">
+                {{ form_row(form.notify_customer, {label_attr: {class: 'checkbox-switch'}, help: 'Zákazník dostane e-mail s tím, co se změnilo (původně → nově), a aktuální podobou objednávky.'}) }}
+                <div class="admin-form-actions">
+                    <button type="submit" class="btn btn-primary">Uložit objednávku</button>
+                    <a class="btn btn-link" href="{{ path('admin_order_detail', {id: order.id}) }}">Zrušit</a>
+                </div>
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

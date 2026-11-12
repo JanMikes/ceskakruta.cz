@@ -60,11 +60,20 @@ readonly final class OrderPriceCalculator
 
     public static function isFreeDelivery(Price $totalItemsPriceWithoutDiscount, null|Place $deliveryPlace): bool
     {
-        if ($deliveryPlace === null || $deliveryPlace->isDelivery === false) {
+        return self::isFreeDeliveryFor($totalItemsPriceWithoutDiscount, $deliveryPlace->isDelivery ?? false, $deliveryPlace->isOwnDelivery ?? false);
+    }
+
+    /**
+     * Same rule from the place flags (admin order editing has no `Place` value): pick-up is free, CoolBalík never,
+     * own delivery over 5 000 Kč.
+     */
+    public static function isFreeDeliveryFor(Price $totalItemsPriceWithoutDiscount, bool $isDelivery, bool $isOwnDelivery): bool
+    {
+        if ($isDelivery === false) {
             return true;
         }
 
-        if ($deliveryPlace->isOwnDelivery === false) {
+        if ($isOwnDelivery === false) {
             return false;
         }
 
@@ -73,7 +82,12 @@ readonly final class OrderPriceCalculator
 
     public static function getDeliveryPrice(Price $totalItemsPriceWithoutDiscount, null|Place $deliveryPlace): int
     {
-        if (self::isFreeDelivery($totalItemsPriceWithoutDiscount, $deliveryPlace)) {
+        return self::getDeliveryPriceFor($totalItemsPriceWithoutDiscount, $deliveryPlace->isDelivery ?? false, $deliveryPlace->isOwnDelivery ?? false);
+    }
+
+    public static function getDeliveryPriceFor(Price $totalItemsPriceWithoutDiscount, bool $isDelivery, bool $isOwnDelivery): int
+    {
+        if (self::isFreeDeliveryFor($totalItemsPriceWithoutDiscount, $isDelivery, $isOwnDelivery)) {
             return 0;
         }
 

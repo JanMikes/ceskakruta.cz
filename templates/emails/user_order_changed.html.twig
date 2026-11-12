@@ -1,0 +1,192 @@
+{#
+    Order changed by the admin (OrderChangeMailer): what changed + the order as it is now, same look as user_order_recapitulation.
+    record/order: AdminOrderRecord/AdminOrder after the change, place: Place|null (inactive place), turkey_items/other_items:
+    list<AdminOrderDetailItem>, changes: list<OrderChange>, price: OrderPrice, show_prices: bool
+#}
+{% apply inline_css(source('@styles/email.css')) %}
+    <html lang="cs">
+    <body>
+
+    <div class="newsletterContainer">
+        <div class="text-center">
+            <img src="{{ email.image('@images/logo.png') }}" alt="Logo">
+
+            <h1 class="newsletter">Změna objednávky č. {{ order.id }}</h1>
+
+            <p>
+                Vaši objednávku jsme upravili. Níže najdete, co se změnilo, a aktuální podobu objednávky.<br>
+                Pokud s úpravou nesouhlasíte, ozvěte se nám prosím.
+            </p>
+        </div>
+
+        {% if changes is not empty %}
+            <h3>Co se změnilo</h3>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="th"></th>
+                        <th class="th">Původně</th>
+                        <th class="th">Nově</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for change in changes %}
+                        <tr>
+                            <td class="td"><strong>{{ change.label }}</strong></td>
+                            <td class="td"><del>{{ change.before }}</del></td>
+                            <td class="td"><strong>{{ change.after }}</strong></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        <h3>Aktuální objednávka</h3>
+
+        {% if not order.place.forceDeliveryAddress %}
+            <h3>Osobní odběr: <strong>{{ order.place.name }}</strong></h3>
+
+            {% if place %}
+                <p>
+                    <strong>{{ place.address1 }}</strong><br>
+                    <span class="text-muted">{{ place.address2 }}</span><br>
+                    <small class="text-muted">{{ place.address3 }}</small><br>
+                    {% if place.mapUrl %}<a href="{{ place.mapUrl }}">Mapa</a>{% endif %}
+                </p>
+
+                <p>
+                    <strong>Otevírací doba</strong><br>
+                    <span class="text-muted">{{ place.openingHoursEmail|nl2br|raw }}</span>
+                </p>
+            {% endif %}
+        {% else %}
+            <h3>
+                Rozvoz <small>({{ order.place.isCoolBalik ? 'CoolBalík' : 'Náš rozvoz' }}) na adresu:</small>
+                <br><strong>{{ order.deliveryStreet }}, {{ order.deliveryCity }} {{ order.deliveryPostalCode }}</strong>
+                {% if show_prices %}
+                    <br>
+                    <small><strong>{{ order.payByCard ? 'Platba kartou při předávce' : 'Platba hotově při předávce' }}</strong></small>
+                {% endif %}
+            </h3>
+        {% endif %}
+
+        <h3>
+            Datum: <strong>{{ order.date|dayOfWeek }} - {{ order.date.format('d.m.Y') }}</strong>
+        </h3>
+
+        <table class="table-borderless">
+            <tr>
+                <th class="th-backgroundless">Jméno a příjmení:</th>
+                <td class="td">{{ order.name }}</td>
+            </tr>
+            <tr>
+                <th class="th-backgroundless">E-mail:</th>
+                <td class="td">{{ order.email }}</td>
+            </tr>
+            <tr>
+                <th class="th-backgroundless">Telefon:</th>
+                <td class="td">{{ order.phone }}</td>
+            </tr>
+            <tr>
+                <th class="th-backgroundless">Poznámka:</th>
+                <td class="td">{{ order.note ?: '-' }}</td>
+            </tr>
+        </table>
+
+        {% if turkey_items is not empty %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="th">Zboží</th>
+                        <th class="th text-center">Počet</th>
+                        <th class="th text-center">Váha/ks</th>
+                        {% if show_prices %}
+                            <th class="th text-center">Kč/ks</th>
+                            <th class="th text-end">Celkem</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in turkey_items %}
+                        {% set item = row.item %}
+                        <tr>
+                            <td class="td"><strong>{{ item.productName }}</strong></td>
+                            <td class="td text-center">{{ item.amount }} {{ item.productUnit }}</td>
+                            <td class="td text-center">{% if item.weightFrom is not null %}{{ item.weightFrom }} až {{ item.weightTo }}kg{% else %}-{% endif %}</td>
+                            {% if show_prices %}
+                                <td class="td text-center">{{ item.pricePerUnit|price|raw }} Kč/ks</td>
+                                <td class="td text-end"><strong>{{ row.priceTotal|price|raw }} Kč</strong></td>
+                            {% endif %}
+                        </tr>
+                        {% if item.note %}
+                            <tr>
+                                <td colspan="{{ show_prices ? '5' : '3' }}" class="td td-note">Poznámka: {{ item.note }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if other_items is not empty %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="th">Zboží</th>
+                        <th class="th text-center">Množství</th>
+                        {% if show_prices %}
+                            <th class="th text-center">Kč</th>
+                            <th class="th text-end">Celkem</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in other_items %}
+                        {% set item = row.item %}
+                        <tr>
+                            <td class="td">
+                                <strong>{{ item.productName }}</strong>
+                                {% if item.isPacked %}<br>+ Vakuovat {% if show_prices %}(+{{ item.pricePacking }} Kč){% endif %}{% endif %}
+                                {% if item.isSliced %}<br>+ Nakrájet{% endif %}
+                            </td>
+                            <td class="td text-center">{{ item.amount }} {{ item.productUnit }}</td>
+                            {% if show_prices %}
+                                <td class="td text-center">{{ item.pricePerUnit|price|raw }} Kč/{{ item.productUnit }}</td>
+                                <td class="td text-end"><strong>{{ row.priceTotal|price|raw }} Kč</strong></td>
+                            {% endif %}
+                        </tr>
+                        {% if item.note %}
+                            <tr>
+                                <td colspan="{{ show_prices ? '4' : '2' }}" class="td td-note">Poznámka: {{ item.note }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if show_prices %}
+            <div>
+                {% if order.couponPercentValue %}
+                    <p>
+                        Slevový kód: <strong>{{ record.couponCode }}</strong><br>
+                        Sleva: <strong>-{{ order.couponPercentValue }}%</strong>
+                    </p>
+                {% endif %}
+
+                {% if price.isDelivery %}
+                    <p>
+                        Doprava: {{ price.deliveryPrice }} Kč {% if price.isFreeDelivery %}(zdarma nad 5000 Kč){% endif %} <br>
+                        Balné: {{ price.packagingPrice }} Kč
+                    </p>
+                {% endif %}
+
+                <h3>Orientační cena celkem: <strong>{{ record.priceTotal|price|raw }} Kč</strong></h3>
+            </div>
+        {% endif %}
+    </div>
+
+    </body>
+    </html>
+{% endapply %}

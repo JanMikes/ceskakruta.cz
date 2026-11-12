@@ -2295,3 +2295,18 @@ body.admin-login-page {
     width: 100%;
     max-width: 25rem;
 }
+
+// Admin order edit: one item row
+.admin-order-item {
+    padding: 1rem 0 0;
+    border-bottom: 1px solid $border-color;
+
+    &:first-child {
+        padding-top: 0;
+    }
+
+    + .btn,
+    &:last-child {
+        margin-bottom: 1rem;
+    }
+}

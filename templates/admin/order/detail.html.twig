@@ -10,6 +10,7 @@
             <h1 class="admin-page-title">Detail objednávky</h1>
         </div>
         <div class="admin-page-actions">
+            <a class="btn btn-primary btn-with-icon" href="{{ path('admin_order_edit', {id: record.order.id}) }}">{{ icons.icon('edit') }}<span>Upravit objednávku</span></a>
             <a class="btn btn-link" href="{{ path('admin_orders') }}">Zpět na seznam</a>
         </div>
     </div>

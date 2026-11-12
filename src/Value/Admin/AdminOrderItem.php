@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CeskaKruta\Web\Value\Admin;
 
 /**
- * Order item (`order_item` row + its product) as needed by the Pohoda XML and the Boxxi weight calculation.
+ * Order item (`order_item` row + its product) as needed by the Pohoda XML, the Boxxi weight calculation and order editing.
  */
 readonly final class AdminOrderItem
 {
@@ -26,6 +26,11 @@ readonly final class AdminOrderItem
         public int $pricePerUnit,
         public null|float $weightFrom,
         public null|float $weightTo,
+        public bool $isSliced = false,
+        public bool $isPacked = false,
+        /** `order_item.price_packing`, added once per item when packed */
+        public int $pricePacking = 0,
+        public null|string $note = null,
     ) {
     }
 }

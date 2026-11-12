@@ -123,7 +123,19 @@ final class SendOrderToBoxxiHandlerTest extends OrderAdminTestCase
         self::assertSame(self::BOXXI_URL . '/BX%205906%2FA/update', $requests[0]['url']);
         self::assertSame(self::BOXXI_TOKEN, $this->header($requests[0], 'x-api-key'));
         self::assertSame(
-            ['PackageCount' => 2, 'Weight' => 7.25, 'Cod' => 1650, 'DeliverAt' => '2024-06-23 12:00:00'],
+            [
+                'PackageCount' => 2,
+                'Weight' => 7.25,
+                'Cod' => 1650,
+                'DeliverAt' => '2024-06-23 12:00:00',
+                // Recipient always sent in full (editable in the order)
+                'DeliveryContactName' => 'Karel Synchronizovaný',
+                'DeliveryPhoneNumber' => '+420601000200',
+                'DeliveryEmail' => 'karel@example.test',
+                'DeliveryStreet' => 'Polní 1',
+                'DeliveryCity' => 'Opava',
+                'DeliveryPostalCode' => '74601',
+            ],
             json_decode($requests[0]['body'], true, flags: JSON_THROW_ON_ERROR),
         );
 
