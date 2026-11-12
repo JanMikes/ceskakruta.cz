@@ -4,9 +4,13 @@
 <section {{ attributes.defaults({class: 'admin-dash-ops'}) }} data-loading="addClass(is-loading)">
     {% set today = this.today %}
     {% set selected = this.selectedDay %}
-    {% set prep_items = computed.prepItems %}
+    {% set prep = computed.prepList %}
     {% set day_orders = computed.dayOrders %}
-    {% set day_label = this.basis.value == 'expedition' ? 'expedice' : 'vyzvednutí / doručení' %}
+    {% set places = this.places %}
+    {% set place_filter = this.placeFilter %}
+    {% set place_label = place_filter.isAll ? null : (place_filter.value == 'own' ? 'Vlastní prodejny' : places[place_filter.value]|default('Místo #' ~ place_filter.value)) %}
+    {% set day_label = (this.basis.value == 'expedition' ? 'expedice' : 'vyzvednutí / doručení') ~ (place_label ? ' · ' ~ place_label : '') %}
+    {% set day_title = dashboard.weekday(selected) ~ ' ' ~ selected|date('j. n. Y', false) %}
 
     <div class="admin-dash-ops-head">
         <div class="btn-group btn-group-sm admin-dash-toggle" role="group" aria-label="Den objednávky podle">
@@ -14,6 +18,18 @@
                 <input type="radio" class="btn-check" name="dashboard-basis" id="dashboard-basis-{{ basis.value }}" value="{{ basis.value }}" data-model="basis" autocomplete="off"{{ this.basis == basis ? ' checked' }}>
                 <label class="btn btn-outline-secondary" for="dashboard-basis-{{ basis.value }}">Podle: {{ basis.label|lower }}</label>
             {% endfor %}
+        </div>
+        <div class="admin-dash-place">
+            <label class="visually-hidden" for="dashboard-place">Místo</label>
+            <select class="form-select form-select-sm" id="dashboard-place" data-model="place">
+                <option value=""{{ place_filter.isAll ? ' selected' }}>Všechna místa</option>
+                <option value="own"{{ place_filter.value == 'own' ? ' selected' }}>Vlastní prodejny</option>
+                <optgroup label="Místa">
+                    {% for id, name in places %}
+                        <option value="{{ id }}"{{ place_filter.value == id ~ '' ? ' selected' }}>{{ name }}</option>
+                    {% endfor %}
+                </optgroup>
+            </select>
         </div>
     </div>
 
@@ -61,63 +77,114 @@
             </div>
         </section>
 
-        <section class="card admin-dash-section">
-            <div class="card-body">
-                <div class="admin-dash-section-head">
-                    <div>
-                        <h2 class="admin-dash-section-title">Co připravit – {{ dashboard.weekday(selected) }} {{ selected|date('j. n. Y', false) }}</h2>
-                        <p class="admin-dash-section-text">Součet položek všech objednávek dne ({{ day_label }}).</p>
-                    </div>
-                </div>
+        <div class="admin-dash-ops-stack">
+            <section class="card admin-dash-section admin-dash-turkeys">
+                <div class="card-body">
+                    <h2 class="admin-dash-section-title">Celé kusy + půlky – {{ day_title }}</h2>
+                    <p class="admin-dash-section-text">Krůty a krocani podle objednané váhy ({{ day_label }}).</p>
 
-                {% if prep_items is empty %}
-                    <p class="admin-dash-empty">Na tento den nejsou žádné objednávky.</p>
-                {% else %}
-                    <div class="admin-table-wrap">
-                        <table class="table table-sm align-middle admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Produkt</th>
-                                    <th class="text-end">Množství</th>
-                                    <th class="text-end">Krájet</th>
-                                    <th class="text-end">Balit</th>
-                                    <th class="text-end">Obj.</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in prep_items %}
-                                    <tr>
-                                        <td>{{ item.name }}</td>
-                                        <td class="text-end text-nowrap"><strong>{{ item.amount|number_format(item.amount == item.amount|round ? 0 : 2, ',', ' ') }} {{ item.unit }}</strong></td>
-                                        <td class="text-end text-nowrap">{{ item.slicedAmount > 0 ? item.slicedAmount|number_format(item.slicedAmount == item.slicedAmount|round ? 0 : 2, ',', ' ') ~ ' ' ~ item.unit : '–' }}</td>
-                                        <td class="text-end text-nowrap">{{ item.packedAmount > 0 ? item.packedAmount|number_format(item.packedAmount == item.packedAmount|round ? 0 : 2, ',', ' ') ~ ' ' ~ item.unit : '–' }}</td>
-                                        <td class="text-end">{{ item.ordersCount }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% endif %}
-
-                {% if day_orders is not empty %}
-                    <h3 class="admin-dash-subtitle">Objednávky ({{ day_orders|length }})</h3>
-                    <ul class="admin-dash-orders">
-                        {% for order in day_orders %}
-                            <li>
-                                <span class="admin-dash-swatch" style="background: {{ order.channel.color }}" title="{{ order.channel.label }}"></span>
-                                <a href="{{ path('admin_order_detail', {id: order.id}) }}"><strong>#{{ order.id }}</strong> {{ order.name }}</a>
-                                <span class="admin-cell-muted">{{ order.placeName }}{% if order.expeditionDate != order.customerDate %} · {{ this.basis.value == 'expedition' ? 'zákazník ' ~ order.customerDate|date('j. n.', false) : 'expedice ' ~ order.expeditionDate|date('j. n.', false) }}{% endif %}</span>
-                                <span class="admin-dash-orders-end">
-                                    {% if order.hasNote %}<span title="Má poznámku">{{ icons.icon('text') }}</span>{% endif %}
-                                    {% if not order.pohodaSynced %}<span class="admin-pill is-danger">Pohoda</span>{% endif %}
-                                    {% if order.boxxiSynced is same as(false) %}<span class="admin-pill is-danger">Boxxi</span>{% endif %}
-                                    <strong>{{ dashboard.money(order.priceTotal) }}</strong>
-                                </span>
-                            </li>
+                    {% if prep.turkeys is empty %}
+                        <p class="admin-dash-empty">Na tento den nejsou objednané celé kusy ani půlky.</p>
+                    {% else %}
+                        {% for group in prep.turkeys %}
+                            <div class="admin-table-wrap">
+                                <table class="table table-sm align-middle admin-table admin-dash-turkey-table">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ group.label }}</th>
+                                            <th>Váha</th>
+                                            <th class="text-end">Kusů</th>
+                                            <th class="text-end">Balit</th>
+                                            <th class="text-end">Obj.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in group.items %}
+                                            <tr{{ item.isHalf ? ' class="is-half"' }}>
+                                                <td>{{ item.name }}</td>
+                                                <td class="text-nowrap">{{ item.weightFrom is not null ? dashboard.amount(item.weightFrom) ~ '–' ~ dashboard.amount(item.weightTo) ~ ' kg' : '–' }}</td>
+                                                <td class="text-end text-nowrap"><strong>{{ dashboard.amount(item.amount) }} {{ item.unit }}</strong></td>
+                                                <td class="text-end text-nowrap">{{ item.packedAmount > 0 ? dashboard.amount(item.packedAmount) ~ ' ' ~ item.unit : '–' }}</td>
+                                                <td class="text-end">{{ item.ordersCount }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="2">{{ group.label }} celkem <span class="admin-cell-muted">(celé + půlky / 2)</span></th>
+                                            <th class="text-end text-nowrap">{{ dashboard.amount(group.wholePieces) }} ks</th>
+                                            <th colspan="2"></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </section>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="card admin-dash-section admin-dash-prep">
+                <div class="card-body">
+                    <h2 class="admin-dash-section-title">Ostatní produkty – {{ day_title }}</h2>
+                    <p class="admin-dash-section-text">Součet položek všech objednávek dne ({{ day_label }}).</p>
+
+                    {% if prep.others is empty %}
+                        <p class="admin-dash-empty">Na tento den nejsou objednané další produkty.</p>
+                    {% else %}
+                        <div class="admin-table-wrap">
+                            <table class="table table-sm align-middle admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produkt</th>
+                                        <th class="text-end">Množství</th>
+                                        <th class="text-end">Krájet</th>
+                                        <th class="text-end">Balit</th>
+                                        <th class="text-end">Obj.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in prep.others %}
+                                        <tr>
+                                            <td>{{ item.name }}</td>
+                                            <td class="text-end text-nowrap"><strong>{{ dashboard.amount(item.amount) }} {{ item.unit }}</strong></td>
+                                            <td class="text-end text-nowrap">{{ item.slicedAmount > 0 ? dashboard.amount(item.slicedAmount) ~ ' ' ~ item.unit : '–' }}</td>
+                                            <td class="text-end text-nowrap">{{ item.packedAmount > 0 ? dashboard.amount(item.packedAmount) ~ ' ' ~ item.unit : '–' }}</td>
+                                            <td class="text-end">{{ item.ordersCount }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
     </div>
+
+    <section class="card admin-dash-section admin-dash-day-orders">
+        <div class="card-body">
+            <h2 class="admin-dash-section-title">Objednávky – {{ day_title }} ({{ day_orders|length }})</h2>
+            <p class="admin-dash-section-text">Objednávky dne ({{ day_label }}).</p>
+
+            {% if day_orders is empty %}
+                <p class="admin-dash-empty">Na tento den nejsou žádné objednávky.</p>
+            {% else %}
+                <ul class="admin-dash-orders">
+                    {% for order in day_orders %}
+                        <li>
+                            <span class="admin-dash-swatch" style="background: {{ order.channel.color }}" title="{{ order.channel.label }}"></span>
+                            <a href="{{ path('admin_order_detail', {id: order.id}) }}"><strong>#{{ order.id }}</strong> {{ order.name }}</a>
+                            <span class="admin-cell-muted">{{ order.placeName }}{% if order.expeditionDate != order.customerDate %} · {{ this.basis.value == 'expedition' ? 'zákazník ' ~ order.customerDate|date('j. n.', false) : 'expedice ' ~ order.expeditionDate|date('j. n.', false) }}{% endif %}</span>
+                            <span class="admin-dash-orders-end">
+                                {% if order.hasNote %}<span title="Má poznámku">{{ icons.icon('text') }}</span>{% endif %}
+                                {% if not order.pohodaSynced %}<span class="admin-pill is-danger">Pohoda</span>{% endif %}
+                                {% if order.boxxiSynced is same as(false) %}<span class="admin-pill is-danger">Boxxi</span>{% endif %}
+                                <strong>{{ dashboard.money(order.priceTotal) }}</strong>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </section>
 </section>

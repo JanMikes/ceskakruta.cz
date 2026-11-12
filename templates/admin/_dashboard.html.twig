@@ -6,6 +6,11 @@
     {{- ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'][date|date('N', false) - 1] -}}
 {%- endmacro %}
 
+{# Amount without trailing zeros: 3 / 2,5 / 0,75 #}
+{% macro amount(value) -%}
+    {{- value|number_format(value == value|round ? 0 : (value * 10 == (value * 10)|round ? 1 : 2), ',', ' ') -}}
+{%- endmacro %}
+
 {% macro money(value) -%}
     {{- value|number_format(0, '', '.') }} Kč
 {%- endmacro %}

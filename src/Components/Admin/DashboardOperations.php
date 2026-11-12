@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace CeskaKruta\Web\Components\Admin;
 
+use CeskaKruta\Web\Query\Admin\GetAdminPlaces;
 use CeskaKruta\Web\Services\Admin\Dashboard\DashboardDays;
 use CeskaKruta\Web\Value\Admin\Dashboard\DateBasis;
 use CeskaKruta\Web\Value\Admin\Dashboard\DayOrder;
 use CeskaKruta\Web\Value\Admin\Dashboard\DayStats;
-use CeskaKruta\Web\Value\Admin\Dashboard\PrepItem;
+use CeskaKruta\Web\Value\Admin\Dashboard\PlaceFilter;
+use CeskaKruta\Web\Value\Admin\Dashboard\PrepList;
 use Psr\Clock\ClockInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -18,7 +20,8 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 /**
  * Dashboard operations: today + next working day, 7-day strip, month calendar and the selected day's prep list and
- * orders, all by expedition or customer day. One orders query for all days per render (+ items and orders of the day).
+ * orders, all by expedition or customer day, optionally for one place or own shops only. One orders query for all days
+ * per render (+ items and orders of the day + place names).
  */
 #[AsLiveComponent(name: 'Admin:DashboardOperations', template: 'components/Admin/DashboardOperations.html.twig', route: 'admin_live_component')]
 final class DashboardOperations
@@ -34,6 +37,10 @@ final class DashboardOperations
     #[LiveProp(url: true)]
     public string $day = '';
 
+    /** Place filter: empty = all, `own` = own shops, place id (`PlaceFilter`) */
+    #[LiveProp(writable: true, url: true)]
+    public string $place = PlaceFilter::ALL;
+
     /** Calendar month `Y-m`, empty = month of the selected day */
     #[LiveProp(url: true)]
     public string $month = '';
@@ -43,6 +50,7 @@ final class DashboardOperations
 
     public function __construct(
         readonly private DashboardDays $dashboardDays,
+        readonly private GetAdminPlaces $getAdminPlaces,
         readonly private ClockInterface $clock,
     ) {
     }
@@ -87,6 +95,19 @@ final class DashboardOperations
     public function bases(): array
     {
         return DateBasis::cases();
+    }
+
+    public function placeFilter(): PlaceFilter
+    {
+        return PlaceFilter::fromValue($this->place);
+    }
+
+    /**
+     * @return array<int, string> active places, id => name
+     */
+    public function places(): array
+    {
+        return $this->getAdminPlaces->namesForChoice();
     }
 
     public function selectedDay(): \DateTimeImmutable
@@ -167,12 +188,9 @@ final class DashboardOperations
         return (int) ceil(4 * $day->ordersCount / $max);
     }
 
-    /**
-     * @return list<PrepItem>
-     */
-    public function prepItems(): array
+    public function prepList(): PrepList
     {
-        return $this->dashboardDays->prepItems($this->basis, $this->selectedDay());
+        return $this->dashboardDays->prepList($this->basis, $this->selectedDay(), $this->placeFilter());
     }
 
     /**
@@ -180,7 +198,7 @@ final class DashboardOperations
      */
     public function dayOrders(): array
     {
-        return $this->dashboardDays->orders($this->basis, $this->selectedDay());
+        return $this->dashboardDays->orders($this->basis, $this->selectedDay(), $this->placeFilter());
     }
 
     /**
@@ -197,7 +215,7 @@ final class DashboardOperations
                 $this->selectedDay(),
             );
 
-            $this->days = $this->dashboardDays->days($this->basis, $from, $to);
+            $this->days = $this->dashboardDays->days($this->basis, $from, $to, $this->placeFilter());
         }
 
         return $this->days;

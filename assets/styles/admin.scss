@@ -1980,6 +1980,43 @@ body.admin {
     }
 }
 
+.admin-dash-ops-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    > .admin-dash-section {
+        margin-bottom: 0;
+    }
+}
+
+.admin-dash-day-orders {
+    margin-top: 1.5rem;
+}
+
+.admin-dash-place .form-select {
+    min-width: 14rem;
+    max-width: 100%;
+}
+
+.admin-dash-turkey-table {
+    margin-bottom: 1rem;
+
+    th:first-child {
+        width: 45%;
+    }
+
+    // Half follows its whole product
+    tr.is-half td:first-child {
+        padding-left: 1rem;
+    }
+
+    tfoot th {
+        border-bottom: 0;
+        font-weight: 600;
+    }
+}
+
 .admin-dash-calendar-head {
     display: flex;
     align-items: center;

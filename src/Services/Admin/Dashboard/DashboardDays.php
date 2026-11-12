@@ -10,13 +10,16 @@ use CeskaKruta\Web\Value\Admin\AdminOrderPlace;
 use CeskaKruta\Web\Value\Admin\Dashboard\DateBasis;
 use CeskaKruta\Web\Value\Admin\Dashboard\DayOrder;
 use CeskaKruta\Web\Value\Admin\Dashboard\DayStats;
+use CeskaKruta\Web\Value\Admin\Dashboard\PlaceFilter;
 use CeskaKruta\Web\Value\Admin\Dashboard\PrepItem;
+use CeskaKruta\Web\Value\Admin\Dashboard\PrepList;
 use CeskaKruta\Web\Value\Admin\Dashboard\SyncAttention;
 
 /**
  * Orders per day for the dashboard operations part, by expedition day (Pohoda `dateTo`, the same rule the Pohoda export
  * uses) or by customer day (`order.date`). The expedition day is never after the customer day and at most
  * `EXPEDITION_LEAD_DAYS` before it (CoolBalík Sunday → last Tuesday), so the customer day range is widened by that much.
+ * The place filter is applied on the already grouped rows (each row carries its place), no extra query.
  */
 readonly final class DashboardDays
 {
@@ -51,8 +54,9 @@ readonly final class DashboardDays
      *
      * @return array<string, DayStats>
      */
-    public function days(DateBasis $basis, \DateTimeImmutable $from, \DateTimeImmutable $to): array
+    public function days(DateBasis $basis, \DateTimeImmutable $from, \DateTimeImmutable $to, null|PlaceFilter $places = null): array
     {
+        $places ??= PlaceFilter::all();
         $days = [];
 
         for ($day = $from; $day <= $to; $day = $day->modify('+1 day')) {
@@ -60,6 +64,10 @@ readonly final class DashboardDays
         }
 
         foreach ($this->getDashboardOrders->groups($from, $this->customerTo($basis, $to)) as $group) {
+            if (!$places->matches($group->place->id)) {
+                continue;
+            }
+
             $key = $this->day($basis, $group->customerDate, $group->place)->format('Y-m-d');
 
             if (isset($days[$key])) {
@@ -71,39 +79,49 @@ readonly final class DashboardDays
     }
 
     /**
-     * What to prepare for one day: products summed over all its orders, sorted by name.
-     *
-     * @return list<PrepItem>
+     * What to prepare for one day: products (whole turkeys per weight class) summed over all its orders.
      */
-    public function prepItems(DateBasis $basis, \DateTimeImmutable $day): array
+    public function prepList(DateBasis $basis, \DateTimeImmutable $day, null|PlaceFilter $places = null): PrepList
     {
+        $places ??= PlaceFilter::all();
         $items = [];
 
         foreach ($this->getDashboardOrders->items($day, $this->customerTo($basis, $day)) as $row) {
-            if ($this->day($basis, $row['date'], $row['place'])->format('Y-m-d') !== $day->format('Y-m-d')) {
+            if (!$places->matches($row['place']->id) || $this->day($basis, $row['date'], $row['place'])->format('Y-m-d') !== $day->format('Y-m-d')) {
                 continue;
             }
 
-            $item = $items[$row['product_id']] ??= new PrepItem($row['product_id'], $row['product_name'], $row['unit']);
+            $item = $items[PrepItem::key($row['product_id'], $row['weight_from'], $row['weight_to'])] ??= new PrepItem(
+                productId: $row['product_id'],
+                name: $row['product_name'],
+                unit: $row['unit'],
+                type: $row['type'],
+                halfOfProductId: $row['half_of_product_id'],
+                weightFrom: $row['weight_from'],
+                weightTo: $row['weight_to'],
+            );
             $item->amount += $row['amount'];
             $item->slicedAmount += $row['sliced_amount'];
             $item->packedAmount += $row['packed_amount'];
             $item->ordersCount += $row['orders_count'];
         }
 
-        usort($items, static fn (PrepItem $a, PrepItem $b): int => strcoll($a->name, $b->name));
-
-        return $items;
+        return PrepList::fromItems(array_values($items));
     }
 
     /**
      * @return list<DayOrder>
      */
-    public function orders(DateBasis $basis, \DateTimeImmutable $day): array
+    public function orders(DateBasis $basis, \DateTimeImmutable $day, null|PlaceFilter $places = null): array
     {
+        $places ??= PlaceFilter::all();
         $orders = [];
 
         foreach ($this->getDashboardOrders->orders($day, $this->customerTo($basis, $day)) as $row) {
+            if (!$places->matches($row['place']->id)) {
+                continue;
+            }
+
             $expeditionDate = $this->pohodaDates->dateTo($row['date'], $row['place']);
             $orderDay = $basis === DateBasis::Expedition ? $expeditionDate : $row['date'];
 

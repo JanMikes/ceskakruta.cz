@@ -9,7 +9,9 @@ use CeskaKruta\Web\Tests\Support\IntegrationTestCase;
 use CeskaKruta\Web\Value\Admin\Dashboard\DateBasis;
 use CeskaKruta\Web\Value\Admin\Dashboard\DayOrder;
 use CeskaKruta\Web\Value\Admin\Dashboard\DayStats;
+use CeskaKruta\Web\Value\Admin\Dashboard\PlaceFilter;
 use CeskaKruta\Web\Value\Admin\Dashboard\PrepItem;
+use CeskaKruta\Web\Value\Admin\Dashboard\TurkeyPrepGroup;
 
 final class DashboardDaysTest extends IntegrationTestCase
 {
@@ -53,14 +55,92 @@ final class DashboardDaysTest extends IntegrationTestCase
         ], array_map(static fn (DayStats $day): int => $day->ordersCount, $this->days(DateBasis::Customer)));
     }
 
-    public function testPrepItemsSumAllOrdersOfTheExpeditionDay(): void
+    public function testPrepListSumsAllOrdersOfTheExpeditionDay(): void
     {
-        $items = $this->dashboardDays()->prepItems(DateBasis::Expedition, new \DateTimeImmutable('2030-03-14'));
+        $prep = $this->dashboardDays()->prepList(DateBasis::Expedition, new \DateTimeImmutable('2030-03-14'));
 
         self::assertSame([
             ['Krůtí prsa', 5.0, 2.0, 3.0, 2],
             ['Krůtí šunka', 1.0, 0.0, 0.0, 1],
-        ], array_map(static fn (PrepItem $item): array => [$item->name, $item->amount, $item->slicedAmount, $item->packedAmount, $item->ordersCount], $items));
+        ], array_map(static fn (PrepItem $item): array => [$item->name, $item->amount, $item->slicedAmount, $item->packedAmount, $item->ordersCount], $prep->others));
+
+        self::assertSame([
+            'Krůta' => [['Krůta celá s droby', 7.0, 9.0, 1.0]],
+            'Krocan' => [['Půlka krocana bez drobů', 16.0, 19.0, 1.0]],
+        ], self::turkeys($prep->turkeys));
+        self::assertSame([1.0, 0.5], array_map(static fn (TurkeyPrepGroup $group): float => $group->wholePieces(), $prep->turkeys));
+    }
+
+    public function testWholeTurkeysAreSplitByWeightClassWithHalvesAfterTheWhole(): void
+    {
+        $this->connection()->insert('`order`', [
+            'place_id' => 1,
+            'date' => '2030-03-15',
+            'email' => 'dashboard@example.test',
+            'phone' => '+420600000000',
+            'name' => 'Dashboard heavy',
+            'note' => '',
+            'price_total' => 900,
+            'ins_dt' => '2030-03-10 10:00:00',
+        ]);
+        $this->connection()->insert('order_item', [
+            'order_id' => (int) $this->connection()->lastInsertId(),
+            'product_id' => 1,
+            'amount' => 1,
+            'price_per_unit' => 900,
+            'price_packing' => 0,
+            'price_total' => 900,
+            'weight_from' => 7,
+            'weight_to' => 9,
+            'ins_dt' => '2030-03-10 10:00:00',
+        ]);
+
+        $prep = $this->dashboardDays()->prepList(DateBasis::Customer, new \DateTimeImmutable('2030-03-15'));
+
+        // A (CoolBalík) + C (shop) + the new order, all picked up / delivered on Friday
+        self::assertSame([
+            'Krůta' => [
+                ['Krůta celá s droby', 5.0, 6.0, 2.0],
+                ['Krůta celá s droby', 7.0, 9.0, 2.0],
+                ['Půlka krůty bez drobů', 5.0, 6.0, 1.0],
+            ],
+            'Krocan' => [['Půlka krocana bez drobů', 16.0, 19.0, 1.0]],
+        ], self::turkeys($prep->turkeys));
+        self::assertSame([4.5, 0.5], array_map(static fn (TurkeyPrepGroup $group): float => $group->wholePieces(), $prep->turkeys));
+    }
+
+    public function testOwnShopsFilterLeavesOutOtherPlaces(): void
+    {
+        $own = PlaceFilter::fromValue(PlaceFilter::OWN_SHOPS);
+
+        // Only C (Rychvald shop, Fri 03-15); A, B (CoolBalík, delivery) and D (other shop 30) are left out
+        self::assertSame(
+            ['2030-03-11' => 0, '2030-03-12' => 0, '2030-03-13' => 0, '2030-03-14' => 0, '2030-03-15' => 1],
+            array_map(static fn (DayStats $day): int => $day->ordersCount, $this->dashboardDays()->days(DateBasis::Expedition, new \DateTimeImmutable('2030-03-11'), new \DateTimeImmutable('2030-03-15'), $own)),
+        );
+        self::assertTrue($this->dashboardDays()->prepList(DateBasis::Expedition, new \DateTimeImmutable('2030-03-14'), $own)->isEmpty());
+        self::assertSame([], $this->dashboardDays()->orders(DateBasis::Expedition, new \DateTimeImmutable('2030-03-14'), $own));
+
+        $prep = $this->dashboardDays()->prepList(DateBasis::Expedition, new \DateTimeImmutable('2030-03-15'), $own);
+        self::assertSame([2.5], array_map(static fn (TurkeyPrepGroup $group): float => $group->wholePieces(), $prep->turkeys));
+        self::assertSame(
+            [$this->orders['C']],
+            array_map(static fn (DayOrder $order): int => $order->id, $this->dashboardDays()->orders(DateBasis::Expedition, new \DateTimeImmutable('2030-03-15'), $own)),
+        );
+    }
+
+    public function testSinglePlaceFilter(): void
+    {
+        $orders = $this->dashboardDays()->orders(DateBasis::Expedition, new \DateTimeImmutable('2030-03-14'), PlaceFilter::fromValue('21'));
+
+        self::assertSame([$this->orders['A']], array_map(static fn (DayOrder $order): int => $order->id, $orders));
+    }
+
+    public function testInvalidPlaceFilterMeansAllPlaces(): void
+    {
+        foreach (['', 'abc', '0', '-1', '1 OR 1=1'] as $value) {
+            self::assertTrue(PlaceFilter::fromValue($value)->isAll(), $value);
+        }
     }
 
     public function testOrdersOfTheDayCarryBothDates(): void
@@ -99,6 +179,21 @@ final class DashboardDaysTest extends IntegrationTestCase
     private function days(DateBasis $basis): array
     {
         return $this->dashboardDays()->days($basis, new \DateTimeImmutable('2030-03-11'), new \DateTimeImmutable('2030-03-15'));
+    }
+
+    /**
+     * @param list<TurkeyPrepGroup> $groups
+     * @return array<string, list<array{string, null|float, null|float, float}>>
+     */
+    private static function turkeys(array $groups): array
+    {
+        $result = [];
+
+        foreach ($groups as $group) {
+            $result[$group->label] = array_map(static fn (PrepItem $item): array => [$item->name, $item->weightFrom, $item->weightTo, $item->amount], $group->items);
+        }
+
+        return $result;
     }
 
     private function dashboardDays(): DashboardDays

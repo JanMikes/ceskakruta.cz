@@ -43,7 +43,9 @@ final class DashboardPageTest extends AdminWebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertCount(1, $crawler->filter('[data-live-name-value="Admin:DashboardOperations"]'));
-        self::assertSelectorTextContains('main', 'Co připravit –');
+        self::assertSelectorTextContains('main', 'Celé kusy + půlky –');
+        self::assertSelectorTextContains('main', 'Ostatní produkty –');
+        self::assertCount(1, $crawler->filter('select[data-model="place"] option[value="own"]'));
     }
 
     public function testRecurringOrdersPage(): void
@@ -124,7 +126,7 @@ final class DashboardPageTest extends AdminWebTestCase
         $crawler = $component->render()->crawler();
 
         // Expedition: CoolBalík A (customer Friday) + own delivery B
-        self::assertStringContainsString('Co připravit – Čt 14. 3. 2030', $crawler->text());
+        self::assertStringContainsString('Celé kusy + půlky – Čt 14. 3. 2030', $crawler->text());
         self::assertCount(2, $crawler->filter('.admin-dash-orders li'));
         self::assertStringContainsString('#' . $orders['A'], $crawler->filter('.admin-dash-orders')->text());
         self::assertSame('Březen 2030', $crawler->filter('.admin-dash-calendar-head h2')->text());
@@ -134,6 +136,24 @@ final class DashboardPageTest extends AdminWebTestCase
         // Customer day: only B is delivered on Thursday
         self::assertCount(1, $crawler->filter('.admin-dash-orders li'));
         self::assertStringContainsString('#' . $orders['B'], $crawler->filter('.admin-dash-orders')->text());
+    }
+
+    public function testOperationsFilterOwnShops(): void
+    {
+        $orders = DashboardOrdersFixture::insert($this->connection());
+        $this->loginAsAdmin();
+
+        $crawler = $this->createLiveComponent('Admin:DashboardOperations', client: $this->client)
+            ->call('selectDay', ['day' => '2030-03-15'])
+            ->set('place', 'own')
+            ->render()
+            ->crawler();
+
+        // Only C (Rychvald shop): 2 whole + 1 half krůta 5–6 kg = 2,5 birds
+        self::assertSame('own', $crawler->filter('select[data-model="place"] option[selected]')->attr('value'));
+        self::assertSame(['#' . $orders['C']], $crawler->filter('.admin-dash-orders li a strong')->each(static fn ($node): string => $node->text()));
+        self::assertStringContainsString('Krůta celkem (celé + půlky / 2) 2,5 ks', $crawler->filter('.admin-dash-turkeys')->text());
+        self::assertStringContainsString('expedice · Vlastní prodejny', $crawler->filter('.admin-dash-turkeys')->text());
     }
 
     public function testTopProductsPeriodSwitch(): void

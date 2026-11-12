@@ -128,9 +128,10 @@ readonly final class GetDashboardOrders
     }
 
     /**
-     * Items summed per (customer day, place, product) – mapped to the expedition day and summed per product by `DashboardDays`.
+     * Items summed per (customer day, place, product, weight class) – mapped to the expedition day and summed per product
+     * by `DashboardDays`. The weight class (`weight_from` / `weight_to`) is set on whole / half turkeys only.
      *
-     * @return list<array{date: \DateTimeImmutable, place: AdminOrderPlace, product_id: int, product_name: string, unit: string, amount: float, sliced_amount: float, packed_amount: float, orders_count: int}>
+     * @return list<array{date: \DateTimeImmutable, place: AdminOrderPlace, product_id: int, product_name: string, unit: string, type: null|int, half_of_product_id: null|int, weight_from: null|float, weight_to: null|float, amount: float, sliced_amount: float, packed_amount: float, orders_count: int}>
      */
     public function items(\DateTimeImmutable $from, \DateTimeImmutable $to): array
     {
@@ -139,6 +140,7 @@ readonly final class GetDashboardOrders
                 SELECT o.date, o.place_id, MAX(p.name) AS place_name, MAX(p.is_cool_balik) AS is_cool_balik,
                     MAX(p.force_delivery_address) AS force_delivery_address,
                     oi.product_id, MAX(pr.name) AS product_name, MAX(pr.unit) AS unit,
+                    MAX(pr.type) AS type, MAX(pr.half_of_product_id) AS half_of_product_id, oi.weight_from, oi.weight_to,
                     SUM(oi.amount) AS amount,
                     SUM(IF(oi.is_sliced = 1, oi.amount, 0)) AS sliced_amount,
                     SUM(IF(oi.is_packed = 1, oi.amount, 0)) AS packed_amount,
@@ -148,7 +150,7 @@ readonly final class GetDashboardOrders
                 JOIN product pr ON pr.id = oi.product_id
                 LEFT JOIN place p ON p.id = o.place_id
                 WHERE o.del_flag = 0 AND o.date >= :from AND o.date <= :to
-                GROUP BY o.date, o.place_id, oi.product_id
+                GROUP BY o.date, o.place_id, oi.product_id, oi.weight_from, oi.weight_to
             ', ['from' => $from->format('Y-m-d'), 'to' => $to->format('Y-m-d')])
             ->fetchAllAssociative();
 
@@ -163,6 +165,10 @@ readonly final class GetDashboardOrders
              *     product_id: int,
              *     product_name: null|string,
              *     unit: null|string,
+             *     type: null|int|string,
+             *     half_of_product_id: null|int|string,
+             *     weight_from: null|float|string,
+             *     weight_to: null|float|string,
              *     amount: float|string,
              *     sliced_amount: float|string,
              *     packed_amount: float|string,
@@ -176,6 +182,10 @@ readonly final class GetDashboardOrders
                 'product_id' => $row['product_id'],
                 'product_name' => (string) $row['product_name'],
                 'unit' => (string) $row['unit'],
+                'type' => $row['type'] !== null ? (int) $row['type'] : null,
+                'half_of_product_id' => $row['half_of_product_id'] !== null ? (int) $row['half_of_product_id'] : null,
+                'weight_from' => $row['weight_from'] !== null ? (float) $row['weight_from'] : null,
+                'weight_to' => $row['weight_to'] !== null ? (float) $row['weight_to'] : null,
                 'amount' => (float) $row['amount'],
                 'sliced_amount' => (float) $row['sliced_amount'],
                 'packed_amount' => (float) $row['packed_amount'],
